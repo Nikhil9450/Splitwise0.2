@@ -2,30 +2,20 @@ import Signup from './Auth/Signup';
 import SignIn from './Auth/SignIn';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
+import { useDispatch,useSelector } from 'react-redux';
+import { checkAuth } from './redux/auth/authSlice';
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import PrivetRoute from './PrivetRoute';
-import axios from 'axios';
-import { useEffect,useState } from 'react';
+import { useEffect } from 'react';
 function App() {
-  const [isAuthenticated,setIsAuthenticated] = useState(null);
+  const dispatch = useDispatch();
+  const {isAuthenticated,status} = useSelector((state)=>state.auth)
   useEffect(()=>{
-    axios.get(" http://localhost:5000/checkAuth",{withCredentials: true})
-    .then((res)=>{
-        console.log(res.data)
-        setIsAuthenticated(res.data.isAuthenticated)
-    })
-    .catch((err)=>{
-        console.log(err);
-        setIsAuthenticated(false);
-    })
+    dispatch(checkAuth());
   },[])
 
-  useEffect(()=>{
-    console.log("isAuthenticated",isAuthenticated)
-  })
-  if (isAuthenticated === null) {
-    return <div>Loading...</div>; // Optional: show loader while checking auth
+  if (status === null || isAuthenticated===null) {
+    return <div>Checking authentication...</div>; 
   }
   return (
     <div className="App">
@@ -43,12 +33,6 @@ function App() {
               path="/signin"
               element={
                 isAuthenticated ? <Navigate to="/" replace /> : <SignIn />
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Signup />
               }
             />
             

@@ -5,20 +5,47 @@ const { OAuth2Client } = require('google-auth-library');
 const secretKey = process.env.JWT_SECRET;
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const handleUserSignup = async(req,res) =>{
-    const {name,email,password}=req.body;
-    try{
-        User.create({
-            name,
-            email,
-            password
-        })
-        return res.status(200).json({ success: 'User created successfully' });
-    } catch(error){
-        console.log("error----->",error);
-        res.status(400).json({ error: 'User creation failed.' })
+const handleUserSignup = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  // Basic validation
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email format.' });
+  }
+
+  // Password strength validation (example: at least 6 characters)
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters long.' });
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already in use.' });
     }
-}
+
+    // Create user
+    await User.create({
+      name,
+      email,
+      password, // Consider hashing before saving (see below)
+    });
+
+    return res.status(200).json({ success: 'User created successfully.' });
+
+  } catch (error) {
+    console.error("User creation error:", error);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
 
 const handleUserSignIn = async (req,res)=>{
   const {email,password}= req.body;
@@ -47,7 +74,7 @@ const handleUserSignIn = async (req,res)=>{
             loggedIn:true
           })
         }else{
-          return res.status(401).json({message:"Incorrect Password"})
+          return res.status(401).json({message:"Invalid User"})
         }
 
     }

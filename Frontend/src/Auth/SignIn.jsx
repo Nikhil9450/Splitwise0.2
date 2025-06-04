@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 import Home from '../components/pages/Home';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { GoogleLogin } from '@react-oauth/google';
 
 const SignIn = () => {
   const emailRef = useRef(null);
@@ -17,28 +18,35 @@ const SignIn = () => {
 
 
 
-  const signupHandler=async()=>{
-    const email = emailRef.current.value;
-    const name = NameRef.current.value;
-    const password = passwordRef.current.value;
-    const confirmPassword = ConfirmPasswordRef.current.value;
-    await axios.post("http://localhost:5000/user",
-      {
-        email,
-        name,
-        password
-      }
-    )
-    .then((res)=>{
-      console.log(res.data)
-       toast.success("User Registered Successfully"); 
-    })
-    .catch((err)=>{
-      console.log(err)
-      toast.error("Some error occured.");
-    })
+const signupHandler = async () => {
+  const email = emailRef.current.value;
+  const name = NameRef.current.value;
+  const password = passwordRef.current.value;
+  const confirmPassword = ConfirmPasswordRef.current.value;
+
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
   }
 
+  try {
+    const res = await axios.post("http://localhost:5000/user", {
+      email,
+      name,
+      password
+    });
+
+    console.log(res.data);
+    toast.success("User Registered Successfully");
+  } catch (err) {
+    console.log(err);
+    toast.error(err.response?.data?.error || "Something went wrong");
+  }
+};
+
+  const googleLoginHandler =()=>{
+
+  }
 
   const loginHandler = async () => {
     const email = emailRef.current.value;
@@ -60,6 +68,8 @@ const SignIn = () => {
       }
     } catch (error) {
       console.log("Error posting data", error);
+      toast.error(error.response.data.message); 
+
     }
   };
 
@@ -109,9 +119,33 @@ const SignIn = () => {
             <hr/>
           </div>
           <div className={styles.field}>
-            <button className={styles.google_button} onClick={loginHandler}><span><img className={styles.google_icon} src="/icons/Google.svg" alt="Logo" /></span>Google</button>
+            {/* <button className={styles.google_button} onClick={loginHandler}><span><img className={styles.google_icon} src="/icons/Google.svg" alt="Logo" /></span>Google</button> */}
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  console.log("Success:", credentialResponse);
+                      try {
+                        const response = await axios.post("http://localhost:5000/user/googleAuth", {
+                          "token":credentialResponse.credential,
+                        }, {
+                          withCredentials: true
+                        });
+
+                        console.log('request submitted', response);
+
+                        if (response.data.loggedIn) {
+                          setRedirectToHome(true);  // trigger navigation
+                        }
+                      } catch (error) {
+                        console.log("Error posting data", error);
+                        toast.error(error.response.data.message); 
+                      }
+                }}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
           </div>
-          <div >
+          <div className={styles.linktoLoginRegister} >
             {
               registerUser ? (
                 <a href="#" onClick={(e) => { e.preventDefault(); setRegisterUser(false); }}>

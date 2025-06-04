@@ -99,3 +99,10 @@
 .button:hover {
   background-color: #0056b3;
 }
+.linktoLoginRegister{
+  width: 60%;
+  text-align: end;
+}
+.linktoLoginRegister a{
+  text-decoration: none;
+}

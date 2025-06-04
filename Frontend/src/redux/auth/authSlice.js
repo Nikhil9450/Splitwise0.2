@@ -1,0 +1,48 @@
+import { createSlice ,createAsyncThunk, isRejected} from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const checkAuth = createAsyncThunk('auth/checkAuth',async()=>{
+    const res = await axios.get ('http://localhost:5000/checkAuth', { withCredentials: true });
+    return res.data.isAuthenticated; 
+})
+
+export const logout = createAsyncThunk('auth/logoutUser',async()=>{
+    const res = await axios.post('http://localhost:5000/user/logout',{},{withCredentials:true});
+    return res.data.loggedIn;
+})
+const authSlice = createSlice({
+    name:'auth',
+    initialState:{
+        isAuthenticated:null,
+        status:'idle'
+    },
+    extraReducers:(builder)=>{
+        builder
+            .addCase(checkAuth.pending,(state)=>{
+                state.status='loading';
+            })
+            .addCase(checkAuth.fulfilled,(state,action)=>{
+                state.isAuthenticated=action.payload;
+                state.status='succeeded';
+            })
+            .addCase(checkAuth.rejected,(state)=>{
+                state.status='failed';
+                state.isAuthenticated=false;
+            })
+            //logout User
+            .addCase(logout.pending, (state) => {
+                state.status = 'loggingOut';
+                state.error = null;
+            })
+            .addCase(logout.fulfilled, (state, action) => {
+                state.isAuthenticated = action.payload; // expected to be false
+                state.status = 'idle';
+            })
+            .addCase(logout.rejected, (state, action) => {
+                state.status = 'logoutFailed';
+                state.error = action.error.message;
+            });
+    }
+})
+
+export default authSlice.reducer; 

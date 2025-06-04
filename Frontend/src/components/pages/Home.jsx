@@ -1,29 +1,28 @@
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import {useNavigate } from 'react-router-dom'
-
-
+// import {useNavigate } from 'react-router-dom'
+import { logout } from '../../redux/auth/authSlice'
+import { useSelector,useDispatch } from 'react-redux'
 
 const Home = () => {
-  const [isLoggedIn,setIsLoggedIn]= useState(null)
-  const navigate = useNavigate();
-
-  useEffect(()=>{
-    isLoggedIn ? navigate('/'):navigate('/signin')
-  },[isLoggedIn])
+  const dispatch = useDispatch();
+  const {isAuthenticated,status} = useSelector((state)=>state.auth)
+  // const navigate = useNavigate();
 
 
-  const handleLogout =()=>{
-    axios.post('http://localhost:3000/logout', {}, { withCredentials: true })
-      .then((data) => {
-        setIsLoggedIn(data.loggedIn)
-        // optionally redirect or update state
-        console.log('Logged out');
-      }).catch((error)=>{
-        console.log('Error in logout');
-      });
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+      window.location.reload(); 
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+  if(status===null){
+    return <div> loading...</div>
   }
-
   return (
     <div>
       Home Page
