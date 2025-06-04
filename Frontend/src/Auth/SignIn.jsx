@@ -44,9 +44,6 @@ const signupHandler = async () => {
   }
 };
 
-  const googleLoginHandler =()=>{
-
-  }
 
   const loginHandler = async () => {
     const email = emailRef.current.value;
@@ -68,7 +65,7 @@ const signupHandler = async () => {
       }
     } catch (error) {
       console.log("Error posting data", error);
-      toast.error(error.response.data.message); 
+      toast.error(error.response.data.error); 
 
     }
   };

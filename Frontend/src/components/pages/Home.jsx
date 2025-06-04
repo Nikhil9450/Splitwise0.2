@@ -8,7 +8,14 @@ const Home = () => {
   const dispatch = useDispatch();
   const {isAuthenticated,status} = useSelector((state)=>state.auth)
   // const navigate = useNavigate();
-
+const fetchAllUsers = async()=>{
+  try{
+    const AllUsers = await axios.get("http://localhost:5000/admin/fetchAllUsers",{withCredentials:true});
+    console.log("list of users------>",AllUsers);
+  }catch(error){
+    console.log("error in fetching users-->",error)
+  }
+}
 
 
   const handleLogout = async () => {
@@ -27,6 +34,7 @@ const Home = () => {
     <div>
       Home Page
       <button  onClick={handleLogout}>Logout</button>
+      <button onClick={fetchAllUsers}>Fetch all users</button>
     </div>
   )
 }

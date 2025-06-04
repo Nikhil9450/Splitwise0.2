@@ -1,4 +1,3 @@
-import Signup from './Auth/Signup';
 import SignIn from './Auth/SignIn';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
