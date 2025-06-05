@@ -6,7 +6,8 @@ import Home from '../components/pages/Home';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
-
+import { useDispatch } from 'react-redux';
+import { setuser } from '../redux/user/userSlice';
 const SignIn = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -14,7 +15,7 @@ const SignIn = () => {
   const ConfirmPasswordRef = useRef(null);
   const [redirectToHome, setRedirectToHome] = useState(false);
   const [registerUser,setRegisterUser]=useState(false);
-
+  const dispatch= useDispatch();
 
 
 
@@ -59,7 +60,7 @@ const signupHandler = async () => {
       });
 
       console.log('request submitted', response);
-
+      dispatch(setuser(response.data.user));
       if (response.data.loggedIn) {
         setRedirectToHome(true);  // trigger navigation
       }

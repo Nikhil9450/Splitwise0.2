@@ -75,7 +75,8 @@ const handleUserSignIn = async (req,res)=>{
           })
           return res.status(200).json({
             message:'Logged In Successfully.',
-            loggedIn:true
+            loggedIn:true,
+            user,
           })
         }else{
           return res.status(401).json({error:"Invalid User"})
@@ -103,7 +104,7 @@ const googleSignIn = async (req, res) => {
       // create new user
       user = await User.create({
         name,
-        email,
+        email, 
         googleId,
         isVerified: true,
       });

@@ -1,23 +1,19 @@
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-// import {useNavigate } from 'react-router-dom'
 import { logout } from '../../redux/auth/authSlice'
 import { useSelector,useDispatch } from 'react-redux'
-
+import { Link } from 'react-router-dom'
+import AdminDashboard from './AdminDashboard'
 const Home = () => {
   const dispatch = useDispatch();
   const {isAuthenticated,status} = useSelector((state)=>state.auth)
-  // const navigate = useNavigate();
-const fetchAllUsers = async()=>{
-  try{
-    const AllUsers = await axios.get("http://localhost:5000/admin/fetchAllUsers",{withCredentials:true});
-    console.log("list of users------>",AllUsers);
-  }catch(error){
-    console.log("error in fetching users-->",error)
-  }
-}
+  const {user}= useSelector((state)=>state.user)
 
-
+  useEffect(()=>{
+   console.log("isAuthenticated,status---->",  isAuthenticated,status)
+   console.log("user------>",user)
+  },[isAuthenticated,status,user])
+  
   const handleLogout = async () => {
     try {
       await dispatch(logout()).unwrap();
@@ -34,7 +30,10 @@ const fetchAllUsers = async()=>{
     <div>
       Home Page
       <button  onClick={handleLogout}>Logout</button>
-      <button onClick={fetchAllUsers}>Fetch all users</button>
+      {/* {user?.role === 'admin' && ( */}
+      <Link to="/dashboard" >Admin Dashboard</Link>
+      {/* )}   */}
+      {/* <AdminDashboard/>   */}
     </div>
   )
 }

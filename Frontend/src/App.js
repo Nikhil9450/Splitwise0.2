@@ -6,6 +6,7 @@ import { checkAuth } from './redux/auth/authSlice';
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import AdminDashboard from './components/pages/AdminDashboard';
 function App() {
   const dispatch = useDispatch();
   const {isAuthenticated,status} = useSelector((state)=>state.auth)
@@ -34,7 +35,12 @@ function App() {
                 isAuthenticated ? <Navigate to="/" replace /> : <SignIn />
               }
             />
-            
+            <Route
+              path="/dashboard"
+              element={
+                isAuthenticated ? <Navigate to="/"  /> : <AdminDashboard />
+              }
+            />
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
