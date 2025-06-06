@@ -36,11 +36,12 @@ const authSlice = createSlice({
                 state.user=action.payload.user;
                 state.status = 'succeeded';
             })
-            .addCase(checkAuth.rejected, (state) => {
+            .addCase(checkAuth.rejected, (state, action) => {
                 state.status = 'failed';
                 state.isAuthenticated = false;
-                state.userRole=null;
-                state.user=null;
+                state.userRole = null;
+                state.user = null;
+                state.error = action.payload || 'Authentication failed';
             })
             //logout User
             .addCase(logout.pending, (state) => {
@@ -48,10 +49,10 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(logout.fulfilled, (state, action) => {
-                state.isAuthenticated = action.payload; // expected to be false
+                state.isAuthenticated = false;
+                state.user = null;
+                state.userRole = null;
                 state.status = 'idle';
-                state.userRole=null;
-                state.user=null;
             })
             .addCase(logout.rejected, (state, action) => {
                 state.status = 'logoutFailed';
