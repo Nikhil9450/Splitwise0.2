@@ -1,53 +1,61 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAuth } from './redux/auth/authSlice';
+
 import SignIn from './Auth/SignIn';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
-import { useDispatch,useSelector } from 'react-redux';
-import { checkAuth } from './redux/auth/authSlice';
-import './App.css';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import AdminDashboard from './components/pages/AdminDashboard';
+import { ToastContainer } from 'react-toastify';
+import ProtectedRoute from './components/ProtectedRoute';
+import Unaurthorize from './components/Unaurthorize';
+
 function App() {
   const dispatch = useDispatch();
-  const {isAuthenticated,status,userRole } = useSelector((state)=>state.auth)
-  useEffect(()=>{
+  const { isAuthenticated, status } = useSelector((state) => state.auth);
+
+  useEffect(() => {
     dispatch(checkAuth());
-  },[])
-  if(isAuthenticated){
-    dispatch()
+  }, [dispatch]);
+
+  if (status === 'loading' || isAuthenticated === null) {
+    return <div>Checking authentication...</div>;
   }
 
-  if (status === null || isAuthenticated===null) {
-    return <div>Checking authentication...</div>; 
-  }
   return (
-    <div className="App">
-          <Routes>
-            {/* Protected Route */}
-            <Route
-              path="/"
-              element={
-                isAuthenticated ? <Home /> : <Navigate to="/signin" replace />
-              }
-            />
-            
-            {/* Public Routes */}
-            <Route
-              path="/signin"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <SignIn />
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                isAuthenticated ? <Navigate to="/"  /> : <AdminDashboard />
-              }
-            />
-            {/* Catch-all */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
+    <>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          isAuthenticated ? <Home /> : <Navigate to="/signin" replace />
+        }
+      />
+
+      <Route
+        path="/signin"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <SignIn />
+        }
+      />
+
+      {/* Admin Routes (RBAC handled inside ProtectedRoute) */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<NotFound />} />
+      <Route path="/unaurthorize" element={<Unaurthorize/>} />
+      
+    </Routes>
+    <ToastContainer />
+    </>
   );
 }
 

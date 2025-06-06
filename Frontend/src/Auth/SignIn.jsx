@@ -160,7 +160,7 @@ const signupHandler = async () => {
     <div className={styles.right_container}>
 
     </div>
-    <ToastContainer />
+    {/* <ToastContainer /> */}
     </div>
   );
 };

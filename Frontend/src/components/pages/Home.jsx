@@ -6,12 +6,11 @@ import { Link } from 'react-router-dom'
 import AdminDashboard from './AdminDashboard'
 const Home = () => {
   const dispatch = useDispatch();
-  const {isAuthenticated,status} = useSelector((state)=>state.auth)
-  const {user}= useSelector((state)=>state.user)
-
+  const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
   useEffect(()=>{
    console.log("isAuthenticated,status---->",  isAuthenticated,status)
    console.log("user------>",user)
+   console.log("userRole------->",userRole);
   },[isAuthenticated,status,user])
   
   const handleLogout = async () => {
@@ -31,7 +30,7 @@ const Home = () => {
       Home Page
       <button  onClick={handleLogout}>Logout</button>
       {/* {user?.role === 'admin' && ( */}
-      <Link to="/dashboard" >Admin Dashboard</Link>
+      <Link to="/admin/dashboard" >Admin Dashboard</Link>
       {/* )}   */}
       {/* <AdminDashboard/>   */}
     </div>
