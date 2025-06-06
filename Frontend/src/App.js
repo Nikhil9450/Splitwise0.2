@@ -9,10 +9,13 @@ import { useEffect } from 'react';
 import AdminDashboard from './components/pages/AdminDashboard';
 function App() {
   const dispatch = useDispatch();
-  const {isAuthenticated,status} = useSelector((state)=>state.auth)
+  const {isAuthenticated,status,userRole } = useSelector((state)=>state.auth)
   useEffect(()=>{
     dispatch(checkAuth());
   },[])
+  if(isAuthenticated){
+    dispatch()
+  }
 
   if (status === null || isAuthenticated===null) {
     return <div>Checking authentication...</div>; 

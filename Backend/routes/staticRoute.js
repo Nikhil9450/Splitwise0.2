@@ -8,7 +8,7 @@ router.get("/checkAuth",async function(req,res){
         return res.status(200).json({isAuthenticated :false})
     }else{
         console.log(user)
-        return res.status(200).json({isAuthenticated :true})
+        return res.status(200).json({isAuthenticated :true,role:user.role})
     }
 })
 
