@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
-import { setuser } from '../redux/user/userSlice';
+// import { setuser } from '../redux/user/userSlice';
+import { checkAuth } from '../redux/auth/authSlice';
 const SignIn = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -60,9 +61,10 @@ const signupHandler = async () => {
       });
 
       console.log('request submitted', response);
-      dispatch(setuser(response.data.user));
       if (response.data.loggedIn) {
         setRedirectToHome(true);  // trigger navigation
+        dispatch(checkAuth());
+        // dispatch(setuser(response.data.user));
       }
     } catch (error) {
       console.log("Error posting data", error);
@@ -131,7 +133,8 @@ const signupHandler = async () => {
                         console.log('request submitted', response);
 
                         if (response.data.loggedIn) {
-                          setRedirectToHome(true);  // trigger navigation
+                          setRedirectToHome(true);
+                          dispatch(checkAuth());  // trigger navigation
                         }
                       } catch (error) {
                         console.log("Error posting data", error);

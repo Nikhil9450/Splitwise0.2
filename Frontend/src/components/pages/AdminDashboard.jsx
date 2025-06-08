@@ -8,7 +8,6 @@ const AdminDashboard = () => {
     const [users,setUsers]=useState(null)
     const [modifiedUsers,setModifiedUsers]=useState(null)
     const fetchAllUsers = async()=>{
-        alert("function triggered.")
         try{
             const AllUsers = await axios.get("http://localhost:5000/admin/fetchAllUsers",{withCredentials:true});
             console.log("list of users------>",AllUsers);

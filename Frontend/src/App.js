@@ -10,9 +10,11 @@ import AdminDashboard from './components/pages/AdminDashboard';
 import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unaurthorize from './components/Unaurthorize';
-
+import DrawerAppBar from './components/Navbar/Navbar';
+import { useLocation } from 'react-router-dom';
 function App() {
   const dispatch = useDispatch();
+   const location = useLocation();
   const { isAuthenticated, status } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -25,6 +27,7 @@ function App() {
 
   return (
     <>
+    {location.pathname !== '/signin' && <DrawerAppBar />}
     <Routes>
       <Route
         path="/"

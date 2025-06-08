@@ -106,12 +106,17 @@ const googleSignIn = async (req, res) => {
         name,
         email, 
         googleId,
-        isVerified: true,
       });
     }
-
+    const payload ={
+      id:user.id,
+      name:user.name,
+      email:user.email,
+      googleId:user.googleId,
+      role:user.role,
+    }
     // Create your own JWT token
-    const authToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const authToken = jwt.sign(payload,secretKey, {
       expiresIn: '7d',
     });
     res.cookie("token", authToken, {
