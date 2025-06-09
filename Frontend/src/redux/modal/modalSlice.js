@@ -23,11 +23,14 @@ const modalSlice = createSlice({
     },
     closeModal: (state) => {
       state.isOpen = false;
-    //   state.modalContent = {
-    //     modalHeader: "",
-    //     modalBody: "",
-    //     modalFooter: "",
-    //   };
+
+      setTimeout(()=>{
+        state.modalContent = {
+        modalHeader: "",
+        modalBody: "",
+        modalFooter: "",
+      };
+      },1000)
     },
   },
 });
