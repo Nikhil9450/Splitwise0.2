@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { openModal,closeModal } from '../../redux/modal/modalSlice';
+import TextField from '@mui/material/TextField';
 const Profile = () => {
     const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
     const dispatch = useDispatch();
@@ -25,17 +26,38 @@ const Profile = () => {
                         bgcolor:'#f5f5f5',
                         height:'60vh'
                         }
-  const handleClick = () => {
-    dispatch(openModal({
-      modalHeader: "Delete Item",
-      modalBody: "Are you sure you want to delete this?",
-      modalFooter: (
-        <>
-          <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-          <Button onClick={() => console.log("Delete")} color="error">Delete</Button>
-        </>
-      )
-    }));
+
+  const editProfileDetails = (field) => {
+    switch(field){
+        case 'name':
+            return dispatch(openModal({
+                        modalHeader: "Edit Your Name",
+                        modalBody: <TextField
+                                        id="outlined-required"
+                                        label="Enter Name"
+                                        defaultValue={user.name}
+                                        sx={{width:'100%'}}
+                                        />,
+                        modalFooter: (
+                            <>
+                            <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+                            <Button onClick={() => console.log("Saved")} color="error">Save</Button>
+                            </>
+                        )
+                    }))
+        default:
+            return <p>Unknown status</p>;
+    }
+    // dispatch(openModal({
+    //   modalHeader: "Delete Item",
+    //   modalBody: "Are you sure you want to delete this?",
+    //   modalFooter: (
+    //     <>
+    //       <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+    //       <Button onClick={() => console.log("Delete")} color="error">Delete</Button>
+    //     </>
+    //   )
+    // }));
   };
 
   return (
@@ -43,9 +65,9 @@ const Profile = () => {
         <Box sx={{ flexGrow: 1,padding:'5rem 12rem' }}>
         <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 6 }}>
-                <Paper sx={paperStyle} elevation={0} >
+                <Paper sx={{...paperStyle,bgcolor:'#f5f5f5',}} elevation={0} >
                    <AccountCircleIcon sx={{height:'10rem',width:'10rem',color:'lightgray'}}/>
-                   <Button onClick={handleClick}>Open Modal</Button>
+                   {/* <Button onClick={handleClick}>Open Modal</Button> */}
                 </Paper>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -60,7 +82,7 @@ const Profile = () => {
                         }}>
                         <ListItem
                             secondaryAction={
-                            <IconButton edge="end" aria-label="delete">
+                            <IconButton edge="end" aria-label="editName" onClick={()=>editProfileDetails('name')}>
                                 <ModeEditIcon />
                             </IconButton>
                             }
@@ -68,21 +90,21 @@ const Profile = () => {
                             <ListItemText primary="Your Name" secondary={user.name} />
                         </ListItem>
                         <ListItem
-                             secondaryAction={
-                            <IconButton edge="end" aria-label="delete">
-                                <ModeEditIcon />
-                            </IconButton>
-                            }
+                            //  secondaryAction={
+                            // <IconButton edge="end" aria-label="editEmail" onClick={()=>editProfileDetails('email')} >
+                            //     <ModeEditIcon />
+                            // </IconButton>
+                            // }
                         >                       
 
                             <ListItemText primary="Your Email" secondary={user.email} />
                         </ListItem>
                         <ListItem
-                            secondaryAction={
-                            <IconButton edge="end" aria-label="delete">
-                                <ModeEditIcon />
-                            </IconButton>
-                            }
+                            // secondaryAction={
+                            // <IconButton edge="end" aria-label="editPassword" onClick={()=>editProfileDetails('password')}>
+                            //     <ModeEditIcon />
+                            // </IconButton>
+                            // }
                         >
                             <ListItemText primary="Password" secondary='**********' />
                         </ListItem>
