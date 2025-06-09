@@ -197,7 +197,7 @@ function DrawerAppBar(props) {
                  <DashboardIcon sx={{marginRight:'1rem'}}/> Admin Dashboard
                 </MenuItem>
               )}
-              <MenuItem sx={{color:'#767676',fontSize:'14px'}} onClick={handleClose}><AccountCircleIcon sx={{marginRight:'1rem'}}/>Your Account</MenuItem>
+              <MenuItem sx={{color:'#767676',fontSize:'14px'}} component={Link} to="/profile"><AccountCircleIcon sx={{marginRight:'1rem'}}/>Your Account</MenuItem>
               <MenuItem sx={{color:'#767676',fontSize:'14px'}} onClick={handleClose}><GroupAddIcon sx={{marginRight:'1rem'}}/>Create Group</MenuItem>
               <MenuItem sx={{color:'#767676',fontSize:'14px'}} onClick={handleLogout}><LogoutIcon sx={{marginRight:'1rem'}}/>Logout</MenuItem>
             </Menu>
