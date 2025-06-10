@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import {closeModal } from '../redux/modal/modalSlice';
 import { useSelector,useDispatch } from 'react-redux';
 import {  DialogActions } from "@mui/material";
+import TextField from '@mui/material/TextField';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -22,8 +23,63 @@ const style = {
 };
 
 export default function TransitionsModal() {
-  const {isOpen,modalContent} = useSelector((state)=>state.modal)
-  const dispatch = useDispatch()
+    const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
+    const dispatch = useDispatch()
+    const renderModalContent = () => {
+    switch (modalType) {
+        case "EDIT_NAME":
+        return (
+            <>
+            <Typography variant="h6">Edit Your Name</Typography>
+            <TextField
+                label="Enter Name"
+                defaultValue={modalProps.data}
+                fullWidth
+                sx={{ mt: 2 }}
+            />
+            <DialogActions>
+                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+                <Button onClick={() => console.log("Saved")} color="error">Save</Button>
+            </DialogActions>
+            </>
+        );
+        case "EDIT_EMAIL":
+        return (
+            <>
+            <Typography variant="h6">Edit Your Email</Typography>
+            <TextField
+                label="Enter Email"
+                defaultValue={modalProps.data}
+                fullWidth
+                sx={{ mt: 2 }}
+            />
+            <DialogActions>
+                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+                <Button onClick={() => console.log("Saved")} color="error">Save</Button>
+            </DialogActions>
+            </>
+        );
+        case "DELETE_CONFIRMATION":
+        return (
+            <>
+            <Typography variant="h6">Confirmation</Typography>
+            <Typography sx={{ mt: 2 }}>{modalProps.message}</Typography>
+            <DialogActions>
+                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+                <Button onClick={() => {
+                modalProps.onConfirm?.();
+                dispatch(closeModal());
+                }} color="error">Delete</Button>
+            </DialogActions>
+            </>
+        );
+
+        // Add more cases as needed
+
+        default:
+        return null;
+    }
+    };
 
   return (
     <div>
@@ -42,19 +98,9 @@ export default function TransitionsModal() {
         }}
       >
         <Fade in={isOpen}>
-          <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              {modalContent.modalHeader && modalContent.modalHeader}
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              {modalContent.modalBody && modalContent.modalBody}
-            </Typography>
-            {modalContent.modalFooter && (
-                <DialogActions>
-                {modalContent.modalFooter}
-                </DialogActions>
-            )}
-          </Box>
+            <Box sx={style}>
+                {renderModalContent()}
+            </Box>
         </Fade>
       </Modal>
     </div>

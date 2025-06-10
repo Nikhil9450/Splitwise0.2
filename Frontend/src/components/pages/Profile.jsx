@@ -27,37 +27,19 @@ const Profile = () => {
                         height:'60vh'
                         }
 
-  const editProfileDetails = (field) => {
-    switch(field){
-        case 'name':
-            return dispatch(openModal({
-                        modalHeader: "Edit Your Name",
-                        modalBody: <TextField
-                                        id="outlined-required"
-                                        label="Enter Name"
-                                        defaultValue={user.name}
-                                        sx={{width:'100%'}}
-                                        />,
-                        modalFooter: (
-                            <>
-                            <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                            <Button onClick={() => console.log("Saved")} color="error">Save</Button>
-                            </>
-                        )
-                    }))
-        default:
-            return <p>Unknown status</p>;
+  const updateName =(name)=>{
+   console.log("perform async operation",name);
+  }                      
+
+  const editProfileDetails = (field,data,func) => {
+    dispatch(openModal({
+    modalType:field,
+    modalProps: {
+        message: "Are you sure you want to delete your account?",
+        data:data,
+        onConfirm: () => func(field),
     }
-    // dispatch(openModal({
-    //   modalHeader: "Delete Item",
-    //   modalBody: "Are you sure you want to delete this?",
-    //   modalFooter: (
-    //     <>
-    //       <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-    //       <Button onClick={() => console.log("Delete")} color="error">Delete</Button>
-    //     </>
-    //   )
-    // }));
+    }));
   };
 
   return (
@@ -82,7 +64,7 @@ const Profile = () => {
                         }}>
                         <ListItem
                             secondaryAction={
-                            <IconButton edge="end" aria-label="editName" onClick={()=>editProfileDetails('name')}>
+                            <IconButton edge="end" aria-label="editName" onClick={()=>editProfileDetails('EDIT_NAME',user.name,updateName)}>
                                 <ModeEditIcon />
                             </IconButton>
                             }
@@ -90,21 +72,21 @@ const Profile = () => {
                             <ListItemText primary="Your Name" secondary={user.name} />
                         </ListItem>
                         <ListItem
-                            //  secondaryAction={
-                            // <IconButton edge="end" aria-label="editEmail" onClick={()=>editProfileDetails('email')} >
-                            //     <ModeEditIcon />
-                            // </IconButton>
-                            // }
+                             secondaryAction={
+                            <IconButton edge="end" aria-label="editEmail" onClick={()=>editProfileDetails('EDIT_EMAIL',user.email)} >
+                                <ModeEditIcon />
+                            </IconButton>
+                            }
                         >                       
 
                             <ListItemText primary="Your Email" secondary={user.email} />
                         </ListItem>
                         <ListItem
-                            // secondaryAction={
-                            // <IconButton edge="end" aria-label="editPassword" onClick={()=>editProfileDetails('password')}>
-                            //     <ModeEditIcon />
-                            // </IconButton>
-                            // }
+                            secondaryAction={
+                            <IconButton edge="end" aria-label="editPassword" onClick={()=>editProfileDetails('password','*********')}>
+                                <ModeEditIcon />
+                            </IconButton>
+                            }
                         >
                             <ListItemText primary="Password" secondary='**********' />
                         </ListItem>
