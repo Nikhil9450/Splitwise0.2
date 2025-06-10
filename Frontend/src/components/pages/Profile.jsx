@@ -25,19 +25,15 @@ const Profile = () => {
                         alignItems:'center',
                         bgcolor:'#f5f5f5',
                         height:'60vh'
-                        }
+                        }                    
 
-  const updateName =(name)=>{
-   console.log("perform async operation",name);
-  }                      
-
-  const editProfileDetails = (field,data,func) => {
+  const editProfileDetails = (modalType) => {
     dispatch(openModal({
-    modalType:field,
+    modalType,
     modalProps: {
-        message: "Are you sure you want to delete your account?",
-        data:data,
-        onConfirm: () => func(field),
+        title:'Edit Profile',
+        name:user.name,
+        email:user.email,
     }
     }));
   };
@@ -63,35 +59,38 @@ const Profile = () => {
                         justifyContent:'space-between' 
                         }}>
                         <ListItem
-                            secondaryAction={
-                            <IconButton edge="end" aria-label="editName" onClick={()=>editProfileDetails('EDIT_NAME',user.name,updateName)}>
-                                <ModeEditIcon />
-                            </IconButton>
-                            }
+                            // secondaryAction={
+                            // <IconButton edge="end" aria-label="editName" onClick={()=>editProfileDetails('EDIT_NAME',user.name,updateName)}>
+                            //     <ModeEditIcon />
+                            // </IconButton>
+                            // }
                         >
                             <ListItemText primary="Your Name" secondary={user.name} />
                         </ListItem>
                         <ListItem
-                             secondaryAction={
-                            <IconButton edge="end" aria-label="editEmail" onClick={()=>editProfileDetails('EDIT_EMAIL',user.email)} >
-                                <ModeEditIcon />
-                            </IconButton>
-                            }
+                            //  secondaryAction={
+                            // <IconButton edge="end" aria-label="editEmail" onClick={()=>editProfileDetails('EDIT_EMAIL',user.email)} >
+                            //     <ModeEditIcon />
+                            // </IconButton>
+                            // }
                         >                       
 
                             <ListItemText primary="Your Email" secondary={user.email} />
                         </ListItem>
                         <ListItem
-                            secondaryAction={
-                            <IconButton edge="end" aria-label="editPassword" onClick={()=>editProfileDetails('password','*********')}>
-                                <ModeEditIcon />
-                            </IconButton>
-                            }
+                            // secondaryAction={
+                            // <IconButton edge="end" aria-label="editPassword" onClick={()=>editProfileDetails('password','*********')}>
+                            //     <ModeEditIcon />
+                            // </IconButton>
+                            // }
                         >
                             <ListItemText primary="Password" secondary='**********' />
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="User Type" secondary={user.role} />
+                        </ListItem>
+                        <ListItem>
+                             <Button variant="outlined" onClick={()=>editProfileDetails('EDIT_PROFILE')}>Edit Profile</Button>
                         </ListItem>
                         <ListItem>
                              <Button variant="outlined">Delete Your Account</Button>

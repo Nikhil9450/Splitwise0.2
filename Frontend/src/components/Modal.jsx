@@ -9,6 +9,7 @@ import {closeModal } from '../redux/modal/modalSlice';
 import { useSelector,useDispatch } from 'react-redux';
 import {  DialogActions } from "@mui/material";
 import TextField from '@mui/material/TextField';
+import { useState } from 'react';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -24,61 +25,63 @@ const style = {
 
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
+    const [updatedUserDetails,setUpdatedUserDetails]= useState({
+        name:modalProps.name,
+        email:modalProps.email,
+        password:"",
+      })
     const dispatch = useDispatch()
-    const renderModalContent = () => {
-    switch (modalType) {
-        case "EDIT_NAME":
-        return (
-            <>
-            <Typography variant="h6">Edit Your Name</Typography>
-            <TextField
-                label="Enter Name"
-                defaultValue={modalProps.data}
-                fullWidth
-                sx={{ mt: 2 }}
-            />
-            <DialogActions>
-                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                <Button onClick={() => console.log("Saved")} color="error">Save</Button>
-            </DialogActions>
-            </>
-        );
-        case "EDIT_EMAIL":
-        return (
-            <>
-            <Typography variant="h6">Edit Your Email</Typography>
-            <TextField
-                label="Enter Email"
-                defaultValue={modalProps.data}
-                fullWidth
-                sx={{ mt: 2 }}
-            />
-            <DialogActions>
-                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                <Button onClick={() => console.log("Saved")} color="error">Save</Button>
-            </DialogActions>
-            </>
-        );
-        case "DELETE_CONFIRMATION":
-        return (
-            <>
-            <Typography variant="h6">Confirmation</Typography>
-            <Typography sx={{ mt: 2 }}>{modalProps.message}</Typography>
-            <DialogActions>
-                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                <Button onClick={() => {
-                modalProps.onConfirm?.();
-                dispatch(closeModal());
-                }} color="error">Delete</Button>
-            </DialogActions>
-            </>
-        );
-
-        // Add more cases as needed
-
-        default:
-        return null;
+    const updateProfile=() =>{
+      console.log("updatedUserDetails-------------->",updatedUserDetails)
     }
+    const renderModalContent = () => {
+
+      switch (modalType) {
+          case "EDIT_PROFILE":
+          return (
+              <>
+              <Typography variant="h6">{modalProps.title}</Typography>
+              <TextField
+                  label="Enter Name"
+                  defaultValue={modalProps.name}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'name':event.target.value})}
+              />
+              <TextField
+                  label="Enter Email"
+                  defaultValue={modalProps.email}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'email':event.target.value})}
+
+              />
+              <Box>
+                <TextField
+                    label="Enter Current Password"
+                    defaultValue=""
+                    fullWidth
+                    type='password'
+                    sx={{ mt: 2 }}
+                />
+                <TextField
+                    label="Enter New Password"
+                    defaultValue=""
+                    fullWidth
+                    type='password'
+                    sx={{ mt: 2 }}
+                />            
+              </Box>
+              <DialogActions>
+                  <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+                  <Button onClick={() => updateProfile()} color="error">Submit</Button>
+              </DialogActions>
+              </>
+          );
+          // Add more cases as needed
+          default:
+          return null;
+      }
     };
 
   return (
