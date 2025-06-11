@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const secretKey = process.env.JWT_SECRET || 'your-secret-key';
 async function restrictToLoggedinUserOnly(req,res,next){
-    console.log("restrictToLoggedinUserOnly req----->",req);
+    // console.log("restrictToLoggedinUserOnly req----->",req);
     const token = req.cookies?.token;
     if (!token) return res.status(401).send("Invalid user");
     try {

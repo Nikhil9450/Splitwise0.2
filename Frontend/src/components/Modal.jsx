@@ -12,6 +12,8 @@ import TextField from '@mui/material/TextField';
 import { useState,useEffect } from 'react';
 import axios from 'axios'
 import Loader from './Loader';
+import { toast } from 'react-toastify';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -48,14 +50,16 @@ export default function TransitionsModal() {
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
       try{
-        const response =await axios.post('http://localhost:5000/editUser/update',{
+        const response =await axios.post('http://localhost:5000/editUser/update',
           updatedUserDetails
-        },{
+        ,{
             withCredentials: true
           })
         console.log("api respose------>",response)
+        toast.success("Updated successfully");
       }catch(error){
         console.log("error--------->",error);
+        toast.error(error.response?.data?.error || "Something went wrong");
       }
       
     }
