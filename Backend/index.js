@@ -5,7 +5,8 @@ const connectDB = require('./config/db');
 const userRoute = require("./routes/userRoutes")
 const staticRoute = require("./routes/staticRoute")
 const adminRoutes = require("./routes/adminRoutes")
-const {checkAuth} = require("./middlewares/auth")
+const editUserRoutes = require("./routes/editUserRoutes")
+const {checkAuth, restrictToLoggedinUserOnly} = require("./middlewares/auth")
 const {checkRole}= require("./middlewares/role")
 const app = express();
 
@@ -24,5 +25,5 @@ app.use(express.json());
 app.use("/",checkAuth,staticRoute);
 app.use("/user",userRoute);
 app.use("/admin",checkRole,adminRoutes)
-
+app.use("/editUser",restrictToLoggedinUserOnly,editUserRoutes)
 app.listen(process.env.PORT,()=> console.log(`Server Started at PORT ${process.env.PORT}`)) 

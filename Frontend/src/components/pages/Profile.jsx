@@ -15,6 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { openModal,closeModal } from '../../redux/modal/modalSlice';
 import TextField from '@mui/material/TextField';
+import Loader from '../Loader';
 const Profile = () => {
     const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
     const dispatch = useDispatch();
@@ -109,6 +110,7 @@ const Profile = () => {
                 </Paper>            
             </Grid> */}
         </Grid>
+         {/* <Loader message="Fetching data..." /> */}
         </Box>
     </div>
   )

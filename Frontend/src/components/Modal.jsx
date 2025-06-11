@@ -9,7 +9,9 @@ import {closeModal } from '../redux/modal/modalSlice';
 import { useSelector,useDispatch } from 'react-redux';
 import {  DialogActions } from "@mui/material";
 import TextField from '@mui/material/TextField';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import axios from 'axios'
+import Loader from './Loader';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -28,11 +30,34 @@ export default function TransitionsModal() {
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
-        password:"",
+        currentPassword:"",
+        newPassword:""
       })
     const dispatch = useDispatch()
-    const updateProfile=() =>{
+
+    useEffect(() => {
+  if (modalType === "EDIT_PROFILE") {
+        setUpdatedUserDetails({
+          name: modalProps.name || "",
+          email: modalProps.email || "",
+          currentPassword: "",
+          newPassword: "",
+        });
+      }
+    }, [modalType, modalProps]);
+    const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
+      try{
+        const response =await axios.post('http://localhost:5000/editUser/update',{
+          updatedUserDetails
+        },{
+            withCredentials: true
+          })
+        console.log("api respose------>",response)
+      }catch(error){
+        console.log("error--------->",error);
+      }
+      
     }
     const renderModalContent = () => {
 
@@ -63,6 +88,8 @@ export default function TransitionsModal() {
                     fullWidth
                     type='password'
                     sx={{ mt: 2 }}
+                    onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'currentPassword':event.target.value})}
+
                 />
                 <TextField
                     label="Enter New Password"
@@ -70,11 +97,12 @@ export default function TransitionsModal() {
                     fullWidth
                     type='password'
                     sx={{ mt: 2 }}
+                    onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'newPassword':event.target.value})}
                 />            
               </Box>
               <DialogActions>
                   <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                  <Button onClick={() => updateProfile()} color="error">Submit</Button>
+                  <Button onClick={() => updateProfile()}>Submit</Button>
               </DialogActions>
               </>
           );

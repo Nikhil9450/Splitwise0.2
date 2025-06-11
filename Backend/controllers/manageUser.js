@@ -11,6 +11,7 @@ const fetchAllUsers =async(req,res)=>{
 
 }
 
+
 module.exports={
     fetchAllUsers
 }
