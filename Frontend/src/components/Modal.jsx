@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -118,8 +119,8 @@ export default function TransitionsModal() {
           case "CREATE_GROUP":
             return (            
             <>
-              <Box>
-                 <Typography variant="h6">{modalProps.title}</Typography>
+              <Box >
+                 <Typography variant="h6" sx={{marginBottom: '1rem'}}>{modalProps.title}</Typography>
                  <TextField
                   id="filled-basic" 
                   label="Group name" 
@@ -135,24 +136,11 @@ export default function TransitionsModal() {
                     },
                   }}  
                   />
-                  <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                    <GroupsIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-                    <TextField
-                        id="filled-basic" 
-                        label="Group name" 
-                        variant="filled" 
-                        fullWidth
-                        slotProps={{
-                          input: {
-                            startAdornment: (
-                              <InputAdornment position="end">
-                                <GroupsIcon/>
-                              </InputAdornment>
-                            ),
-                          },
-                        }}  
-                        />
-                  </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                  <Button variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
+                    Create
+                  </Button>
+                </Box>
               </Box>
             </>
             )
