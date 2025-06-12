@@ -13,7 +13,6 @@ import Unaurthorize from './components/Unaurthorize';
 import DrawerAppBar from './components/Navbar/Navbar';
 import { useLocation } from 'react-router-dom';
 import Profile from './components/pages/Profile';
-import TransitionsModal from './components/Modal';
 function App() {
   const dispatch = useDispatch();
    const location = useLocation();
@@ -40,7 +39,7 @@ function App() {
       <Route
         path="/profile"
         element={
-          isAuthenticated ? <Profile /> : <Navigate to="/profile" replace />
+          isAuthenticated ? <Profile /> : <Navigate to="/signin" replace />
         }
       />
       <Route
@@ -65,7 +64,6 @@ function App() {
       
     </Routes>
     <ToastContainer />
-    <TransitionsModal/>
     </>
   );
 }

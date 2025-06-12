@@ -26,6 +26,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useEffect } from 'react';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import { closeModal ,openModal} from '../../redux/modal/modalSlice';
 const drawerWidth = 240;
 
 
@@ -39,6 +40,7 @@ function DrawerAppBar(props) {
 
 
   const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
+  const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
 
   useEffect(()=>{
    console.log("isAuthenticated,status---->",  isAuthenticated,status)
@@ -198,7 +200,21 @@ function DrawerAppBar(props) {
                 </MenuItem>
               )}
               <MenuItem sx={{color:'#767676',fontSize:'14px'}} component={Link} to="/profile"><AccountCircleIcon sx={{marginRight:'1rem'}}/>Your Account</MenuItem>
-              <MenuItem sx={{color:'#767676',fontSize:'14px'}} onClick={handleClose}><GroupAddIcon sx={{marginRight:'1rem'}}/>Create Group</MenuItem>
+              <MenuItem
+                sx={{ color: '#767676', fontSize: '14px' }}
+                onClick={() => {
+                  console.log("Opening Create Group modal...");
+                  dispatch(openModal({
+                    modalType: 'CREATE_GROUP',
+                    modalProps: {
+                      title: 'Create group',
+                    }
+                  }));
+                }}
+              >
+                <GroupAddIcon sx={{ marginRight: '1rem' }} />
+                Create Group
+              </MenuItem>
               <MenuItem sx={{color:'#767676',fontSize:'14px'}} onClick={handleLogout}><LogoutIcon sx={{marginRight:'1rem'}}/>Logout</MenuItem>
             </Menu>
           </Box>

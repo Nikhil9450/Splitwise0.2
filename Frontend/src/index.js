@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import store from './redux/store';
 import { Provider } from 'react-redux';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import TransitionsModal from './components/Modal';
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,6 +16,7 @@ root.render(
     <BrowserRouter >
       <GoogleOAuthProvider clientId={clientId}>
         <App />
+        <TransitionsModal/>
       </GoogleOAuthProvider>
     </BrowserRouter>
   </Provider>

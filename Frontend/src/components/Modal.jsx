@@ -10,10 +10,13 @@ import { useSelector,useDispatch } from 'react-redux';
 import {  DialogActions } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import { useState,useEffect } from 'react';
+import GroupsIcon from '@mui/icons-material/Groups';
 import axios from 'axios'
 import Loader from './Loader';
 import { toast } from 'react-toastify';
-
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -56,7 +59,8 @@ export default function TransitionsModal() {
             withCredentials: true
           })
         console.log("api respose------>",response)
-        toast.success("Updated successfully");
+        dispatch(closeModal());
+        toast.success("Updated successfully login again to reflect changes");
       }catch(error){
         console.log("error--------->",error);
         toast.error(error.response?.data?.error || "Something went wrong");
@@ -111,6 +115,47 @@ export default function TransitionsModal() {
               </>
           );
           // Add more cases as needed
+          case "CREATE_GROUP":
+            return (            
+            <>
+              <Box>
+                 <Typography variant="h6">{modalProps.title}</Typography>
+                 <TextField
+                  id="filled-basic" 
+                  label="Group name" 
+                  variant="filled" 
+                  fullWidth
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <GroupsIcon/>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}  
+                  />
+                  <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <GroupsIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+                    <TextField
+                        id="filled-basic" 
+                        label="Group name" 
+                        variant="filled" 
+                        fullWidth
+                        slotProps={{
+                          input: {
+                            startAdornment: (
+                              <InputAdornment position="end">
+                                <GroupsIcon/>
+                              </InputAdornment>
+                            ),
+                          },
+                        }}  
+                        />
+                  </Box>
+              </Box>
+            </>
+            )
           default:
           return null;
       }

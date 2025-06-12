@@ -1,53 +1,55 @@
 const User = require ('../models/user')
-const updateUser = async(req,res)=>{
-    console.log("updateUser request---------->",req.body)
+const bcrypt = require('bcrypt');
 
-    const loggedInUser = req.user;
-        console.log("loggedInUser---------->",loggedInUser)
+const updateUser = async (req, res) => {
+  console.log("updateUser request---------->", req.body);
 
+  const loggedInUser = req.user;
+  console.log("loggedInUser---------->", loggedInUser);
 
-try {
-  const user = await User.findById(loggedInUser.id);
-  console.log("Fetched user:", user);
+  try {
+    const { name, email, currentPassword, newPassword } = req.body;
 
-  if (!user) {
-    return res.status(400).json({ error: 'Invalid User' });
+    const user = await User.findById(loggedInUser.id);
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid User' });
+    }
+
+    let updateFields = {
+      name: name || user.name,
+      email: email || user.email,
+    };
+
+    // Handle password update
+    if (currentPassword || newPassword) {
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ error: 'Both current and new password are required.' });
+      }
+
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Incorrect current password' });
+      }
+
+      // ✅ Manually hash the new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      updateFields.password = hashedPassword;
+    }
+
+    // ✅ Use findOneAndUpdate with hashed password if applicable
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: loggedInUser.id },
+      updateFields,
+      { new: true } // return the updated document
+    );
+
+    res.status(200).json({ message: 'Updated Successfully.', updatedUser });
+
+  } catch (error) {
+    console.error("Outer catch error:", error);
+    res.status(500).json({ error: 'Unable to process request.' });
   }
-  const { name, email, currentPassword, newPassword } = req.body;
-  console.log("Current Password from req:", currentPassword);
-
-  if (currentPassword || newPassword) {
-    if (!currentPassword) {
-      return res.status(400).json({ error: 'Current password is required to set a new password.' });
-    }
-
-    if (!newPassword) {
-      return res.status(400).json({ error: 'New password is required to change the password.' });
-    }
-
-    const isMatch = await user.comparePassword(currentPassword);
-    console.log("isMatch----------------->", isMatch);
-
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Incorrect current password' });
-    }
-
-    user.password = newPassword; // ✅ Will be hashed by Mongoose middleware
-  }
-
-// Update other fields
-    user.name = name || user.name;
-    user.email = email || user.email;
-
-    await user.save(); // ✅ triggers middleware
-
-    res.status(200).json({ message: 'Updated Successfully.', updatedUser: user });
-
-} catch (error) {
-  console.error("Outer catch error:", error);
-  res.status(500).json({ error: 'Unable to process request.' });
-}
-
-}
+};
 
 module.exports={updateUser}
