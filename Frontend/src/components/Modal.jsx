@@ -120,7 +120,7 @@ export default function TransitionsModal() {
             return (            
             <>
               <Box >
-                 <Typography variant="h6" sx={{marginBottom: '1rem'}}>{modalProps.title}</Typography>
+                 <Typography variant="h6" sx={{marginBottom: '1rem',fontSize:'1.2rem'}}>{modalProps.title}</Typography>
                  <TextField
                   id="filled-basic" 
                   label="Group name" 

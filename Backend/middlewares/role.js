@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const secretKey= process.env.JWT_SECRET
 const checkRole = async(req,res,next)=>{
-    console.log("check role----->",req);
+    // console.log("check role----->",req);
     const token=req.cookies?.token;
     if (!token) return res.status(401).json({error:"User not logged in."});
     try{
