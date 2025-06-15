@@ -22,6 +22,8 @@ async function restrictToLoggedinUserOnly(req,res,next){
 
 async function checkAuth(req,res,next){
     console.log("inside check auth")
+    //  const token = req.cookies?.token;
+    // const decodeduser = jwt.verify(token, secretKey);
     const user = req.cookies?.token;
     console.log("user---->",user);
     req.user = user;
