@@ -18,6 +18,7 @@ import Menu from '@mui/material/Menu';
 // import Settings from '@mui/icons-material/Settings';
 // import Logout from '@mui/icons-material/Logout';
 // import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -87,9 +88,47 @@ const SearchAccount = () => {
           }
     }   
 
-    const cancelFriendRequest = (userId) => { /* call API */ };
+    // const cancelFriendRequest=async(id)=>{
+    //       const personUserId=id;
+    //       console.log("personUserId--------->",personUserId)
+    //       try{
+    //         const response = await axios.post('http://localhost:5000/cancelFriendRequest',
+    //             {
+    //                 toUserId:personUserId
+    //             },{ withCredentials:true})
+    //             console.log("response---------->",response)
+    //       }catch(error){
+    //           console.log("error---------->",error)
+    //       }
+    // } 
 
-    const acceptFriendRequest = (userId) => { /* call API */ };
+    const removeFriend = async (userId) => { 
+        const personUserId=userId;
+          console.log("personUserId--------->",personUserId)
+          try{
+            const response = await axios.post('http://localhost:5000/removeFriend',
+                {
+                    toUserId:personUserId
+                },{ withCredentials:true})
+                console.log("response---------->",response)
+          }catch(error){
+              console.log("error---------->",error)
+          }
+    };
+
+    const acceptFriendRequest = async(userId) => {
+        const personUserId=userId;
+          console.log("personUserId--------->",personUserId)
+          try{
+            const response = await axios.post('http://localhost:5000/acceptFriendRequest',
+                {
+                    toUserId:personUserId
+                },{ withCredentials:true})
+                console.log("response---------->",response)
+          }catch(error){
+              console.log("error---------->",error)
+          }
+    };
   return (
     <div>
         <Box sx={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'end',margin:'1rem'}} >
@@ -121,7 +160,7 @@ const SearchAccount = () => {
             paper: {
                 elevation: 0,
                 sx: {
-                width:'17rem',
+                width:'20rem',
                 overflow: 'visible',
                 filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                 mt: 1.5,
@@ -158,35 +197,52 @@ const SearchAccount = () => {
                     {
                     User.requestStatus === "incoming" && (
                         <>
-                        <IconButton edge="end" aria-label="Accept" onClick={() => acceptFriendRequest(User.id)}>
-                            <PersonAddIcon />
-                        </IconButton>
-                        <IconButton edge="end" aria-label="Delete" onClick={() => deleteFriendRequest(User.id)}>
-                            <DeleteIcon />
-                        </IconButton>
+                        <Button sx={{fontSize:'10px',marginRight:'5px'}} variant="outlined" edge="end" aria-label="Accept" onClick={() => acceptFriendRequest(User.id)}>
+                            {/* <PersonAddIcon /> */}
+                            Accept
+                        </Button>
+                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Delete" onClick={() => deleteFriendRequest(User.id)}>
+                            {/* <DeleteIcon /> */}
+                            Delete
+                        </Button>
                         </>
                     )
                     }
 
                     {
-                    User.requestStatus === "outgoing" && (
-                        <IconButton edge="end" aria-label="Cancel" onClick={() => cancelFriendRequest(User.id)}>
-                        <DeleteIcon />
-                        </IconButton>
+                        User.requestStatus === "outgoing" && (
+                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Cancel" onClick={() => deleteFriendRequest(User.id)}>
+                        {/* <DeleteIcon /> */}
+                            Cancel Request
+                        </Button>
                     )
                     }
 
                     {
+                        User.requestStatus === "alreadyFriends" && (
+                            <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="remove friend" onClick={() => removeFriend(User.id)}>
+                            {/* <DeleteIcon /> */}
+                            Remove Friend
+                            </Button>
+                        )
+                    }
+
+                    {
                     User.requestStatus === "none" && (
-                        <IconButton edge="end" aria-label="Send" onClick={() => sendFriendRequest(User.id)}>
-                        <PersonAddIcon />
-                        </IconButton>
+                        <Button sx={{fontSize:'10px'}} variant="outlined" edge="end" aria-label="Send" onClick={() => sendFriendRequest(User.id)}>
+                        {/* <PersonAddIcon /> */}
+                        Add Friend
+                        </Button>
                     )
                     }
                 </Box>
                 }
             >
-                <ListItemText primary={User.name} secondary={User.email} />
+                <ListItemText   
+                primaryTypographyProps={{ fontSize: '13px' }}
+                secondaryTypographyProps={{ fontSize: '12px', color: 'text.secondary' }} 
+                primary={User.name} 
+                secondary={User.email} />
             </ListItem>
             ) : (
             <ListItem>
