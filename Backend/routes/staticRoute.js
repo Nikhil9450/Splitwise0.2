@@ -332,4 +332,57 @@ router.post("/deleteFriendRequest", async (req, res) => {
   }
 });
 
+router.post("/acceptFriendRequest", async (req, res) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ error: "User is not authenticated." });
+
+  let decodedUser;
+  try {
+    decodedUser = jwt.verify(token, secretKey);
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid or expired token." });
+  }
+
+  const fromUserId = decodedUser.id; // the receiver (current logged-in user)
+  const toUserId = req.body.toUserId; // the requester (sender of the friend request)
+
+  try {
+    const user = await User.findById(fromUserId);
+
+    // Check if already friends
+    if (user.friends.includes(toUserId)) {
+      return res.status(400).json({ message: "You are already friends with this user." });
+    }
+
+    const result = await User.bulkWrite([
+      {
+        updateOne: {
+          filter: { _id: fromUserId },
+          update: {
+            $pull: { friendRequestsReceived: toUserId },
+            $push: { friends: toUserId }
+          }
+        }
+      },
+      {
+        updateOne: {
+          filter: { _id: toUserId },
+          update: {
+            $pull: { friendRequestsSent: fromUserId },
+            $push: { friends: fromUserId }
+          }
+        }
+      }
+    ]);
+
+    return res.status(200).json({ message: "Friend request accepted successfully.", result });
+
+  } catch (error) {
+    console.error("Accept Friend Request Error:", error);
+    return res.status(500).json({ error: "Failed to accept friend request." });
+  }
+});
+
+
+
 module.exports= router;
