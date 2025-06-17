@@ -16,6 +16,7 @@ const Home = () => {
   // const dispatch = useDispatch();
   // const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
   const [buttonType,setButtonType]=useState("groups")
+  const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
 
   // if(status===null){
   //   return <div> loading...</div>
@@ -24,12 +25,7 @@ const Home = () => {
            setButtonType(pageName);
            switch (pageName){
             case 'friends':
-              try{
-                const friendLists= await axios.get("http://localhost:5000/friendLists",{withCredentials:true});
-                console.log('response--->',friendLists);
-              }catch(error){
-                console.log("error----->",error)
-              }
+              console.log(friends,sentRequests,recievedRequests)
             break;
             default:  
               console.log("inside the default")

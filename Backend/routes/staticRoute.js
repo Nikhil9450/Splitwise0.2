@@ -14,48 +14,7 @@ router.get("/checkAuth",async function(req,res){
         return res.status(200).json({isAuthenticated :true,role:user.role,user})
     }
 })
-// router.get("/findUser", async(req,res)=>{
-//     console.log("checkAuth user-------->",req.user);
-//     const user= req.user;
-//     console.log("req.query-------->",req.query);
-//     let decodeduser;
-//     try {
-//         decodeduser = jwt.verify(user, secretKey);
-//     } catch (err) {
-//         return res.status(401).json({ error: "Invalid or expired token." });
-//     }
-//     if(!user){
-//         return res.status(400).json({error :"User is not authenticated."})
-//     }else{
-//         const emailForSearch= req.query.email;
-//         try{
-//           const searchedUser = await User.find({email:emailForSearch})
 
-//           const dataToDisplay= searchedUser.map( async(user)=>{
-//                 const alreadySent = await User.exists({
-//                         _id: user.id,
-//                         friendRequestsSent: decodeduser.id
-//                         });
-//                 const alreadyRecieved = await User.exists({
-//                         _id:  user.id,
-//                         friendRequestsReceived: decodeduser.id
-//                         });                        
-//             if(user.id)
-//             return {
-//                 name:user.name,
-//                 email:user.email,
-//                 id:user._id,
-//                 friendRequestSent: !!alreadySent,
-//                 friendRequestRecieved: !!alreadyRecieved
-//             }
-//           })
-//           console.log('searchedUser',searchedUser)
-//           return res.status(200).json(dataToDisplay)
-//         }catch(error){
-//           return res.status(400).json({error :'Error occured in finding user.'})
-//         }
-//     }
-// })
 router.get("/findUser", async (req, res) => {
     const token = req.cookies?.token;
 

@@ -1,11 +1,13 @@
 import { createSlice ,createAsyncThunk, isRejected} from "@reduxjs/toolkit";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { fetchFriendLists } from "../friendList/friendlistSlice";
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
     try {
         const res = await axios.get('http://localhost:5000/checkAuth', { withCredentials: true });
         console.log("checkAuth response---->", res);
-        const decodedUser = jwtDecode(res.data.user)
+        const decodedUser = jwtDecode(res.data.user);
+        thunkAPI.dispatch(fetchFriendLists());
         return { isAuthenticated: res.data.isAuthenticated, role: decodedUser.role ,user:decodedUser};
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to check auth");
