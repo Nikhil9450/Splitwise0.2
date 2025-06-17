@@ -322,5 +322,74 @@ router.post("/removeFriend", async (req, res) => {
   }
 });
 
+router.get('/friendLists',async (req,res)=>{
+    const token = req.cookies?.token;
+    let decodedUser;
+    try {
+        decodedUser = jwt.verify(token, secretKey);
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token." });
+    }
+    const userID = decodedUser.id;;
+
+try {
+    const user = await User.findById(userID);
+
+    if (!user) {
+        console.log("User not found");
+        return;
+    }
+
+    const friendRequestsReceived = await User.find({
+        _id: { $in: user.friendRequestsReceived }
+    }, 'name email _id'); 
+    const friendRequestsSent = await User.find({
+        _id: { $in: user.friendRequestsSent }
+    }, 'name email _id'); 
+    const friends = await User.find({
+        _id: { $in: user.friends }
+    }, 'name email _id'); 
+    const result={
+        friends,
+        friendRequestsReceived,
+        friendRequestsSent,
+    }
+    console.log("Friends,recieved, sent---->", result);
+    return res.status(200).json({result });
+} catch (error) {
+    console.log("error----------->", error);
+    res.status(500).json({"error":error})
+}
+})
+
+router.get('/friends',async (req,res)=>{
+    const token = req.cookies?.token;
+    let decodedUser;
+    try {
+        decodedUser = jwt.verify(token, secretKey);
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token." });
+    }
+    const userID = decodedUser.id;;
+
+try {
+    const user = await User.findById(userID);
+
+    if (!user) {
+        console.log("User not found");
+        return;
+    }
+
+    const friends = await User.find({
+        _id: { $in: user.friends }
+    }, 'name email _id'); 
+
+    console.log("Friends---->", friends);
+    return res.status(200).json(friends);
+} catch (error) {
+    console.log("error----------->", error);
+    res.status(500).json({"error":error})
+}
+})
 
 module.exports= router;

@@ -20,8 +20,20 @@ const Home = () => {
   // if(status===null){
   //   return <div> loading...</div>
   // }
-  const handlePageChange=(pageName)=>{
+  const handlePageChange= async (pageName)=>{
            setButtonType(pageName);
+           switch (pageName){
+            case 'friends':
+              try{
+                const friendLists= await axios.get("http://localhost:5000/friendLists",{withCredentials:true});
+                console.log('response--->',friendLists);
+              }catch(error){
+                console.log("error----->",error)
+              }
+            break;
+            default:  
+              console.log("inside the default")
+           }
   }
   const paperStyle={
     height:'100%',

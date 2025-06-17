@@ -18,6 +18,13 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Checkbox from '@mui/material/Checkbox';
+import Avatar from '@mui/material/Avatar';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -39,6 +46,7 @@ export default function TransitionsModal() {
         currentPassword:"",
         newPassword:""
       })
+    const [friends,setFriends]=useState([]);
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -51,6 +59,16 @@ export default function TransitionsModal() {
         });
       }
     }, [modalType, modalProps]);
+
+    const friendLists = async()=>{
+      try{
+          const friendLists= await axios.get("http://localhost:5000/friends",{withCredentials:true});
+          console.log("friendLists------->",friendLists);
+           setFriends(friendLists);
+      }catch(error){
+          console.log("error-------->",error)
+      }
+    }
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
       try{
@@ -136,6 +154,37 @@ export default function TransitionsModal() {
                     },
                   }}  
                   />
+                <Box>
+                  <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    {[0, 1, 2, 3].map((value) => {
+                      const labelId = `checkbox-list-secondary-label-${value}`;
+                      return (
+                        <ListItem
+                          key={value}
+                          secondaryAction={
+                            <Checkbox
+                              edge="end"
+                              // onChange={}
+                              // checked={}
+                              inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                          }
+                          disablePadding
+                        >
+                          <ListItemButton>
+                            <ListItemAvatar>
+                              <Avatar
+                                alt={`Avatar n°${value + 1}`}
+                                src={`/static/images/avatar/${value + 1}.jpg`}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
+                          </ListItemButton>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </Box>  
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                   <Button variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
                     Create
