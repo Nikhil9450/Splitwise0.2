@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-// import InputAdornment from '@mui/material/InputAdornment';
-// import FormHelperText from '@mui/material/FormHelperText';
-// import FormControl from '@mui/material/FormControl';
-// import TextField from '@mui/material/TextField';
 import { Box } from '@mui/material';
 import axios from 'axios';
 import Menu from '@mui/material/Menu';
@@ -24,16 +20,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { deleteFriendRequest,removeFriend,acceptFriendRequest,sendFriendRequest } from '../redux/friendList/friendlistSlice';
 import {CircularProgress} from '@mui/material';
 const SearchAccount = () => {
     const [emailToSearch,setEmailToSearch] =useState(null)
     const [anchorEl, setAnchorEl] = useState(null);
     const [User,setUser]= useState(null);
     const [loading,setLoading]=useState(false)
+    const dispatch = useDispatch()
     const open = Boolean(anchorEl);
-    const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
-
-
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -60,77 +55,10 @@ const SearchAccount = () => {
     useEffect(()=>{
         console.log("User----------->",User)
     },[User])
-    const sendFriendRequest=async(id)=>{
-          const personUserId=id;
-          console.log("personUserId--------->",personUserId)
-          try{
-            const response = await axios.post('http://localhost:5000/sendFriendRequest',
-                {
-                    toUserId:personUserId
-                },{ withCredentials:true})
-                console.log("response---------->",response)
-          }catch(error){
-              console.log("error---------->",error)
-          }
-    }
 
-    const deleteFriendRequest=async(id)=>{
-          const personUserId=id;
-          console.log("personUserId--------->",personUserId)
-          try{
-            const response = await axios.post('http://localhost:5000/deleteFriendRequest',
-                {
-                    toUserId:personUserId
-                },{ withCredentials:true})
-                console.log("response---------->",response)
-          }catch(error){
-              console.log("error---------->",error)
-          }
-    }   
-
-    // const cancelFriendRequest=async(id)=>{
-    //       const personUserId=id;
-    //       console.log("personUserId--------->",personUserId)
-    //       try{
-    //         const response = await axios.post('http://localhost:5000/cancelFriendRequest',
-    //             {
-    //                 toUserId:personUserId
-    //             },{ withCredentials:true})
-    //             console.log("response---------->",response)
-    //       }catch(error){
-    //           console.log("error---------->",error)
-    //       }
-    // } 
-
-    const removeFriend = async (userId) => { 
-        const personUserId=userId;
-          console.log("personUserId--------->",personUserId)
-          try{
-            const response = await axios.post('http://localhost:5000/removeFriend',
-                {
-                    toUserId:personUserId
-                },{ withCredentials:true})
-                console.log("response---------->",response)
-          }catch(error){
-              console.log("error---------->",error)
-          }
-    };
-
-    const acceptFriendRequest = async(userId) => {
-        const personUserId=userId;
-          console.log("personUserId--------->",personUserId)
-          try{
-            const response = await axios.post('http://localhost:5000/acceptFriendRequest',
-                {
-                    toUserId:personUserId
-                },{ withCredentials:true})
-                console.log("response---------->",response)
-          }catch(error){
-              console.log("error---------->",error)
-          }
-    };
   return (
     <div>
+
         <Box sx={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'end',margin:'1rem'}} >
             <Box sx={{padding:'0.3rem 0.3rem 0.3rem 1rem;',border:'1px solid #1976d2',borderRadius:'2rem',width:'20rem',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <input type='email' placeholder='Find user by email'  style={{border:'none',background:'none',outline: 'none',fontSize:'1rem',color:'#1976d2', width:'100%'}} onChange={(event)=>setEmailToSearch(event.target.value)}/>
@@ -197,11 +125,11 @@ const SearchAccount = () => {
                     {
                     User.requestStatus === "incoming" && (
                         <>
-                        <Button sx={{fontSize:'10px',marginRight:'5px'}} variant="outlined" edge="end" aria-label="Accept" onClick={() => acceptFriendRequest(User.id)}>
+                        <Button sx={{fontSize:'10px',marginRight:'5px'}} variant="outlined" edge="end" aria-label="Accept" onClick={() => dispatch(acceptFriendRequest(User.id))}>
                             {/* <PersonAddIcon /> */}
                             Accept
                         </Button>
-                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Delete" onClick={() => deleteFriendRequest(User.id)}>
+                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Delete" onClick={() => dispatch(deleteFriendRequest(User.id))}>
                             {/* <DeleteIcon /> */}
                             Delete
                         </Button>
@@ -211,7 +139,7 @@ const SearchAccount = () => {
 
                     {
                         User.requestStatus === "outgoing" && (
-                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Cancel" onClick={() => deleteFriendRequest(User.id)}>
+                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Cancel" onClick={() => dispatch( deleteFriendRequest(User.id))}>
                         {/* <DeleteIcon /> */}
                             Cancel Request
                         </Button>
@@ -220,7 +148,7 @@ const SearchAccount = () => {
 
                     {
                         User.requestStatus === "alreadyFriends" && (
-                            <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="remove friend" onClick={() => removeFriend(User.id)}>
+                            <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="remove friend" onClick={() =>dispatch( removeFriend(User.id))}>
                             {/* <DeleteIcon /> */}
                             Remove Friend
                             </Button>
@@ -228,12 +156,12 @@ const SearchAccount = () => {
                     }
 
                     {
-                    User.requestStatus === "none" && (
-                        <Button sx={{fontSize:'10px'}} variant="outlined" edge="end" aria-label="Send" onClick={() => sendFriendRequest(User.id)}>
-                        {/* <PersonAddIcon /> */}
-                        Add Friend
-                        </Button>
-                    )
+                        User.requestStatus === "none" && (
+                            <Button sx={{fontSize:'10px'}} variant="outlined" edge="end" aria-label="Send" onClick={() => dispatch(sendFriendRequest(User.id))}>
+                            {/* <PersonAddIcon /> */}
+                            Add Friend
+                            </Button>
+                        )
                     }
                 </Box>
                 }

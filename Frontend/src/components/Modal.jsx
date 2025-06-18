@@ -40,13 +40,14 @@ const style = {
 
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
+    const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
+    
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
         currentPassword:"",
         newPassword:""
       })
-    const [friends,setFriends]=useState([]);
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -60,15 +61,6 @@ export default function TransitionsModal() {
       }
     }, [modalType, modalProps]);
 
-    const friendLists = async()=>{
-      try{
-          const friendLists= await axios.get("http://localhost:5000/friends",{withCredentials:true});
-          console.log("friendLists------->",friendLists);
-           setFriends(friendLists);
-      }catch(error){
-          console.log("error-------->",error)
-      }
-    }
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
       try{
@@ -156,11 +148,11 @@ export default function TransitionsModal() {
                   />
                 <Box>
                   <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {[0, 1, 2, 3].map((value) => {
-                      const labelId = `checkbox-list-secondary-label-${value}`;
+                    {friends.map((user) => {
+                      const labelId = `checkbox-list-secondary-label-${user.id}`;
                       return (
                         <ListItem
-                          key={value}
+                          key={user}
                           secondaryAction={
                             <Checkbox
                               edge="end"
@@ -174,11 +166,14 @@ export default function TransitionsModal() {
                           <ListItemButton>
                             <ListItemAvatar>
                               <Avatar
-                                alt={`Avatar n°${value + 1}`}
-                                src={`/static/images/avatar/${value + 1}.jpg`}
+                                // alt={`Avatar n°${user + 1}`}
+                                // src={`/static/images/avatar/${user + 1}.jpg`}
                               />
                             </ListItemAvatar>
-                            <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
+                            <ListItemText id={labelId}                 
+                                primary={user.name} 
+                                secondary={user.email} 
+                            />
                           </ListItemButton>
                         </ListItem>
                       );
