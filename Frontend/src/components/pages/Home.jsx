@@ -33,35 +33,57 @@ const Home = () => {
               console.log("inside the default")
            }
   }
-  const paperStyle={
-    height:'100%',
-    width:'100%',
-    // padding:'1rem',
-    backgroundColor:'#f5f5f5'
-    // overflowY:'scroll'
-  }
   return (
-    <div>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 12 }}>
-            <Box sx={{display:'flex',justifyContent:'space-evenly',margin:'1rem 2rem', height:'80vh',alignItems:'center'}}>
-              <Paper elevation='0' sx={paperStyle}>
-              <Box sx={{bgcolor:'#dcedff'}}>
-                <ButtonGroup size="large"   aria-label="Large button group" sx={{width:'100%',margin:'.6rem'}}>
-                    <Button  variant={(buttonType==='groups')?"contained":"outlined"} key="groups" onClick={()=>handlePageChange("groups")}>Groups</Button>,
-                    <Button  variant={(buttonType==='expenses')?"contained":"outlined"} key="expenses" onClick={()=>handlePageChange("expenses")}>Expenses</Button>,
-                    <Button  variant={(buttonType==='friends')?"contained":"outlined"} key="friends" onClick={()=>handlePageChange("friends")}>Friends</Button>,
-                    <Button  variant={(buttonType==='balances')?"contained":"outlined"} key="balances" onClick={()=>handlePageChange("balances")}>Balances</Button>,
-                </ButtonGroup>
-              </Box>
-                {/* <Divider /> */}
-                <SearchAccount/>
-                <FriendListContainer/>
-              </Paper>
-            </Box>
-          </Grid>
-        </Grid>
-    </div>
+<Box sx={{ height: '80vh', margin: '1rem 2rem', border: '1px solid #82bdf7' }}>
+  <Grid container spacing={2} direction="column" sx={{ height: '100%' }}>
+    
+    <Grid xs={12} item md={12}>
+      <Box sx={{ bgcolor: '#dcedff' }}>
+        <ButtonGroup
+          size="small"
+          aria-label="small button group"
+          sx={{ width: '100%', padding: '.6rem' }}
+        >
+          <Button
+            variant={buttonType === 'groups' ? 'contained' : 'outlined'}
+            onClick={() => handlePageChange('groups')}
+          >
+            Groups
+          </Button>
+          <Button
+            variant={buttonType === 'expenses' ? 'contained' : 'outlined'}
+            onClick={() => handlePageChange('expenses')}
+          >
+            Expenses
+          </Button>
+          <Button
+            variant={buttonType === 'friends' ? 'contained' : 'outlined'}
+            onClick={() => handlePageChange('friends')}
+          >
+            Friends
+          </Button>
+          <Button
+            variant={buttonType === 'balances' ? 'contained' : 'outlined'}
+            onClick={() => handlePageChange('balances')}
+          >
+            Balances
+          </Button>
+        </ButtonGroup>
+        <Divider sx={{ borderColor: '#82bdf7' }} />
+      </Box>
+    </Grid>
+
+    <Grid item xs={12} md={12}>
+      <SearchAccount />
+    </Grid>
+
+    <Grid item xs={12} md={12} sx={{ flexGrow: 1, overflowY: 'auto' }}>
+      <FriendListContainer />
+    </Grid>
+
+  </Grid>
+</Box>
+
   )
 }
 

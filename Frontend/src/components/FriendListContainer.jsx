@@ -12,13 +12,8 @@ const FriendListContainer = (props) => {
         const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
         const dispatch= useDispatch();
   return (
-    <Box sx={{ flexGrow: 1 }}>
-
-
-
-
-    <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 4 }}>
+    <Grid container spacing={2} sx={{margin:'0rem 1rem',height:'95%'}}>
+        <Grid size={{ xs: 12, md: 4 }}  sx={{border:'1px solid #82bdf7'}}>
             <Box>
                 {friends.map((user)=>{
                     return  <ListItem
@@ -41,7 +36,7 @@ const FriendListContainer = (props) => {
                 })}
             </Box>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 4 }} sx={{border:'1px solid #82bdf7'}} >
             <Box>
                 {sentRequests.map((user)=>{
                     return  <ListItem
@@ -64,7 +59,7 @@ const FriendListContainer = (props) => {
                 })}
             </Box>        
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 4 }} sx={{border:'1px solid #82bdf7'}}>
             <Box>
                 {recievedRequests.map((user)=>{
                     return  <ListItem
@@ -93,9 +88,7 @@ const FriendListContainer = (props) => {
                 })}
             </Box>
         </Grid>
-
     </Grid>
-    </Box>
   )
 }
 
