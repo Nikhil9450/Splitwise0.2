@@ -41,7 +41,8 @@ const style = {
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
-    
+    const {selectedUser,setSelectedUser}=useState([]);
+
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
@@ -51,16 +52,20 @@ export default function TransitionsModal() {
     const dispatch = useDispatch()
 
     useEffect(() => {
-  if (modalType === "EDIT_PROFILE") {
-        setUpdatedUserDetails({
-          name: modalProps.name || "",
-          email: modalProps.email || "",
-          currentPassword: "",
-          newPassword: "",
-        });
-      }
+      if (modalType === "EDIT_PROFILE") {
+            setUpdatedUserDetails({
+              name: modalProps.name || "",
+              email: modalProps.email || "",
+              currentPassword: "",
+              newPassword: "",
+            });
+          }
     }, [modalType, modalProps]);
 
+    const selectUser=(selectedUserId)=>{
+      console.log("selected user",selectedUserId)
+
+    }
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
       try{
@@ -149,15 +154,15 @@ export default function TransitionsModal() {
                 <Box>
                   <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                     {friends.map((user) => {
-                      const labelId = `checkbox-list-secondary-label-${user.id}`;
+                      const labelId = `checkbox-list-secondary-label-${user._id}`;
                       return (
                         <ListItem
-                          key={user}
+                          key={user._id}
                           secondaryAction={
                             <Checkbox
                               edge="end"
-                              // onChange={}
-                              // checked={}
+                              onChange={() => selectUser(user._id)}
+                              value={user._id}
                               inputProps={{ 'aria-labelledby': labelId }}
                             />
                           }

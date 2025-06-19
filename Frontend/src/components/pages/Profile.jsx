@@ -24,7 +24,6 @@ const Profile = () => {
                         flexDirection:'column',
                         justifyContent:'center',
                         alignItems:'center',
-                        bgcolor:'#f5f5f5',
                         height:'60vh'
                         }                    
 
@@ -99,16 +98,6 @@ const Profile = () => {
                     </List>                
                 </Paper>
             </Grid>
-            {/* <Grid size={{ xs: 6, md: 4 }}>
-                <Paper sx={paperStyle} elevation={0} >
-                
-                </Paper>            
-            </Grid>
-            <Grid size={{ xs: 6, md: 8 }}>
-                <Paper sx={paperStyle} elevation={0} >
-                
-                </Paper>            
-            </Grid> */}
         </Grid>
          {/* <Loader message="Fetching data..." /> */}
         </Box>

@@ -35,9 +35,8 @@ const Home = () => {
   }
   return (
 <Box sx={{ height: '80vh', margin: '1rem 2rem', border: '1px solid #82bdf7' }}>
-  <Grid container spacing={2} direction="column" sx={{ height: '100%' }}>
-    
-    <Grid xs={12} item md={12}>
+  <Grid container spacing={2} direction="column" sx={{ height: '100%',flexWrap:'nowrap' }}>
+    <Grid >
       <Box sx={{ bgcolor: '#dcedff' }}>
         <ButtonGroup
           size="small"
@@ -72,15 +71,9 @@ const Home = () => {
         <Divider sx={{ borderColor: '#82bdf7' }} />
       </Box>
     </Grid>
-
-    <Grid item xs={12} md={12}>
-      <SearchAccount />
+    <Grid size="grow" sx={{height:'100%',margin:'1rem'}}>
+          {(buttonType==='friends')?<FriendListContainer />:''}
     </Grid>
-
-    <Grid item xs={12} md={12} sx={{ flexGrow: 1, overflowY: 'auto' }}>
-      <FriendListContainer />
-    </Grid>
-
   </Grid>
 </Box>
 
