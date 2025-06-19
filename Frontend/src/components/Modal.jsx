@@ -41,7 +41,7 @@ const style = {
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
-    const {selectedUser,setSelectedUser}=useState([]);
+    const [selectedUser,setSelectedUser]=useState([]);
 
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
@@ -62,8 +62,15 @@ export default function TransitionsModal() {
           }
     }, [modalType, modalProps]);
 
-    const selectUser=(selectedUserId)=>{
-      console.log("selected user",selectedUserId)
+    const selectUser=(event)=>{
+     const {checked,value} = event.target;
+
+      console.log("selected user",checked,value)
+      if(checked){
+        setSelectedUser((prev)=>[...prev,value])
+      }else{
+        setSelectedUser((prev)=>[...prev].filter((id)=> id !== value ))
+      }
 
     }
     const updateProfile= async() =>{
@@ -161,8 +168,9 @@ export default function TransitionsModal() {
                           secondaryAction={
                             <Checkbox
                               edge="end"
-                              onChange={() => selectUser(user._id)}
+                              onChange={selectUser}
                               value={user._id}
+                              checked={selectedUser.includes(user._id)}
                               inputProps={{ 'aria-labelledby': labelId }}
                             />
                           }
