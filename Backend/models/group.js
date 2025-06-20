@@ -1,5 +1,4 @@
-const mongoose = requrie("mongoose");
-
+const mongoose = require("mongoose");
 const groupSchema = new mongoose.Schema(
     {
         name: {
@@ -24,4 +23,4 @@ const groupSchema = new mongoose.Schema(
     }
 );
 
-mongoose.exports = mongoose.model("Group",groupSchema);
+module.exports = mongoose.model("Group",groupSchema);

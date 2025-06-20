@@ -329,7 +329,7 @@ router.get('/friends',async (req,res)=>{
     } catch (err) {
         return res.status(401).json({ error: "Invalid or expired token." });
     }
-    const userID = decodedUser.id;;
+    const userID = decodedUser.id;
 
 try {
     const user = await User.findById(userID);

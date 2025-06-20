@@ -25,6 +25,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Checkbox from '@mui/material/Checkbox';
 import Avatar from '@mui/material/Avatar';
+import { asyncThunkCreator } from '@reduxjs/toolkit';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -42,6 +43,7 @@ export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
     const [selectedUser,setSelectedUser]=useState([]);
+    const [groupName,setGroupName]=useState(null)
 
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
@@ -72,6 +74,38 @@ export default function TransitionsModal() {
         setSelectedUser((prev)=>[...prev].filter((id)=> id !== value ))
       }
 
+    }
+
+    const fetchGroupDetails=async(groupId)=>{
+      try {
+        const groupData=await axios.post("http://localhost:5000/group/fetchGroupData",{groupId},{withCredentials:true});
+        console.log("groupData----------->",groupData)
+      } catch (error) {
+        console.log("error------------>",error)        
+      }
+    }
+
+    const createGroup = async()=>{
+      console.log(selectedUser,selectedUser.length,groupName)
+      if(selectedUser.length==0 || groupName==null){
+        toast.error("Please select group members and give group name.");
+      }else if(selectedUser.length <= 1){
+        toast.error("Please select at least 2 group members.")
+      }else{
+        const data ={
+          groupName:groupName,
+          groupMembers:selectedUser,
+        }
+        try {
+          const groupData=await axios.post("http://localhost:5000/group/createGroup",{data},{withCredentials:true});
+          console.log("groupData----------->",groupData)
+          toast.success("Group created successfully.");
+          setSelectedUser([]);
+          dispatch(closeModal());
+        } catch (error) {
+          console.log("error------------>",error)        
+        }
+      }
     }
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
@@ -148,6 +182,8 @@ export default function TransitionsModal() {
                   label="Group name" 
                   variant="filled" 
                   fullWidth
+                  onChange={(event)=>setGroupName(event.target.value)}
+                  value={groupName}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -194,7 +230,7 @@ export default function TransitionsModal() {
                   </List>
                 </Box>  
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                  <Button variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
+                  <Button onClick={()=>createGroup()} variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
                     Create
                   </Button>
                 </Box>
