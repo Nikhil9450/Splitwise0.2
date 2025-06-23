@@ -10,9 +10,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import { Grid } from '@mui/material';
+import { Grid,Avatar,ListItemAvatar } from '@mui/material';
+
 const Groups = () => {
   const [userGroupList,SetUserGroupList]=useState([]);
+  const [groupMemberList,SetGroupMemberList]=useState([]);
 
   useEffect(()=>{
     fetchgroupList();
@@ -56,7 +58,7 @@ const Groups = () => {
                             {userGroupList.map((item) => (
                               <ListItem key={item.id}>
                                 {/* <ListItemText primary={item.name} /> */}
-                                <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}</Button>
+                                <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} onClick={()=>SetGroupMemberList(item.members)} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}</Button>
                               </ListItem>
                             ))}
                           </ul>
@@ -84,10 +86,29 @@ const Groups = () => {
                     <ListSubheader sx={{bgcolor:'#1976d2',color:'white',marginBottom:'.5rem'}}>Group Members</ListSubheader>
                       <li >
                           <ul>
-                            {userGroupList.map((item) => (
-                              <ListItem key={item.id}>
-                                {/* <ListItemText primary={item.name} /> */}
-                                <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}</Button>
+                            {groupMemberList.map((member) => (
+                                
+                              <ListItem key={member._id} sx={{padding:'0px 10px'}}>
+                                                            <ListItemAvatar sx={{minWidth:'40px'}}>
+                                                              <Avatar
+                                                               sx={{ width: 30, height: 30 }}
+                                                                // alt={`Avatar n°${user + 1}`}
+                                                                // src={`/static/images/avatar/${user + 1}.jpg`}
+                                                              />
+                                                            </ListItemAvatar>
+                                <ListItemText 
+                                primary={member.name} 
+                                secondary={member.email}
+                                slotProps={{
+                                    primary: {
+                                    sx: { fontSize: '13px', fontWeight: 'bold',color:'#636262' },
+                                    },
+                                    secondary: {
+                                    sx: { fontSize: '0.85rem', color: 'text.secondary' ,fontSize:'12px'},
+                                    },
+                                }}
+                                />
+                                {/* <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>} >{item.name}</Button> */}
                               </ListItem>
                             ))}
                           </ul>
