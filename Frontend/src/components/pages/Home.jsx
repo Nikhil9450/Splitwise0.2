@@ -13,7 +13,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Divider from '@mui/material/Divider';
 import FriendListContainer from '../FriendListContainer';
 import Grid from '@mui/material/Grid';
-
+import Groups from '../groups'
 const Home = () => {
   // const dispatch = useDispatch();
   // const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
@@ -33,6 +33,21 @@ const Home = () => {
               console.log("inside the default")
            }
   }
+
+  const renderComponent = (buttonType) => {
+    switch (buttonType) {
+      case 'friends':
+        return <FriendListContainer />;
+      case 'groups':
+        return <Groups />;
+      case 'expenses':
+        return <></>;
+      case 'Balances':
+        return <></>;
+      default:
+        return null;
+    }
+  };
   return (
 <Box sx={{ height: '80vh', margin: '1rem 2rem', border: '1px solid #82bdf7' }}>
   <Grid container spacing={2} direction="column" sx={{ height: '100%',flexWrap:'nowrap' }}>
@@ -72,7 +87,8 @@ const Home = () => {
       </Box>
     </Grid>
     <Grid size="grow" sx={{height:'100%',margin:'1rem'}}>
-          {(buttonType==='friends')?<FriendListContainer />:''}
+          {/* {(buttonType==='friends')?<FriendListContainer />:''} */}
+          {renderComponent(buttonType)}
     </Grid>
   </Grid>
 </Box>

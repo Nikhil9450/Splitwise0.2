@@ -42,7 +42,9 @@ const style = {
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
-    const [selectedUser,setSelectedUser]=useState([]);
+    const {status,user} = useSelector((state)=>state.auth)
+    
+    const [selectedUser,setSelectedUser]=useState([user.id]);
     const [groupName,setGroupName]=useState(null)
 
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
@@ -100,7 +102,7 @@ export default function TransitionsModal() {
           const groupData=await axios.post("http://localhost:5000/group/createGroup",{data},{withCredentials:true});
           console.log("groupData----------->",groupData)
           toast.success("Group created successfully.");
-          setSelectedUser([]);
+          setSelectedUser([user.id]);
           dispatch(closeModal());
         } catch (error) {
           console.log("error------------>",error)        

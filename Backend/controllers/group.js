@@ -30,6 +30,7 @@ const createGroup = async( req,res)=>{
             members:groupMembers,
             createdBy:userID,
         },)
+        await User.findByIdAndUpdate(userID,{$push:{groups:createdGroup._id}},{ new: true })
         return res.status(200).json(createdGroup);
     }catch(error){
         console.log("error-------->",error);
@@ -37,7 +38,7 @@ const createGroup = async( req,res)=>{
     }
 }
 
-const fetchGroupData = async( req,res)=>{
+const fetchUserGroups = async( req,res)=>{
     const user = req.user;
     if(!user){
         return res.status(400).json({error:"User is not authenticated"});  
@@ -50,19 +51,24 @@ const fetchGroupData = async( req,res)=>{
         return res.status(401).json({ error: "Invalid or expired token." });
     }
     const userID = decodedUser.id;
-    const groupId= req.body.groupId;
-    console.log("userID,groupId---------->",userID,groupId)
-    if(!groupId){
-        return res.status(400).json({error:"group id is invalid"});
-    }
+    // const groupId= req.body.groupId;
+    // console.log("userID,groupId---------->",userID,groupId)
+    // if(!groupId){
+    //     return res.status(400).json({error:"group id is invalid"});
+    // }
 
     try{
-        const groupDetails =await Group.findById(groupId)
-        return res.status(200).json(groupDetails);
+        const user =await User.findById(userID)
+        const userGroupList= user.groups;
+        const groupDetail=await Group.find({
+            _id:{$in:userGroupList}
+        },'id name members expenses createdBy createdAt')
+        
+        return res.status(200).json(groupDetail);
     }catch(error){
         console.log("error-------->",error);
         return res.status(500).json({error:"internal server error"});
     }
 }
 
-module.exports={fetchGroupData,createGroup}
+module.exports={fetchUserGroups,createGroup}
