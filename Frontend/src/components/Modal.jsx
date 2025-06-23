@@ -221,7 +221,7 @@ export default function TransitionsModal() {
                           disablePadding
                         >
                           <ListItemButton>
-                            <ListItemAvatar>
+                            <ListItemAvatar >
                               <Avatar
                                 // alt={`Avatar n°${user + 1}`}
                                 // src={`/static/images/avatar/${user + 1}.jpg`}
