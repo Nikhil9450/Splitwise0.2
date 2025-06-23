@@ -35,7 +35,7 @@ const Groups = () => {
   return (
       <Box sx={{height:'100%'}}>
          <Grid container spacing={2} size="grow" sx={{height:'100%'}}>
-            <Grid size={{ xs: 12, md: 4 }}  sx={{border:'1px solid #82bdf7'}}>
+            <Grid size={{ xs: 12, md: 3 }}  sx={{border:'1px solid #82bdf7'}}>
               <List
                     sx={{
                       width: '100%',
@@ -63,8 +63,36 @@ const Groups = () => {
                       </li>
               </List>
             </Grid>
-            <Grid size={{ xs: 12, md: 8 }}  sx={{border:'1px solid #82bdf7'}}>
+            <Grid size={{ xs: 12, md: 6 }}  sx={{border:'1px solid #82bdf7'}}>
 
+            </Grid>
+            <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7'}}>
+              <List
+                    sx={{
+                      width: '100%',
+                      // maxWidth: 360,
+                      bgcolor: 'background.paper',
+                      position: 'relative',
+                      overflow: 'auto',
+                      // maxHeight: 300,
+                      height:'100%',
+                      paddingBottom:0,
+                      '& ul': { padding: 0 },
+                    }}
+                    subheader={<li />}
+                  >
+                    <ListSubheader sx={{bgcolor:'#1976d2',color:'white',marginBottom:'.5rem'}}>Group Members</ListSubheader>
+                      <li >
+                          <ul>
+                            {userGroupList.map((item) => (
+                              <ListItem key={item.id}>
+                                {/* <ListItemText primary={item.name} /> */}
+                                <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}</Button>
+                              </ListItem>
+                            ))}
+                          </ul>
+                      </li>
+              </List>
             </Grid>
          </Grid>
 
