@@ -44,7 +44,7 @@ export default function TransitionsModal() {
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
     const {status,user} = useSelector((state)=>state.auth)
     
-    const [selectedUser,setSelectedUser]=useState([user.id]);
+    const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState(null)
 
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
@@ -55,6 +55,12 @@ export default function TransitionsModal() {
       })
     const dispatch = useDispatch()
 
+
+    useEffect(()=>{
+      setSelectedUser (user?.id ? [user.id] : [])
+    },[user])
+
+    
     useEffect(() => {
       if (modalType === "EDIT_PROFILE") {
             setUpdatedUserDetails({
