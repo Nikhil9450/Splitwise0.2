@@ -1,31 +1,37 @@
 import * as React from 'react';
-import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import {closeModal } from '../redux/modal/modalSlice';
-import { useSelector,useDispatch } from 'react-redux';
-import {  DialogActions } from "@mui/material";
-import TextField from '@mui/material/TextField';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  Backdrop,
+  Box,
+  Modal,
+  Fade,
+  Button,
+  Typography,
+  DialogActions,
+  TextField,
+  InputLabel,
+  InputAdornment,
+  OutlinedInput,
+  MenuItem,
+  FormControl,
+  Select,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemAvatar,
+  Checkbox,
+  Avatar,
+} from '@mui/material';
 import GroupsIcon from '@mui/icons-material/Groups';
-import axios from 'axios'
-import Loader from './Loader';
-import { toast } from 'react-toastify';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Checkbox from '@mui/material/Checkbox';
-import Avatar from '@mui/material/Avatar';
-import { asyncThunkCreator } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import Loader from './Loader';
+import { closeModal } from '../redux/modal/modalSlice';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -46,7 +52,20 @@ export default function TransitionsModal() {
     
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState(null)
-
+    const [personName, setPersonName] = React.useState([]);
+    const [age, setAge] = React.useState('');
+    const names = [
+      'Oliver Hansen',
+      'Van Henry',
+      'April Tucker',
+      'Ralph Hubbard',
+      'Omar Alexander',
+      'Carlos Abbott',
+      'Miriam Wagner',
+      'Bradley Wilkerson',
+      'Virginia Andrews',
+      'Kelly Snyder',
+    ];
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
@@ -54,7 +73,14 @@ export default function TransitionsModal() {
         newPassword:""
       })
     const dispatch = useDispatch()
-
+    const MenuProps = {
+      PaperProps: {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+          width: 250,
+        },
+      },
+    };
 
     useEffect(()=>{
       setSelectedUser (user?.id ? [user.id] : [])
@@ -132,6 +158,19 @@ export default function TransitionsModal() {
       }
       
     }
+
+
+    const handleChange = (event) => {
+      const {
+        target: { value },
+      } = event;
+      setPersonName(
+        // On autofill we get a stringified value.
+        typeof value === 'string' ? value.split(',') : value,
+      );
+    };
+
+
     const renderModalContent = () => {
 
       switch (modalType) {
@@ -182,69 +221,131 @@ export default function TransitionsModal() {
           // Add more cases as needed
           case "CREATE_GROUP":
             return (            
-            <>
-              <Box >
-                 <Typography variant="h6" sx={{marginBottom: '1rem',fontSize:'1.2rem'}}>{modalProps.title}</Typography>
-                 <TextField
-                  id="filled-basic" 
-                  label="Group name" 
-                  variant="filled" 
-                  fullWidth
-                  onChange={(event)=>setGroupName(event.target.value)}
-                  value={groupName}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <GroupsIcon/>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}  
-                  />
-                <Box>
-                  <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {friends.map((user) => {
-                      const labelId = `checkbox-list-secondary-label-${user._id}`;
-                      return (
-                        <ListItem
-                          key={user._id}
-                          secondaryAction={
-                            <Checkbox
-                              edge="end"
-                              onChange={selectUser}
-                              value={user._id}
-                              checked={selectedUser.includes(user._id)}
-                              inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                          }
-                          disablePadding
-                        >
-                          <ListItemButton>
-                            <ListItemAvatar >
-                              <Avatar
-                                // alt={`Avatar n°${user + 1}`}
-                                // src={`/static/images/avatar/${user + 1}.jpg`}
+              <>
+                <Box >
+                  <Typography variant="h6" sx={{marginBottom: '1rem',fontSize:'1.2rem'}}>{modalProps.title}</Typography>
+                  <TextField
+                    id="filled-basic" 
+                    label="Group name" 
+                    variant="filled" 
+                    fullWidth
+                    onChange={(event)=>setGroupName(event.target.value)}
+                    value={groupName}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <GroupsIcon/>
+                          </InputAdornment>
+                        ),
+                      },
+                    }}  
+                    />
+                  <Box>
+                    <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                      {friends.map((user) => {
+                        const labelId = `checkbox-list-secondary-label-${user._id}`;
+                        return (
+                          <ListItem
+                            key={user._id}
+                            secondaryAction={
+                              <Checkbox
+                                edge="end"
+                                onChange={selectUser}
+                                value={user._id}
+                                checked={selectedUser.includes(user._id)}
+                                inputProps={{ 'aria-labelledby': labelId }}
                               />
-                            </ListItemAvatar>
-                            <ListItemText id={labelId}                 
-                                primary={user.name} 
-                                secondary={user.email} 
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                </Box>  
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                  <Button onClick={()=>createGroup()} variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
-                    Create
-                  </Button>
+                            }
+                            disablePadding
+                          >
+                            <ListItemButton>
+                              <ListItemAvatar >
+                                <Avatar
+                                  // alt={`Avatar n°${user + 1}`}
+                                  // src={`/static/images/avatar/${user + 1}.jpg`}
+                                />
+                              </ListItemAvatar>
+                              <ListItemText id={labelId}                 
+                                  primary={user.name} 
+                                  secondary={user.email} 
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        );
+                      })}
+                    </List>
+                  </Box>  
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                    <Button onClick={()=>createGroup()} variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
+                      Create
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            </>
-            )
+              </>
+            );
+          case "ADD_EXPENSE":
+            return (
+              <>
+                  <Box>
+                    <TextField id="standard-basic" label="Standard" variant="standard" 
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      }
+                    />
+                    <TextField id="standard-basic" label="Standard" variant="standard"
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      } 
+                    />
+                    <Box>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                          <InputLabel id="demo-simple-select-standard-label">Age</InputLabel>
+                          <Select
+                            labelId="demo-simple-select-standard-label"
+                            id="demo-simple-select-standard"
+                            value={age}
+                            onChange={handleChange}
+                            label="Age"
+                          >
+                            <MenuItem value="">
+                              <em>None</em>
+                            </MenuItem>
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                          </Select>
+                        </FormControl>
+
+
+                        <FormControl sx={{ m: 1, width: 300 }}>
+                          <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                          <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={personName}
+                            onChange={handleChange}
+                            input={<OutlinedInput label="Tag" />}
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                          >
+                            {names.map((name) => (
+                              <MenuItem key={name} value={name}>
+                                <Checkbox checked={personName.includes(name)} />
+                                <ListItemText primary={name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                    </Box>
+                  </Box>
+              </>
+            );
           default:
           return null;
       }
