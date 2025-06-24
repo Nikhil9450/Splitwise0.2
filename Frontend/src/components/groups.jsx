@@ -11,11 +11,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import { Grid,Avatar,ListItemAvatar } from '@mui/material';
+import { openModal } from '../redux/modal/modalSlice';
+import { useDispatch } from 'react-redux';
 
 const Groups = () => {
   const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
-
+  const dispatch = useDispatch();
   useEffect(()=>{
     fetchgroupList();
   },[])
@@ -27,6 +29,15 @@ const Groups = () => {
         } catch (error) {
             console.log("error---------------->",error);
         }
+    }
+
+    const addExpenseHandler =()=>{
+      dispatch(openModal({
+                    modalType: 'ADD_EXPENSE',
+                    modalProps: {
+                      title: 'Add Expense',
+                    }
+      }))
     }
     // const buttons = [
     //   <Button key="one" startIcon={<GroupsIcon />}>group name</Button>,
@@ -66,7 +77,7 @@ const Groups = () => {
               </List>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}  sx={{border:'1px solid #82bdf7'}}>
-
+             <Button primary onClick={()=>addExpenseHandler("ADD_EXPENSE")}>Add Expenses</Button>
             </Grid>
             <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7'}}>
               <List
@@ -92,8 +103,6 @@ const Groups = () => {
                                                             <ListItemAvatar sx={{minWidth:'40px'}}>
                                                               <Avatar
                                                                sx={{ width: 30, height: 30 }}
-                                                                // alt={`Avatar n°${user + 1}`}
-                                                                // src={`/static/images/avatar/${user + 1}.jpg`}
                                                               />
                                                             </ListItemAvatar>
                                 <ListItemText 

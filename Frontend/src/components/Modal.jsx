@@ -76,7 +76,8 @@ export default function TransitionsModal() {
     const MenuProps = {
       PaperProps: {
         style: {
-          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+          // maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+          maxHeight: 300,
           width: 250,
         },
       },
@@ -287,6 +288,7 @@ export default function TransitionsModal() {
           case "ADD_EXPENSE":
             return (
               <>
+                  <Typography variant="h6">{modalProps.title}</Typography>
                   <Box>
                     <TextField id="standard-basic" label="Standard" variant="standard" 
                       startAdornment={
