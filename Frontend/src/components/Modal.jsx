@@ -72,12 +72,14 @@ export default function TransitionsModal() {
         currentPassword:"",
         newPassword:""
       })
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
     const dispatch = useDispatch()
     const MenuProps = {
       PaperProps: {
         style: {
-          // maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-          maxHeight: 300,
+          maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+          // maxHeight: 300,
           width: 250,
         },
       },
@@ -219,7 +221,6 @@ export default function TransitionsModal() {
               </DialogActions>
               </>
           );
-          // Add more cases as needed
           case "CREATE_GROUP":
             return (            
               <>
@@ -290,19 +291,11 @@ export default function TransitionsModal() {
               <>
                   <Typography variant="h6">{modalProps.title}</Typography>
                   <Box>
-                    <TextField id="standard-basic" label="Standard" variant="standard" 
-                      startAdornment={
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      }
+                    <TextField id="standard-basic" label="Description" variant="standard" 
+
                     />
-                    <TextField id="standard-basic" label="Standard" variant="standard"
-                      startAdornment={
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      } 
+                    <TextField id="standard-basic" label="Amout" variant="standard"
+
                     />
                     <Box>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
@@ -312,14 +305,10 @@ export default function TransitionsModal() {
                             id="demo-simple-select-standard"
                             value={age}
                             onChange={handleChange}
-                            label="Age"
+                            label="Paid By"
                           >
-                            <MenuItem value="">
-                              <em>None</em>
-                            </MenuItem>
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                          {friends.map((user)=> <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>)}
+
                           </Select>
                         </FormControl>
 
