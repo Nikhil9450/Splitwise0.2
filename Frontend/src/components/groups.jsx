@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import { Grid,Avatar,ListItemAvatar } from '@mui/material';
 import { openModal } from '../redux/modal/modalSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 const Groups = () => {
   const [userGroupList,SetUserGroupList]=useState([]);
@@ -22,7 +22,7 @@ const Groups = () => {
     // fetchgroupList();
     dispatch(fetchUserGroups());
   },[])
-  
+
     const fetchgroupList =async()=>{
         try {
            const groupList = await axios.post("http://localhost:5000/group/fetchUserGroups",{},{withCredentials:true});
