@@ -29,11 +29,11 @@ const userGroupSlice = createSlice({
                 state.status='loading';
             })
             .addCase(fetchUserGroups.fulfilled,(state,action)=>{
-                state.GroupDetails=action.payload;
+                state.UserGroupList=action.payload;
                 state.status='succeeded'
             })
             .addCase(fetchUserGroups.rejected,(state,action)=>{
-                state.GroupDetails=null;
+                state.UserGroupList=null;
                 state.status='failed'
             })
     }
