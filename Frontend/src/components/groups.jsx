@@ -36,10 +36,12 @@ const Groups = () => {
             console.log("error---------------->",error);
         }
     }
- useEffect(()=>{
-   console.log("groupMemberList from group.jsx----->",groupMemberList)
- },[groupMemberList])
+//  useEffect(()=>{
+//    console.log("groupMemberList from group.jsx----->",groupMemberList)
+//  },[groupMemberList])
     const addExpenseHandler =()=>{
+         console.log("groupMemberList from group.jsx----->",groupMemberList)
+
       dispatch(openModal({
                     modalType: 'ADD_EXPENSE',
                     modalProps: {

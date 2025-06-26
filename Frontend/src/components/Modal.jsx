@@ -57,8 +57,8 @@ export default function TransitionsModal() {
     
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState(null)
-    const [selectedGroupMember,setSelectedGroupMember]=useState( modalProps?.groupMemberList?.map((member) => member._id) || [])
-    const [paidBy, setPaidBy] = useState(user?.id || "");
+    const [selectedGroupMember,setSelectedGroupMember]=useState([])
+    const [paidBy, setPaidBy] = useState("");
 
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
@@ -83,10 +83,14 @@ export default function TransitionsModal() {
       setSelectedUser (user?.id ? [user.id] : [])
     },[user])
     
-    useEffect(()=>{
-      console.log("modalProps.groupMemberList--------->", modalProps.groupMemberList)
-      console.log( "user--------->",user)
-    },[user])
+  useEffect(() => {
+  if (modalProps?.groupMemberList) {
+    setSelectedGroupMember(modalProps.groupMemberList.map((member) => member._id));
+  }
+  if(user){
+    setPaidBy(user.id)
+  }
+}, [modalProps?.groupMemberList,user]);
     
     useEffect(() => {
       if (modalType === "EDIT_PROFILE") {
@@ -290,16 +294,16 @@ export default function TransitionsModal() {
                   <Typography variant="h6">{modalProps.title}</Typography>
                   <Box>
                   <Box >
-                      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-end', marginBottom:'1rem' }}>
                         <Box 
                           sx={{ 
                               display: 'flex', 
                               alignItems: 'center',
                               justifyContent:'center', 
-                              padding:'.5rem',
+                              padding:'.6rem',
                               border: '1px solid #82bdf7',
                               bgcolor:'#dcedff', 
-                              marginRight:'.5rem'
+                              marginRight:'.6rem'
                             }}
                           >
                           <DescriptionIcon sx={{ color: '#1976d2' }} />
@@ -312,10 +316,10 @@ export default function TransitionsModal() {
                               display: 'flex', 
                               alignItems: 'center',
                               justifyContent:'center', 
-                              padding:'.5rem',
+                              padding:'.6rem',
                               border: '1px solid #82bdf7',
                               bgcolor:'#dcedff', 
-                              marginRight:'.5rem'
+                              marginRight:'.6rem'
                             }}                        
                           >
                           <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
@@ -336,11 +340,12 @@ export default function TransitionsModal() {
                           <Select
                             labelId="demo-simple-select-standard-label"
                             id="demo-simple-select-standard"
+                            sx={{fontSize:'smaller'}}
                             value={paidBy}
                             onChange={(event)=>setPaidBy(event.target.value)}
                             label="Paid By"
                           >
-                          {modalProps.groupMemberList.map((user)=> <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>)}
+                          {modalProps.groupMemberList.map((user)=> <MenuItem sx={{fontSize:'smaller'}} key={user._id} value={user._id}>{user.name}</MenuItem>)}
 
                           </Select>
                         </FormControl>
@@ -351,6 +356,7 @@ export default function TransitionsModal() {
                             labelId="demo-multiple-checkbox-label"
                             id="demo-multiple-checkbox"
                             multiple
+                            sx={{fontSize:'smaller'}}
                             value={selectedGroupMember}
                             onChange={handleChange}
                             input={<OutlinedInput label="Equally" />}
@@ -363,9 +369,13 @@ export default function TransitionsModal() {
                             MenuProps={MenuProps}
                           >
                             {modalProps.groupMemberList.map((user) => (
-                              <MenuItem key={user._id} value={user._id}>
+                              <MenuItem  key={user._id} value={user._id} sx={{backgroundColor: 'transparent',padding:'0px'}}>
                                 <Checkbox checked={selectedGroupMember.includes(user._id)} />
-                                <ListItemText primary={user.name} />
+                                <ListItemText
+                                  primary={
+                                    <Typography sx={{ fontSize: '0.8rem' }}>{user.name}</Typography>
+                                  }
+                                />                              
                               </MenuItem>
                             ))}
                           </Select>
