@@ -31,6 +31,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Loader from './Loader';
 import { closeModal } from '../redux/modal/modalSlice';
+import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const style = {
   position: 'absolute',
@@ -48,24 +51,15 @@ const style = {
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
+    const {UserGroupList,GroupDetails} = useSelector((state)=>state.friendList)
+
     const {status,user} = useSelector((state)=>state.auth)
     
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState(null)
-    const [personName, setPersonName] = React.useState([]);
-    const [age, setAge] = React.useState('');
-    const names = [
-      'Oliver Hansen',
-      'Van Henry',
-      'April Tucker',
-      'Ralph Hubbard',
-      'Omar Alexander',
-      'Carlos Abbott',
-      'Miriam Wagner',
-      'Bradley Wilkerson',
-      'Virginia Andrews',
-      'Kelly Snyder',
-    ];
+    const [selectedGroupMember,setSelectedGroupMember]=useState( modalProps?.groupMemberList?.map((member) => member._id) || [])
+    const [paidBy, setPaidBy] = useState(user?.id || "");
+
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
@@ -88,7 +82,11 @@ export default function TransitionsModal() {
     useEffect(()=>{
       setSelectedUser (user?.id ? [user.id] : [])
     },[user])
-
+    
+    useEffect(()=>{
+      console.log("modalProps.groupMemberList--------->", modalProps.groupMemberList)
+      console.log( "user--------->",user)
+    },[user])
     
     useEffect(() => {
       if (modalType === "EDIT_PROFILE") {
@@ -163,15 +161,15 @@ export default function TransitionsModal() {
     }
 
 
-    const handleChange = (event) => {
-      const {
-        target: { value },
-      } = event;
-      setPersonName(
-        // On autofill we get a stringified value.
-        typeof value === 'string' ? value.split(',') : value,
-      );
-    };
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedGroupMember(
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
+
 
 
     const renderModalContent = () => {
@@ -291,44 +289,83 @@ export default function TransitionsModal() {
               <>
                   <Typography variant="h6">{modalProps.title}</Typography>
                   <Box>
-                    <TextField id="standard-basic" label="Description" variant="standard" 
-
+                  <Box >
+                      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                        <Box 
+                          sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center',
+                              justifyContent:'center', 
+                              padding:'.5rem',
+                              border: '1px solid #82bdf7',
+                              bgcolor:'#dcedff', 
+                              marginRight:'.5rem'
+                            }}
+                          >
+                          <DescriptionIcon sx={{ color: '#1976d2' }} />
+                        </Box>
+                        <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}}/>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                        <Box 
+                          sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center',
+                              justifyContent:'center', 
+                              padding:'.5rem',
+                              border: '1px solid #82bdf7',
+                              bgcolor:'#dcedff', 
+                              marginRight:'.5rem'
+                            }}                        
+                          >
+                          <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
+                        </Box>
+                        
+                        <TextField id="input-with-sx" label="Amount" variant="standard" sx={{width:'100%'}}/>
+                      </Box>
+                    {/* <TextField id="standard-basic" label="Description" variant="standard" 
+                      sx={{width:'100%'}}
                     />
                     <TextField id="standard-basic" label="Amout" variant="standard"
-
-                    />
-                    <Box>
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                          <InputLabel id="demo-simple-select-standard-label">Age</InputLabel>
+                      sx={{width:'100%'}} 
+                    /> */}
+                  </Box>
+                    <Box sx={{ display:'flex',flexDirection:'row',marginTop:'1rem'}}>
+                        <FormControl  sx={{ m: 1, minWidth: 120 }}  size="small">
+                          <InputLabel id="demo-simple-select-standard-label">Paid By</InputLabel>
                           <Select
                             labelId="demo-simple-select-standard-label"
                             id="demo-simple-select-standard"
-                            value={age}
-                            onChange={handleChange}
+                            value={paidBy}
+                            onChange={(event)=>setPaidBy(event.target.value)}
                             label="Paid By"
                           >
-                          {friends.map((user)=> <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>)}
+                          {modalProps.groupMemberList.map((user)=> <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>)}
 
                           </Select>
                         </FormControl>
 
-
-                        <FormControl sx={{ m: 1, width: 300 }}>
-                          <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                        <FormControl sx={{ m: 1, width: 300 }}  size="small">
+                          <InputLabel id="demo-multiple-checkbox-label">Equally</InputLabel>
                           <Select
                             labelId="demo-multiple-checkbox-label"
                             id="demo-multiple-checkbox"
                             multiple
-                            value={personName}
+                            value={selectedGroupMember}
                             onChange={handleChange}
-                            input={<OutlinedInput label="Tag" />}
-                            renderValue={(selected) => selected.join(', ')}
+                            input={<OutlinedInput label="Equally" />}
+                            renderValue={(selected) =>
+                                          modalProps.groupMemberList
+                                            .filter((user) => selected.includes(user._id))
+                                            .map((user) => user.name)
+                                            .join(', ')
+                                        }
                             MenuProps={MenuProps}
                           >
-                            {names.map((name) => (
-                              <MenuItem key={name} value={name}>
-                                <Checkbox checked={personName.includes(name)} />
-                                <ListItemText primary={name} />
+                            {modalProps.groupMemberList.map((user) => (
+                              <MenuItem key={user._id} value={user._id}>
+                                <Checkbox checked={selectedGroupMember.includes(user._id)} />
+                                <ListItemText primary={user.name} />
                               </MenuItem>
                             ))}
                           </Select>

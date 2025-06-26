@@ -17,6 +17,7 @@ import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
+  const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
   const dispatch = useDispatch();
   useEffect(()=>{
@@ -24,7 +25,7 @@ const Groups = () => {
     dispatch(fetchUserGroups());
   },[])
   useEffect(()=>{
- console.log("UserGroupList from use selector-------->",UserGroupList)
+    console.log("UserGroupList from use selector-------->",UserGroupList)
   },[UserGroupList])
     const fetchgroupList =async()=>{
         try {
@@ -35,21 +36,20 @@ const Groups = () => {
             console.log("error---------------->",error);
         }
     }
-
+ useEffect(()=>{
+   console.log("groupMemberList from group.jsx----->",groupMemberList)
+ },[groupMemberList])
     const addExpenseHandler =()=>{
       dispatch(openModal({
                     modalType: 'ADD_EXPENSE',
                     modalProps: {
                       title: 'Add Expense',
+                      groupId:groupId,
+                      groupMemberList:groupMemberList,
                     }
       }))
     }
-    // const buttons = [
-    //   <Button key="one" startIcon={<GroupsIcon />}>group name</Button>,
-    // ];
-    // const buttons = userGroupList.map((group)=>{
-    //   return <Button key={group.id} startIcon={<GroupsIcon />}>{group.name}</Button>
-    // })
+
   return (
       <Box sx={{height:'100%'}}>
          <Grid container spacing={2} size="grow" sx={{height:'100%'}}>
@@ -74,7 +74,15 @@ const Groups = () => {
                             {UserGroupList.map((item) => (
                               <ListItem key={item.id}>
                                 {/* <ListItemText primary={item.name} /> */}
-                                <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} onClick={()=>SetGroupMemberList(item.members)} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}</Button>
+                                <Button 
+                                  variant="text" 
+                                  sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} 
+                                  onClick={()=>{
+                                    SetGroupMemberList(item.members);
+                                    SetGroupId(item.id)
+                                  }} 
+                                  startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
+                                </Button>
                               </ListItem>
                             ))}
                           </ul>
