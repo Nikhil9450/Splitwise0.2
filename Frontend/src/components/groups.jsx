@@ -19,6 +19,7 @@ const Groups = () => {
   const [groupMemberList,SetGroupMemberList]=useState([]);
   const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
+  const [selectedGroup,setSelectedGroup]= useState("");
   const dispatch = useDispatch();
   useEffect(()=>{
     // fetchgroupList();
@@ -77,11 +78,12 @@ const Groups = () => {
                               <ListItem key={item.id}>
                                 {/* <ListItemText primary={item.name} /> */}
                                 <Button 
-                                  variant="text" 
+                                  variant={(selectedGroup==item.id)?"outlined":"text"} 
                                   sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} 
                                   onClick={()=>{
                                     SetGroupMemberList(item.members);
-                                    SetGroupId(item.id)
+                                    SetGroupId(item.id);
+                                    setSelectedGroup(item.id)
                                   }} 
                                   startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
                                 </Button>

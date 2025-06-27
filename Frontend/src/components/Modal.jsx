@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Backdrop,
@@ -34,6 +34,9 @@ import { closeModal } from '../redux/modal/modalSlice';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
 
 const style = {
   position: 'absolute',
@@ -52,20 +55,22 @@ export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
     const {UserGroupList,GroupDetails} = useSelector((state)=>state.friendList)
-
     const {status,user} = useSelector((state)=>state.auth)
-    
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState(null)
     const [selectedGroupMember,setSelectedGroupMember]=useState([])
     const [paidBy, setPaidBy] = useState("");
-
+    const [splitType,setSplitType]=useState("Equally");
+    const [splitContainer,setSplitContainer]=useState(false)
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
         currentPassword:"",
         newPassword:""
       })
+    const [description, setDescription] = useState("");
+    const [amount, setAmount] = useState("");
+    const [splitByAmount,setSplitByAmount]=useState({});
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const dispatch = useDispatch()
@@ -74,23 +79,46 @@ export default function TransitionsModal() {
         style: {
           maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
           // maxHeight: 300,
-          width: 250,
+          width: 180,
         },
       },
     };
+
+  // const resetUnequallyAmt =()=>{
+  //     if (modalProps?.groupMemberList?.length) {
+  //     const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
+  //       acc[user._id] = 0;
+  //       return acc;
+  //     }, {});
+  //   setSplitByAmount(initialSplit);
+  // }
+
+useEffect(() => {
+  if (modalProps?.groupMemberList?.length) {
+    const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
+      acc[user._id] = 0;
+      return acc;
+    }, {});
+    setSplitByAmount(initialSplit);
+  }
+}, [modalProps.groupMemberList]);
+
+    useEffect(()=>{
+      console.log("splitByAmount----------->",splitByAmount)
+    },[splitByAmount])
 
     useEffect(()=>{
       setSelectedUser (user?.id ? [user.id] : [])
     },[user])
     
-  useEffect(() => {
-  if (modalProps?.groupMemberList) {
-    setSelectedGroupMember(modalProps.groupMemberList.map((member) => member._id));
-  }
-  if(user){
-    setPaidBy(user.id)
-  }
-}, [modalProps?.groupMemberList,user]);
+    useEffect(() => {
+      if (modalProps?.groupMemberList) {
+        setSelectedGroupMember(modalProps.groupMemberList.map((member) => member._id));
+      }
+      if(user){
+        setPaidBy(user.id)
+      }
+    }, [modalProps?.groupMemberList,user]);
     
     useEffect(() => {
       if (modalType === "EDIT_PROFILE") {
@@ -146,6 +174,7 @@ export default function TransitionsModal() {
         }
       }
     }
+
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
       try{
@@ -164,20 +193,132 @@ export default function TransitionsModal() {
       
     }
 
+    const handleChange = (event) => {
+     const {checked,value} = event.target;
 
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedGroupMember(
-      typeof value === 'string' ? value.split(',') : value
-    );
-  };
+      console.log("selected user",checked,value)
+      if(checked){
+        setSelectedGroupMember((prev)=>[...prev,value])
+      }else{
+        setSelectedGroupMember((prev)=>[...prev].filter((id)=> id !== value ))
+      }
+    };
 
+    const splitTypeHandler=(type)=>{
+      setSplitType(type);
+      setSplitContainer(true);
+    }
 
+    const renderSplitType=()=>{
+      if(splitType=='Equally'){
+        return(
+          <>
+            <Typography variant="h6">Split equally</Typography>
+            <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              {modalProps.groupMemberList.map((user) => {
+                const labelId = `checkbox-list-secondary-label-${user._id}`;
+                return (
+                  <ListItem
+                      key={user._id}
+                      secondaryAction={
+                        <Checkbox
+                          edge="end"
+                          onChange={handleChange}
+                          value={user._id}
+                          checked={selectedGroupMember.includes(user._id)}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      }
+                      disablePadding
+                    >
+                      <ListItemText id={labelId}                 
+                        primary={user.name} 
+                        secondary={user.email}
+                        sx={{
+                          '& .MuiListItemText-secondary': {
+                            fontSize: '11px',
+                            color: 'gray',
+                          },                      
+                        }}                            
+                        />
+                    </ListItem>
+                );
+              })}
+            </List>
+            <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}}>
 
+              <Button variant='outlined'  startIcon={<SaveIcon />} 
+                  onClick={()=>save("Equally")}
+              > 
+                Save
+              </Button>
+            </Box>  
+          </>
+        )
+      }else if(splitType=='Unequally'){
+        return (
+          <>
+            <Typography variant="h6">Split by exact amount</Typography>
+            <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              {modalProps.groupMemberList.map((user) => {
+                const labelId = `checkbox-list-secondary-label-${user._id}`;
+                return (
+                  <ListItem
+                    key={user._id}
+                    secondaryAction={
+                      <TextField id="standard-basic" label="₹" variant="standard" size="small" sx={{width:'2rem'}} onChange={(e)=>{setSplitByAmount((prev)=>({...prev,[user._id]:e.target.value}))}} />
+                    }
+                    disablePadding
+                  >
+
+                      <ListItemText id={labelId}                 
+                          primary={user.name} 
+                          secondary={user.email} 
+                              sx={{
+                                '& .MuiListItemText-secondary': {
+                                  fontSize: '11px',
+                                  color: 'gray',
+                                },                      
+                              }}                       
+                      />
+                  </ListItem>
+                );
+              })}
+            </List>
+            <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}}>
+              <Button variant='outlined' color="error"
+                  onClick={()=>setSplitContainer(false)}
+                  sx={{mr:1}}
+              > 
+                Cancel
+              </Button>
+              <Button variant='outlined'  startIcon={<SaveIcon />} 
+                  onClick={()=>save("Unequally")}
+              > 
+                Save
+              </Button>
+            </Box>              
+          </>
+        )
+      }
+    }
+
+    const addExpense =()=>{
+      console.log("description,amount---------->",description,amount);
+    }
+
+    const save=(type)=>{
+      if(type==="Equally"){
+        if(selectedGroupMember.length===0){
+          toast.error("Please select at least one member.")
+        }else{
+          setSplitContainer(false);
+        }
+      }else if(type==="Unequally"){
+            
+      }
+    }
     const renderModalContent = () => {
-
       switch (modalType) {
           case "EDIT_PROFILE":
           return (
@@ -291,52 +432,52 @@ export default function TransitionsModal() {
           case "ADD_EXPENSE":
             return (
               <>
-                  <Typography variant="h6">{modalProps.title}</Typography>
+              {splitContainer
+              ? <>
+                {renderSplitType()}
+              </>
+              :<>
+                <Typography variant="h6" sx={{marginBottom:'2rem'}} >{modalProps.title}</Typography>
                   <Box>
-                  <Box >
-                      <Box sx={{ display: 'flex', alignItems: 'flex-end', marginBottom:'1rem' }}>
-                        <Box 
-                          sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center',
-                              justifyContent:'center', 
-                              padding:'.6rem',
-                              border: '1px solid #82bdf7',
-                              bgcolor:'#dcedff', 
-                              marginRight:'.6rem'
-                            }}
-                          >
-                          <DescriptionIcon sx={{ color: '#1976d2' }} />
+                    <Box >
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end', marginBottom:'1rem' }}>
+                          <Box 
+                            sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center',
+                                justifyContent:'center', 
+                                padding:'.5rem',
+                                border: '1px solid #82bdf7',
+                                bgcolor:'#dcedff', 
+                                marginRight:'.6rem',
+                                borderRadius:'.5rem'
+                              }}
+                            >
+                            <DescriptionIcon sx={{ color: '#1976d2' }} />
+                          </Box>
+                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} />
                         </Box>
-                        <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}}/>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <Box 
-                          sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center',
-                              justifyContent:'center', 
-                              padding:'.6rem',
-                              border: '1px solid #82bdf7',
-                              bgcolor:'#dcedff', 
-                              marginRight:'.6rem'
-                            }}                        
-                          >
-                          <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
+                        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                          <Box 
+                            sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center',
+                                justifyContent:'center', 
+                                padding:'.5rem',
+                                border: '1px solid #82bdf7',
+                                bgcolor:'#dcedff', 
+                                marginRight:'.6rem',
+                                borderRadius:'.5rem',
+                              }}                        
+                            >
+                            <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
+                          </Box>
+                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(e.target.value)} />
                         </Box>
-                        
-                        <TextField id="input-with-sx" label="Amount" variant="standard" sx={{width:'100%'}}/>
-                      </Box>
-                    {/* <TextField id="standard-basic" label="Description" variant="standard" 
-                      sx={{width:'100%'}}
-                    />
-                    <TextField id="standard-basic" label="Amout" variant="standard"
-                      sx={{width:'100%'}} 
-                    /> */}
-                  </Box>
-                    <Box sx={{ display:'flex',flexDirection:'row',marginTop:'1rem'}}>
-                        <FormControl  sx={{ m: 1, minWidth: 120 }}  size="small">
-                          <InputLabel id="demo-simple-select-standard-label">Paid By</InputLabel>
+                    </Box>
+                    <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem'}}>
+                        <FormControl  sx={{ mr: 1, minWidth: 120 }}  size="small">
+                          <InputLabel id="demo-simple-select-standard-label" sx={{fontSize:'14px'}}>Paid By</InputLabel>
                           <Select
                             labelId="demo-simple-select-standard-label"
                             id="demo-simple-select-standard"
@@ -350,38 +491,24 @@ export default function TransitionsModal() {
                           </Select>
                         </FormControl>
 
-                        <FormControl sx={{ m: 1, width: 300 }}  size="small">
-                          <InputLabel id="demo-multiple-checkbox-label">Equally</InputLabel>
-                          <Select
-                            labelId="demo-multiple-checkbox-label"
-                            id="demo-multiple-checkbox"
-                            multiple
-                            sx={{fontSize:'smaller'}}
-                            value={selectedGroupMember}
-                            onChange={handleChange}
-                            input={<OutlinedInput label="Equally" />}
-                            renderValue={(selected) =>
-                                          modalProps.groupMemberList
-                                            .filter((user) => selected.includes(user._id))
-                                            .map((user) => user.name)
-                                            .join(', ')
-                                        }
-                            MenuProps={MenuProps}
+      
+                          <ButtonGroup
+                            disableElevation
+                            variant="outlined"
+                            aria-label="Disabled button group"
+                            size='small'
                           >
-                            {modalProps.groupMemberList.map((user) => (
-                              <MenuItem  key={user._id} value={user._id} sx={{backgroundColor: 'transparent',padding:'0px'}}>
-                                <Checkbox checked={selectedGroupMember.includes(user._id)} />
-                                <ListItemText
-                                  primary={
-                                    <Typography sx={{ fontSize: '0.8rem' }}>{user.name}</Typography>
-                                  }
-                                />                              
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                            <Button  variant={(splitType=="Equally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Equally")}>Equally</Button>
+                            <Button  variant={(splitType=="Unequally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Unequally")}>Unequally</Button>
+                          </ButtonGroup>
                     </Box>
                   </Box>
+                  <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}} >
+                    <Button variant='contained' startIcon={<AddIcon />} onClick={()=>addExpense()}>Add</Button>
+                  </Box>
+              </>
+              }
+
               </>
             );
           default:
