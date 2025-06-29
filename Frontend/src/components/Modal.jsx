@@ -57,11 +57,12 @@ export default function TransitionsModal() {
     const {UserGroupList,GroupDetails} = useSelector((state)=>state.friendList)
     const {status,user} = useSelector((state)=>state.auth)
     const [selectedUser,setSelectedUser]=useState([]);
-    const [groupName,setGroupName]=useState(null)
+    const [groupName,setGroupName]=useState("")
     const [selectedGroupMember,setSelectedGroupMember]=useState([])
     const [paidBy, setPaidBy] = useState("");
     const [splitType,setSplitType]=useState("Equally");
     const [splitContainer,setSplitContainer]=useState(false)
+    const [remainingAmt,setRemainingAmt]=useState(0)
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
@@ -71,6 +72,7 @@ export default function TransitionsModal() {
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [splitByAmount,setSplitByAmount]=useState({});
+    const [splitBetweenUsers,setSplitBetweenUsers]=useState({});
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const dispatch = useDispatch()
@@ -84,27 +86,34 @@ export default function TransitionsModal() {
       },
     };
 
-  // const resetUnequallyAmt =()=>{
-  //     if (modalProps?.groupMemberList?.length) {
-  //     const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
-  //       acc[user._id] = 0;
-  //       return acc;
-  //     }, {});
-  //   setSplitByAmount(initialSplit);
-  // }
+    const resetUnequallyAmt =()=>{
+        if (modalProps?.groupMemberList?.length) {
+        const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
+          // acc[user._id] = "";
+          acc[user._id] = {
+            userId: user._id,
+            owesTo: "",
+            amount: ""
+          };
+          return acc;
+        }, []);
+          setSplitByAmount(initialSplit);
+        }
+    }
 
-useEffect(() => {
-  if (modalProps?.groupMemberList?.length) {
-    const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
-      acc[user._id] = 0;
-      return acc;
-    }, {});
-    setSplitByAmount(initialSplit);
-  }
-}, [modalProps.groupMemberList]);
+    useEffect(() => {
+      resetUnequallyAmt();
+    }, [modalProps.groupMemberList]);
 
     useEffect(()=>{
       console.log("splitByAmount----------->",splitByAmount)
+        const ItemPrice = Number(amount);
+        const sumOfSplitAmount = Object.values(splitByAmount).reduce((acc, user) =>
+          {
+            const sum= acc + Number(user.amount);
+            return sum;
+          } , 0);
+          setRemainingAmt(ItemPrice-sumOfSplitAmount);
     },[splitByAmount])
 
     useEffect(()=>{
@@ -154,7 +163,7 @@ useEffect(() => {
 
     const createGroup = async()=>{
       console.log(selectedUser,selectedUser.length,groupName)
-      if(selectedUser.length==0 || groupName==null){
+      if(selectedUser.length===0 || groupName===""){
         toast.error("Please select group members and give group name.");
       }else if(selectedUser.length <= 1){
         toast.error("Please select at least 2 group members.")
@@ -205,12 +214,13 @@ useEffect(() => {
     };
 
     const splitTypeHandler=(type)=>{
+
       setSplitType(type);
       setSplitContainer(true);
     }
 
     const renderSplitType=()=>{
-      if(splitType=='Equally'){
+      if(splitType==='Equally'){
         return(
           <>
             <Typography variant="h6">Split equally</Typography>
@@ -255,21 +265,41 @@ useEffect(() => {
             </Box>  
           </>
         )
-      }else if(splitType=='Unequally'){
+      }else if(splitType==='Unequally'){
+        //  resetUnequallyAmt();
         return (
           <>
             <Typography variant="h6">Split by exact amount</Typography>
             <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
               {modalProps.groupMemberList.map((user) => {
+                const userId=user._id;
                 const labelId = `checkbox-list-secondary-label-${user._id}`;
                 return (
                   <ListItem
                     key={user._id}
                     secondaryAction={
-                      <TextField id="standard-basic" label="₹" variant="standard" size="small" sx={{width:'2rem'}} onChange={(e)=>{setSplitByAmount((prev)=>({...prev,[user._id]:e.target.value}))}} />
-                    }
-                    disablePadding
-                  >
+                      <TextField 
+                            id="standard-basic" 
+                            label="₹" 
+                            variant="standard" 
+                            size="small" 
+                            sx={{width:'2rem'}} 
+                            onChange={
+                              (e)=>{
+                                  setSplitByAmount((prev) => ({
+                                    ...prev,
+                                    [user._id]: {
+                                      userId: user._id,
+                                      owesTo: paidBy,
+                                      amount: e.target.value,
+                                    }
+                                  }));
+                              }
+                            } 
+                            value={splitByAmount[userId]} />
+                          }
+                        disablePadding
+                      >
 
                       <ListItemText id={labelId}                 
                           primary={user.name} 
@@ -284,10 +314,27 @@ useEffect(() => {
                   </ListItem>
                 );
               })}
+              <ListItem
+                    disablePadding
+                  >
+                      <ListItemText                 
+                          secondary={`Remaining amount: ${remainingAmt}`}
+                              sx={{
+                                '& .MuiListItemText-secondary': {
+                                  fontSize: '14px',
+                                  color: '#1976d2',
+                                },                      
+                              }}                       
+                      />
+                  </ListItem>
             </List>
             <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}}>
               <Button variant='outlined' color="error"
-                  onClick={()=>setSplitContainer(false)}
+                  onClick={()=>{
+                    setSplitContainer(false);
+                    setSplitType("Equally");
+                    resetUnequallyAmt();
+                  }}
                   sx={{mr:1}}
               > 
                 Cancel
@@ -303,21 +350,71 @@ useEffect(() => {
       }
     }
 
-    const addExpense =()=>{
-      console.log("description,amount---------->",description,amount);
-    }
+    const addExpense = () => {
+      let split = {};
+
+      if (splitType === "Equally") {
+        const perPersonPrice = Number(amount) / selectedGroupMember.length;
+
+        split = modalProps.groupMemberList.reduce((acc, user) => {
+          if (selectedGroupMember.includes(user._id)) {
+            acc[user._id] = {
+              userId: user._id,
+              owesTo: paidBy,
+              amount: perPersonPrice
+            };
+          } else {
+            acc[user._id] = {
+              userId: user._id,
+              owesTo: paidBy,
+              amount: 0
+            };
+          }
+          return acc;
+        }, {});
+      } else if (splitType === "Unequally") {
+        split = splitByAmount;
+      }
+
+      // optionally update the state
+      setSplitBetweenUsers(split);
+
+      const data = {
+        description,
+        amount,
+        paidBy,
+        splitBetween: split,
+      };
+
+      console.log("data-------->", data);
+    };
 
     const save=(type)=>{
       if(type==="Equally"){
         if(selectedGroupMember.length===0){
           toast.error("Please select at least one member.")
         }else{
+          setSplitType(type);
           setSplitContainer(false);
+          resetUnequallyAmt();
         }
       }else if(type==="Unequally"){
-            
+        const ItemPrice = Number(amount);
+        const sumOfSplitAmount = Object.values(splitByAmount).reduce((acc, user) =>
+          {
+            const sum= acc + Number(user.amount);
+            return sum;
+          } , 0);
+        console.log("product_amt,sumOfAmount------>",ItemPrice,sumOfSplitAmount,typeof(ItemPrice),typeof(sumOfSplitAmount))
+        if(remainingAmt===0){
+          setSplitType(type);
+          setSplitContainer(false);
+        }else{
+          toast.error("Total sum of the amount is not matched.");          
+        }
       }
     }
+
     const renderModalContent = () => {
       switch (modalType) {
           case "EDIT_PROFILE":
@@ -455,7 +552,7 @@ useEffect(() => {
                             >
                             <DescriptionIcon sx={{ color: '#1976d2' }} />
                           </Box>
-                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} />
+                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} value={description} />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                           <Box 
@@ -472,7 +569,7 @@ useEffect(() => {
                             >
                             <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
                           </Box>
-                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(e.target.value)} />
+                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={amount}/>
                         </Box>
                     </Box>
                     <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem'}}>
@@ -498,8 +595,8 @@ useEffect(() => {
                             aria-label="Disabled button group"
                             size='small'
                           >
-                            <Button  variant={(splitType=="Equally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Equally")}>Equally</Button>
-                            <Button  variant={(splitType=="Unequally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Unequally")}>Unequally</Button>
+                            <Button  variant={(splitType==="Equally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Equally")}>Equally</Button>
+                            <Button  variant={(splitType==="Unequally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Unequally")}>Unequally</Button>
                           </ButtonGroup>
                     </Box>
                   </Box>
@@ -523,7 +620,16 @@ useEffect(() => {
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={isOpen}
-        onClose={()=>dispatch(closeModal())}
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick') {
+            // ✅ Trigger your custom function here
+            setSplitType("Equally");
+            setSplitContainer(false);
+
+          }
+          // This will still close the modal
+          dispatch(closeModal());
+        }}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{

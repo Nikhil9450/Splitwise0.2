@@ -4,13 +4,13 @@ const User = require("../models/user");
 
 
 const handleExpense =async(req,res)=>{
-    const {description,amount,paidBy,splitBetween}=req.body;
+    const {description,amount,paidBy,splitBetweenWithAmt}=req.body;
     try{
         Expense.create({
             description,
             amount,
             paidBy,
-            splitBetween
+            splitBetweenWithAmt,
         })
         return res.status(200).send("Expense added successfully.")
     } catch(error){
@@ -19,3 +19,5 @@ const handleExpense =async(req,res)=>{
     }
 
 }
+
+module.exports={handleExpense}
