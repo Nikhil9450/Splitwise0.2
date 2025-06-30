@@ -7,6 +7,7 @@ const staticRoute = require("./routes/staticRoute")
 const adminRoutes = require("./routes/adminRoutes")
 const editUserRoutes = require("./routes/editUserRoutes")
 const groupRoutes = require("./routes/groupRoutes")
+const expenseRoutes = require("./routes/expenseRoutes")
 const {checkAuth, restrictToLoggedinUserOnly} = require("./middlewares/auth")
 const {checkRole}= require("./middlewares/role")
 const app = express();
@@ -28,4 +29,5 @@ app.use("/user",userRoute);
 app.use("/admin",checkRole,adminRoutes);
 app.use("/editUser",restrictToLoggedinUserOnly,editUserRoutes);
 app.use("/group",checkAuth,groupRoutes);
+app.use("/expense", checkAuth,expenseRoutes);
 app.listen(process.env.PORT,()=> console.log(`Server Started at PORT ${process.env.PORT}`)) 

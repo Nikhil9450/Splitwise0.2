@@ -14,17 +14,28 @@ import { Grid,Avatar,ListItemAvatar } from '@mui/material';
 import { openModal } from '../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
+import { fetchGroupExpenses } from '../redux/expense/expenseSlice';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
   const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
+  const {expense}=useSelector((state)=>state.expenses);
   const [selectedGroup,setSelectedGroup]= useState("");
   const dispatch = useDispatch();
   useEffect(()=>{
     // fetchgroupList();
     dispatch(fetchUserGroups());
   },[])
+
+  useEffect(()=>{
+    dispatch(fetchGroupExpenses(groupId));
+  },[groupId])
+
+  useEffect(()=>{
+    console.log("expenses------------>",expense);
+  },[expense])
+
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
   },[UserGroupList])

@@ -37,7 +37,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
-
+import { addExpense } from '../redux/expense/expenseSlice';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -296,7 +296,7 @@ export default function TransitionsModal() {
                                   }));
                               }
                             } 
-                            value={splitByAmount[userId]} />
+                            value={splitByAmount[userId].amount} />
                           }
                         disablePadding
                       >
@@ -350,7 +350,7 @@ export default function TransitionsModal() {
       }
     }
 
-    const addExpense = () => {
+    const add_Expense = async() => {
       let split = {};
 
       if (splitType === "Equally") {
@@ -383,10 +383,13 @@ export default function TransitionsModal() {
         description,
         amount,
         paidBy,
-        splitBetween: split,
+        addedBy:user.id,
+        group:modalProps.groupId,
+        splitBetweenWithAmt: split,
       };
 
       console.log("data-------->", data);
+      dispatch(addExpense(data));
     };
 
     const save=(type)=>{
@@ -400,6 +403,7 @@ export default function TransitionsModal() {
         }
       }else if(type==="Unequally"){
         const ItemPrice = Number(amount);
+        // setAmount()
         const sumOfSplitAmount = Object.values(splitByAmount).reduce((acc, user) =>
           {
             const sum= acc + Number(user.amount);
@@ -601,7 +605,7 @@ export default function TransitionsModal() {
                     </Box>
                   </Box>
                   <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}} >
-                    <Button variant='contained' startIcon={<AddIcon />} onClick={()=>addExpense()}>Add</Button>
+                    <Button variant='contained' startIcon={<AddIcon />} onClick={()=>add_Expense()}>Add</Button>
                   </Box>
               </>
               }
