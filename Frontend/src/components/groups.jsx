@@ -10,16 +10,18 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import { Grid,Avatar,ListItemAvatar } from '@mui/material';
+import { Grid,Avatar,ListItemAvatar,ListItemButton } from '@mui/material';
 import { openModal } from '../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 import { fetchGroupExpenses } from '../redux/expense/expenseSlice';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
   const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
+  const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
   const [selectedGroup,setSelectedGroup]= useState("");
   const dispatch = useDispatch();
@@ -67,7 +69,7 @@ const Groups = () => {
   return (
       <Box sx={{height:'100%'}}>
          <Grid container spacing={2} size="grow" sx={{height:'100%'}}>
-            <Grid size={{ xs: 12, md: 3 }}  sx={{border:'1px solid #82bdf7'}}>
+            <Grid size={{ xs: 12, md: 3 }}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'70vh'}}>
               <List
                     sx={{
                       width: '100%',
@@ -104,10 +106,40 @@ const Groups = () => {
                       </li>
               </List>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}  sx={{border:'1px solid #82bdf7'}}>
+            <Grid size={{ xs: 12, md: 6 }}  sx={{border:'1px solid #82bdf7',overflowY:'scroll',height:'70vh'}}>
+                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                {expense.map((expense)=>{
+                  const lent_borrowed_amt=0;
+                  const userEntry =expense. splitBetweenWithAmt.find(
+                    (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
+                  );
+                  if(expense.paidBy===user.id){
+                        console.log("Amount owed by user:", userEntry.amount);
+                        lent_borrowed_amt = amount-userEntry.amount
+                  }else{
+                    lent_borrowed_amt=userEntry.amount
+                  }
+
+
+                  return <ListItem>
+                            <ListItemButton sx={{padding:'0px'}}>
+                              <Box sx={{margin:'1rem'}}>
+                                <p style={{margin:'0px',fontSize:'14px'}}>Jan <br/> <span>20</span></p>
+                              </Box>
+                              <ListItemAvatar >
+                                <Avatar sx={{borderRadius:'0'}}>
+                                  <ShoppingBagIcon />
+                                </Avatar>
+                              </ListItemAvatar>
+                              <ListItemText primary={expense.description} secondary={`${expense.paidBy.name} Paid ${expense.amount}`}/>
+                              <ListItemText primary={(expense.paidBy._id ===user.id)?"You lent" :"You borrowed"} secondary={lent_borrowed_amt} />
+                            </ListItemButton>
+                         </ListItem>
+                })}
+                </List>
              <Button primary onClick={()=>addExpenseHandler("ADD_EXPENSE")}>Add Expenses</Button>
             </Grid>
-            <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7'}}>
+            <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'70vh'}}>
               <List
                     sx={{
                       width: '100%',
