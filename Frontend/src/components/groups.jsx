@@ -10,12 +10,14 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import { Grid,Avatar,ListItemAvatar,ListItemButton } from '@mui/material';
+import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography } from '@mui/material';
 import { openModal } from '../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 import { fetchGroupExpenses } from '../redux/expense/expenseSlice';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
@@ -68,7 +70,7 @@ const Groups = () => {
 
   return (
       <Box sx={{height:'100%'}}>
-         <Grid container spacing={2} size="grow" sx={{height:'100%'}}>
+         <Grid container spacing={2} sx={{height:'100%',width:'100%',flexGrow:1}}>
             <Grid size={{ xs: 12, md: 3 }}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'70vh'}}>
               <List
                     sx={{
@@ -106,38 +108,81 @@ const Groups = () => {
                       </li>
               </List>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}  sx={{border:'1px solid #82bdf7',overflowY:'scroll',height:'70vh'}}>
+              <Grid
+                item
+                size={{ xs: 12, md:6}}
+                sx={{
+                  position: 'relative',
+                  border: '1px solid #82bdf7',
+                  height: '70vh',
+                }}
+              >
+
+              <Box sx={{ overflowY: 'scroll', height: '100%', pr: 1,paddingBottom:'3rem' }}>
                 <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {expense.map((expense)=>{
-                  const lent_borrowed_amt=0;
-                  const userEntry =expense. splitBetweenWithAmt.find(
-                    (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
-                  );
-                  if(expense.paidBy===user.id){
-                        console.log("Amount owed by user:", userEntry.amount);
-                        lent_borrowed_amt = amount-userEntry.amount
-                  }else{
-                    lent_borrowed_amt=userEntry.amount
-                  }
+                  {expense.map((expense) => {
+                    let lent_borrowed_amt = 0;
+                    const userEntry = expense.splitBetweenWithAmt.find(
+                      (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
+                    );
+                    if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
+                      lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
+                    } else {
+                      lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
+                    }
 
-
-                  return <ListItem>
-                            <ListItemButton sx={{padding:'0px'}}>
-                              <Box sx={{margin:'1rem'}}>
-                                <p style={{margin:'0px',fontSize:'14px'}}>Jan <br/> <span>20</span></p>
-                              </Box>
-                              <ListItemAvatar >
-                                <Avatar sx={{borderRadius:'0'}}>
-                                  <ShoppingBagIcon />
-                                </Avatar>
-                              </ListItemAvatar>
-                              <ListItemText primary={expense.description} secondary={`${expense.paidBy.name} Paid ${expense.amount}`}/>
-                              <ListItemText primary={(expense.paidBy._id ===user.id)?"You lent" :"You borrowed"} secondary={lent_borrowed_amt} />
-                            </ListItemButton>
-                         </ListItem>
-                })}
+                    return (
+                      <ListItem key={expense._id}>
+                        <ListItemButton sx={{ padding: '0px' }}>
+                          <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
+                            <p style={{ margin: '0px', fontSize: '14px' }}>
+                              Jan <br /> <span>20</span>
+                            </p>
+                          </Box>
+                          <ListItemAvatar>
+                            <Avatar sx={{ borderRadius: '0' }}>
+                              <ShoppingBagIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={expense.description}
+                            secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
+                          />
+                          <ListItemText
+                            sx={{ textAlign: 'right', paddingRight: '1rem' }}
+                            primary={
+                              <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
+                                {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
+                                ₹{lent_borrowed_amt}
+                              </Typography>
+                            }
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })}
                 </List>
-             <Button primary onClick={()=>addExpenseHandler("ADD_EXPENSE")}>Add Expenses</Button>
+              </Box>
+              {/* Floating Add Button */}
+              <Fab
+                onClick={() => addExpenseHandler('ADD_EXPENSE')}
+                color="primary"
+                aria-label="Add Expenses"
+                variant="extended"
+                sx={{
+                  position: 'absolute',
+                  bottom: 16,
+                  right: 16,
+                  zIndex: 10,
+                }}
+              >
+                <AddIcon />
+                Add Expenses
+              </Fab>
             </Grid>
             <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'70vh'}}>
               <List
