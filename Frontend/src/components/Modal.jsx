@@ -390,6 +390,7 @@ export default function TransitionsModal() {
 
       console.log("data-------->", data);
       dispatch(addExpense(data));
+      dispatch(closeModal());
     };
 
     const save=(type)=>{

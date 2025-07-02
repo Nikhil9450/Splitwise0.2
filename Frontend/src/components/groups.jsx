@@ -18,6 +18,8 @@ import { fetchGroupExpenses } from '../redux/expense/expenseSlice';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
@@ -26,6 +28,7 @@ const Groups = () => {
   const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
   const [selectedGroup,setSelectedGroup]= useState("");
+  const [expense_details,setExpense_details]=useState(false)
   const dispatch = useDispatch();
   useEffect(()=>{
     // fetchgroupList();
@@ -117,72 +120,84 @@ const Groups = () => {
                   height: '70vh',
                 }}
               >
-
-              <Box sx={{ overflowY: 'scroll', height: '100%', pr: 1,paddingBottom:'3rem' }}>
-                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                  {expense.map((expense) => {
-                    let lent_borrowed_amt = 0;
-                    const userEntry = expense.splitBetweenWithAmt.find(
-                      (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
-                    );
-                    if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
-                      lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
-                    } else {
-                      lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
-                    }
-
-                    return (
-                      <ListItem key={expense._id}>
-                        <ListItemButton sx={{ padding: '0px' }}>
-                          <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
-                            <p style={{ margin: '0px', fontSize: '14px' }}>
-                              Jan <br /> <span>20</span>
-                            </p>
-                          </Box>
-                          <ListItemAvatar>
-                            <Avatar sx={{ borderRadius: '0' }}>
-                              <ShoppingBagIcon />
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={expense.description}
-                            secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
-                          />
-                          <ListItemText
-                            sx={{ textAlign: 'right', paddingRight: '1rem' }}
-                            primary={
-                              <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
-                                {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
-                              </Typography>
-                            }
-                            secondary={
-                              <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
-                                ₹{lent_borrowed_amt}
-                              </Typography>
-                            }
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                    );
-                  })}
-                </List>
+              {(expense_details)
+              ?<Box sx={{  height: '100%'}}>
+                 <Box sx={{ display:'flex' ,alignItems:'end',justifyContent:'end',padding:'1rem'}}>
+                    <IconButton aria-label="delete" size="small" onClick={()=>setExpense_details(false)}>
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                 </Box>
               </Box>
-              {/* Floating Add Button */}
-              <Fab
-                onClick={() => addExpenseHandler('ADD_EXPENSE')}
-                color="primary"
-                aria-label="Add Expenses"
-                variant="extended"
-                sx={{
-                  position: 'absolute',
-                  bottom: 16,
-                  right: 16,
-                  zIndex: 10,
-                }}
-              >
-                <AddIcon />
-                Add Expenses
-              </Fab>
+              : <Box sx={{  height: '100%'}}>
+
+                <Box sx={{ overflowY: 'scroll', height: '100%', pr: 1,paddingBottom:'3rem' }}>
+                  <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                    {expense.map((expense) => {
+                      let lent_borrowed_amt = 0;
+                      const userEntry = expense.splitBetweenWithAmt.find(
+                        (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
+                      );
+                      if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
+                        lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
+                      } else {
+                        lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
+                      }
+
+                      return (
+                        <ListItem key={expense._id}>
+                          <ListItemButton sx={{ padding: '0px' }} onClick={()=>{setExpense_details(true)}}>
+                            <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
+                              <p style={{ margin: '0px', fontSize: '14px' }}>
+                                Jan <br /> <span>20</span>
+                              </p>
+                            </Box>
+                            <ListItemAvatar>
+                              <Avatar sx={{ borderRadius: '0' }}>
+                                <ShoppingBagIcon />
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={expense.description}
+                              secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
+                            />
+                            <ListItemText
+                              sx={{ textAlign: 'right', paddingRight: '1rem' }}
+                              primary={
+                                <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
+                                  {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
+                                </Typography>
+                              }
+                              secondary={
+                                <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
+                                  ₹{lent_borrowed_amt}
+                                </Typography>
+                              }
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </Box>
+                {/* Floating Add Button */}
+                <Fab
+                  onClick={() => addExpenseHandler('ADD_EXPENSE')}
+                  color="primary"
+                  aria-label="Add Expenses"
+                  variant="extended"
+                  sx={{
+                    position: 'absolute',
+                    bottom: 16,
+                    right: 16,
+                    zIndex: 10,
+                  }}
+                >
+                  <AddIcon />
+                  Add Expenses
+                </Fab>
+              </Box>  
+              }
+
             </Grid>
             <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'70vh'}}>
               <List
