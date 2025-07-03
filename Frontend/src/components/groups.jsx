@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography } from '@mui/material';
+import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider } from '@mui/material';
 import { openModal } from '../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
@@ -28,7 +28,9 @@ const Groups = () => {
   const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
   const [selectedGroup,setSelectedGroup]= useState("");
-  const [expense_details,setExpense_details]=useState(false)
+  const [expense_details,setExpense_details]=useState({});
+  const [expense_container,setExpense_container] = useState(false);
+
   const dispatch = useDispatch();
   useEffect(()=>{
     // fetchgroupList();
@@ -120,14 +122,66 @@ const Groups = () => {
                   height: '70vh',
                 }}
               >
-              {(expense_details)
-              ?<Box sx={{  height: '100%'}}>
-                 <Box sx={{ display:'flex' ,alignItems:'end',justifyContent:'end',padding:'1rem'}}>
-                    <IconButton aria-label="delete" size="small" onClick={()=>setExpense_details(false)}>
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                 </Box>
-              </Box>
+              {(expense_container)
+              ?<Box
+                  component={Paper}
+                  // elevation={3}
+                  sx={{
+                    p: 3,
+                    width: '100%',
+                    height:'100%',
+                    mx: 'auto',
+                    // bgcolor: 'background.paper',
+                    position: 'relative',
+                  }}
+                >
+                  {/* Close Button */}
+                  <IconButton
+                    aria-label="close"
+                    size="small"
+                    onClick={() => setExpense_container(false)}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+
+                  {/* Expense Details */}
+                  <Typography variant="h5" fontWeight={500} gutterBottom>
+                    {(expense_details.description).toUpperCase()}
+                  </Typography>
+
+                  <Typography variant="h4" color="primary" gutterBottom>
+                    ₹{expense_details.amount}
+                  </Typography>
+
+                  <Divider sx={{ mb: 2 }} />
+
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Added by <strong>{expense_details.addedBy.name}</strong> on <strong>29/11/2025</strong>
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <strong>{expense_details.paidBy.name}</strong> paid ₹{expense_details.amount}
+                  </Typography>
+
+                  <Divider sx={{ my: 2 }} />
+
+                  {/* Split Details */}
+                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                    Split Details:
+                  </Typography>
+
+                  {expense_details.splitBetweenWithAmt.map((member, idx) => (
+                    <Typography
+                      key={idx}
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ pl: 1 }}
+                    >
+                      {member.user.name} owes ₹{(member.amount).toFixed(2)}
+                    </Typography>
+                  ))}
+               </Box>
               : <Box sx={{  height: '100%'}}>
 
                 <Box sx={{ overflowY: 'scroll', height: '100%', pr: 1,paddingBottom:'3rem' }}>
@@ -145,7 +199,10 @@ const Groups = () => {
 
                       return (
                         <ListItem key={expense._id}>
-                          <ListItemButton sx={{ padding: '0px' }} onClick={()=>{setExpense_details(true)}}>
+                          <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
+                            setExpense_details(expense);
+                            setExpense_container(true)
+                            }}>
                             <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
                               <p style={{ margin: '0px', fontSize: '14px' }}>
                                 Jan <br /> <span>20</span>
