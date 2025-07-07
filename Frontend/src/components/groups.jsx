@@ -32,6 +32,7 @@ const Groups = () => {
   const [selectedGroup,setSelectedGroup]= useState("");
   const [expense_details,setExpense_details]=useState({});
   const [expense_container,setExpense_container] = useState(false);
+  const [splitBalance,setSplitBalance]= useState([]);
 
   const dispatch = useDispatch();
   useEffect(()=>{
@@ -45,7 +46,45 @@ const Groups = () => {
 
   useEffect(()=>{
     console.log("expenses------------>",expense);
+    const balances = {};
+    expense.forEach((expense) => {
+      expense.splitBetweenWithAmt.forEach((split) => {
+        const from = split.user._id;
+        const to = split.owesTo._id;
+        const amount = split.amount;
+
+        if (from !== to) {
+          if (!balances[from]) balances[from] = {};
+          if (!balances[from][to]) balances[from][to] = 0;
+
+          balances[from][to] += amount;
+        }
+      });
+    });
+
+    console.log(balances);
+    // Optional: Format the results with names
+    setSplitBalance([]);
+
+    for (const fromId in balances) {
+      for (const toId in balances[fromId]) {
+        const fromUser =
+          groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+        const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+        const amount = balances[fromId][toId];
+        setSplitBalance((prev)=>([...prev,{
+          from: fromUser,
+          to: toUser,
+          amount: parseFloat(amount.toFixed(2))
+        }]))
+      }
+    }
+
   },[expense])
+
+  useEffect(()=>{
+    console.log("splitBalance------------->",splitBalance)
+  },[splitBalance])
 
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
@@ -178,7 +217,10 @@ const Groups = () => {
               </Box>
               : (selectedGroup)
                 ?<Box sx={{  height: '100%',overflowY: 'scroll'}}>
-                  <Box sx={{ height: '100%', pr: 1 }}>
+                  <Box sx={{height:'20%'}}>
+
+                  </Box>
+                  <Box sx={{ height: '80%', pr: 1 }}>
                     <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
                       {expense.map((expense) => {
                         let lent_borrowed_amt = 0;
