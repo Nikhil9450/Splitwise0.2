@@ -86,7 +86,7 @@ const Home = () => {
         <Divider sx={{ borderColor: '#82bdf7' }} />
       </Box>
     </Grid>
-    <Grid size="grow" sx={{height:'100%',margin:'1rem'}}>
+    <Grid size="grow" sx={{height:'80%',margin:'1rem'}}>
           {/* {(buttonType==='friends')?<FriendListContainer />:''} */}
           {renderComponent(buttonType)}
     </Grid>

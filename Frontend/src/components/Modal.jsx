@@ -38,6 +38,12 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
 import { addExpense } from '../redux/expense/expenseSlice';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { logout } from '../redux/auth/authSlice';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -73,6 +79,8 @@ export default function TransitionsModal() {
     const [amount, setAmount] = useState("");
     const [splitByAmount,setSplitByAmount]=useState({});
     const [splitBetweenUsers,setSplitBetweenUsers]=useState({});
+    const [selectedDate, setSelectedDate] = useState(dayjs());
+
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const dispatch = useDispatch()
@@ -194,6 +202,7 @@ export default function TransitionsModal() {
           })
         console.log("api respose------>",response)
         dispatch(closeModal());
+        dispatch(logout());
         toast.success("Updated successfully login again to reflect changes");
       }catch(error){
         console.log("error--------->",error);
@@ -386,11 +395,15 @@ export default function TransitionsModal() {
         addedBy:user.id,
         group:modalProps.groupId,
         splitBetweenWithAmt: split,
+        date:selectedDate,
       };
-
-      console.log("data-------->", data);
-      dispatch(addExpense(data));
-      dispatch(closeModal());
+      if(data.description===""||data.amount===0 || data.amount===""){
+        toast.error("Please fill the details.")
+      }else{
+        console.log("data-------->", data);
+        dispatch(addExpense(data));
+        dispatch(closeModal());
+      }
     };
 
     const save=(type)=>{
@@ -577,7 +590,7 @@ export default function TransitionsModal() {
                           <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={amount}/>
                         </Box>
                     </Box>
-                    <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem'}}>
+                    <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem' ,justifyContent:'space-between'}}>
                         <FormControl  sx={{ mr: 1, minWidth: 120 }}  size="small">
                           <InputLabel id="demo-simple-select-standard-label" sx={{fontSize:'14px'}}>Paid By</InputLabel>
                           <Select
@@ -605,7 +618,20 @@ export default function TransitionsModal() {
                           </ButtonGroup>
                     </Box>
                   </Box>
-                  <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}} >
+                  <Box sx={{display:'flex',justifyContent:'space-between',marginTop:'2rem'}} >
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MobileDatePicker
+                          slotProps={{
+                              textField: {
+                                size: 'small',             // small | medium (default)
+                                sx: { width: 200 },        // change width
+                              },
+                            }}
+                          value={selectedDate}
+                          onChange={(newValue) => setSelectedDate(newValue)}
+                          format="YYYY-MM-DD"
+                        />
+                      </LocalizationProvider>
                     <Button variant='contained' startIcon={<AddIcon />} onClick={()=>add_Expense()}>Add</Button>
                   </Box>
               </>

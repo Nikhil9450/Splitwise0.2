@@ -17,7 +17,7 @@ const addExpense =async(req,res)=>{
     } catch (err) {
         return res.status(401).json({ error: "Invalid or expired token." });
     }
-    let {description,amount,paidBy,splitBetweenWithAmt,group,addedBy}=req.body.data;
+    let {description,amount,paidBy,splitBetweenWithAmt,group,addedBy,date}=req.body.data;
     console.log( "req.body.data-------->",req.body.data)
     if (!Array.isArray(splitBetweenWithAmt)) {
         splitBetweenWithAmt = Object.values(splitBetweenWithAmt).map((item) => ({
@@ -34,6 +34,7 @@ const addExpense =async(req,res)=>{
             addedBy,
             group,
             splitBetweenWithAmt,
+            date,
         })
         return res.status(200).json("Expense added successfully.")
     } catch(error){
