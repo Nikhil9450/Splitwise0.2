@@ -220,11 +220,11 @@ const Groups = () => {
                             {groupMemberList.map((member) => (
                                 
                               <ListItem key={member._id} sx={{padding:'0px 10px'}}>
-                                                            <ListItemAvatar sx={{minWidth:'40px'}}>
-                                                              <Avatar
-                                                               sx={{ width: 30, height: 30 }}
-                                                              />
-                                                            </ListItemAvatar>
+                              <ListItemAvatar sx={{minWidth:'40px'}}>
+                                <Avatar
+                                  sx={{ width: 30, height: 30 }}
+                                />
+                              </ListItemAvatar>
                                 <ListItemText 
                                 primary={member.name} 
                                 secondary={member.email}
