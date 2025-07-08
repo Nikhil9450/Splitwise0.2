@@ -63,15 +63,29 @@ const Groups = () => {
     });
 
     console.log(balances);
+    console.log("filter---------->",balances[user.id]);
+    const filteredBalance = balances[user.id]
+    const filteredWithName = []
+    for (const Id in filteredBalance) {
+      const toUser = groupMemberList.find((u) => u._id === Id)?.name || Id;
+      const amount = filteredBalance[Id];  
+      
+      filteredWithName.push({
+        "name":toUser,
+        "amount":amount
+      })
+    }
+    console.log("filteredWithName----------->",filteredWithName)
     // Optional: Format the results with names
     setSplitBalance([]);
-
+   
     for (const fromId in balances) {
       for (const toId in balances[fromId]) {
         const fromUser =
           groupMemberList.find((u) => u._id === fromId)?.name || fromId;
         const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
         const amount = balances[fromId][toId];
+
         setSplitBalance((prev)=>([...prev,{
           from: fromUser,
           to: toUser,
@@ -84,6 +98,7 @@ const Groups = () => {
 
   useEffect(()=>{
     console.log("splitBalance------------->",splitBalance)
+
   },[splitBalance])
 
   useEffect(()=>{
