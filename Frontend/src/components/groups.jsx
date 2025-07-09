@@ -44,62 +44,98 @@ const Groups = () => {
     dispatch(fetchGroupExpenses(groupId));
   },[groupId])
 
-  useEffect(()=>{
-    console.log("expenses------------>",expense);
-    const balances = {};
-    expense.forEach((expense) => {
-      expense.splitBetweenWithAmt.forEach((split) => {
-        const from = split.user._id;
-        const to = split.owesTo._id;
-        const amount = split.amount;
+useEffect(() => {
+  console.log("expenses------------>", expense);
+  const balances = {};
 
-        if (from !== to) {
-          if (!balances[from]) balances[from] = {};
-          if (!balances[from][to]) balances[from][to] = 0;
+  // Step 1: Build raw balances
+  expense.forEach((expense) => {
+    expense.splitBetweenWithAmt.forEach((split) => {
+      const from = split.user._id;
+      const to = split.owesTo._id;
+      const amount = split.amount;
 
-          balances[from][to] += amount;
-        }
-      });
-    });
-
-    console.log(balances);
-    console.log("filter---------->",balances[user.id]);
-    const filteredBalance = balances[user.id]
-    const filteredWithName = []
-    for (const Id in filteredBalance) {
-      const toUser = groupMemberList.find((u) => u._id === Id)?.name || Id;
-      const amount = filteredBalance[Id];  
-      
-      filteredWithName.push({
-        "name":toUser,
-        "amount":amount
-      })
-    }
-    console.log("filteredWithName----------->",filteredWithName)
-    // Optional: Format the results with names
-    setSplitBalance([]);
-   
-    for (const fromId in balances) {
-      for (const toId in balances[fromId]) {
-        const fromUser =
-          groupMemberList.find((u) => u._id === fromId)?.name || fromId;
-        const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
-        const amount = balances[fromId][toId];
-
-        setSplitBalance((prev)=>([...prev,{
-          from: fromUser,
-          to: toUser,
-          amount: parseFloat(amount.toFixed(2))
-        }]))
+      if (from !== to) {
+        if (!balances[from]) balances[from] = {};
+        if (!balances[from][to]) balances[from][to] = 0;
+        balances[from][to] += amount;
       }
+    });
+  });
+
+  console.log("balances ----------->", balances);
+
+  // Step 2: Filter only balances for current user
+  const filteredBalance = balances[user.id];
+  const filteredWithName = [];
+
+  for (const toId in filteredBalance) {
+    const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+    const amount = filteredBalance[toId];
+
+    filteredWithName.push({
+      name: toUser,
+      amount: amount
+    });
+  }
+
+  console.log("filteredWithName----------->", filteredWithName);
+
+  // Step 3: Convert all balances to flat array with names
+  let split_balance = [];
+  for (const fromId in balances) {
+    for (const toId in balances[fromId]) {
+      const fromUser = groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+      const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+      const amount = balances[fromId][toId];
+
+      split_balance.push({
+        from: fromUser,
+        to: toUser,
+        amount: parseFloat(amount.toFixed(2))
+      });
     }
+  }
 
-  },[expense])
+  console.log("split balance-------->",split_balance);
 
-  useEffect(()=>{
-    console.log("splitBalance------------->",splitBalance)
+  // Step 4: Simplify mutual transactions
+  const netMap = {};
+  split_balance.forEach(({ from, to, amount }) => {
+    const key = `${from}->${to}`;
+    const reverseKey = `${to}->${from}`;
 
-  },[splitBalance])
+    if (netMap[reverseKey]) {
+      if (netMap[reverseKey] > amount) {
+        netMap[reverseKey] -= amount;
+      } else if (netMap[reverseKey] < amount) {
+        netMap[key] = amount - netMap[reverseKey];
+        delete netMap[reverseKey];
+      } else {
+        delete netMap[reverseKey]; // balances out
+      }
+    } else {
+      netMap[key] = (netMap[key] || 0) + amount;
+    }
+  });
+
+  const reduced_amt = Object.entries(netMap).map(([key, amount]) => {
+    const [from, to] = key.split("->");
+    return { from, to, amount };
+  });
+
+  console.log("reduced amt------------->", reduced_amt);
+
+  // Step 5: Save reduced result to state
+  setSplitBalance(reduced_amt);
+
+}, [expense]);
+
+
+  // useEffect(()=>{
+  //   console.log("splitBalance------------->",splitBalance)
+    
+  // },[splitBalance])
 
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
