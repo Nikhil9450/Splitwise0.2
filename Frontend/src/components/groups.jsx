@@ -168,7 +168,7 @@ useEffect(() => {
       }))
     }
       const editExpenseHandler =()=>{
-
+      console.log("expense_details--------->",expense_details);
       dispatch(openModal({
                     modalType: 'ADD_EXPENSE',
                     modalProps: {

@@ -20,6 +20,10 @@ const expenseSchema = new mongoose.Schema(
             ref:"User",
             required:true,
         },
+        splitType:{
+            type:String,
+            required:true,
+        },
         splitBetweenWithAmt: [{
             user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
             amount: { type: Number, required: true },

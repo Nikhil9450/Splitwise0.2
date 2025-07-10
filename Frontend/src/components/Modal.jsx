@@ -146,6 +146,7 @@ export default function TransitionsModal() {
               newPassword: "",
             });
           }
+          
     }, [modalType, modalProps]);
 
     const selectUser=(event)=>{
@@ -394,6 +395,7 @@ export default function TransitionsModal() {
         paidBy,
         addedBy:user.id,
         group:modalProps.groupId,
+        splitType,
         splitBetweenWithAmt: split,
         date:selectedDate,
       };
