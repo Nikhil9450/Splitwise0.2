@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider } from '@mui/material';
+import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider,Stack  } from '@mui/material';
 import { openModal } from '../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
@@ -20,6 +20,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 
 const Groups = () => {
@@ -33,6 +34,7 @@ const Groups = () => {
   const [expense_details,setExpense_details]=useState({});
   const [expense_container,setExpense_container] = useState(false);
   const [splitBalance,setSplitBalance]= useState([]);
+  const [groupTotalAmt,setGroupTotalAmt]=useState(0);
 
   const dispatch = useDispatch();
   useEffect(()=>{
@@ -49,12 +51,13 @@ useEffect(() => {
   const balances = {};
 
   // Step 1: Build raw balances
+  let totalBalance=0;
   expense.forEach((expense) => {
     expense.splitBetweenWithAmt.forEach((split) => {
       const from = split.user._id;
       const to = split.owesTo._id;
       const amount = split.amount;
-
+      totalBalance = totalBalance + amount;
       if (from !== to) {
         if (!balances[from]) balances[from] = {};
         if (!balances[from][to]) balances[from][to] = 0;
@@ -62,7 +65,7 @@ useEffect(() => {
       }
     });
   });
-
+  setGroupTotalAmt(totalBalance);
   console.log("balances ----------->", balances);
 
   // Step 2: Filter only balances for current user
@@ -164,7 +167,18 @@ useEffect(() => {
                     }
       }))
     }
+      const editExpenseHandler =()=>{
 
+      dispatch(openModal({
+                    modalType: 'ADD_EXPENSE',
+                    modalProps: {
+                      title: 'Edit Expense',
+                      groupId:groupId,
+                      groupMemberList:groupMemberList,
+                      expenseDetail: expense_details,
+                    }
+      }))
+    }
   return (
       <Box sx={{height:'100%'}}>
          <Grid container spacing={2} sx={{height:'100%',width:'100%',flexGrow:1}}>
@@ -247,7 +261,6 @@ useEffect(() => {
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     <strong>{expense_details.paidBy.name}</strong> paid ₹{expense_details.amount}
                   </Typography>
-
                   <Divider sx={{ my: 2 }} />
 
                   {/* Split Details */}
@@ -265,13 +278,60 @@ useEffect(() => {
                       {member.user.name} owes ₹{(member.amount).toFixed(2)}
                     </Typography>
                   ))}
+                  <IconButton
+                    aria-label="close"
+                    size="small"
+                    onClick={() => editExpenseHandler()}
+                    sx={{ position: 'absolute', bottom: 40, right: 40 }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
               </Box>
               : (selectedGroup)
-                ?<Box sx={{  height: '100%',overflowY: 'scroll'}}>
-                  <Box sx={{height:'20%'}}>
+                ?<Box sx={{  height: '100%'}}>
+                    <Box 
+                      sx={{
+                        bgcolor: '#e3f2fd',
+                        borderRadius: '1rem',
+                        p: 3,
+                        m: 2,
+                        // boxShadow: 3,
+                        minHeight: '20%',
+                      }}
+                    >
+                      <Typography 
+                        variant="h6" 
+                        color="primary" 
+                        gutterBottom 
+                        // sx={{ fontWeight: 'bold' }}
+                      >
+                      Total Group Balance: ₹{groupTotalAmt.toFixed(2)}
+                      </Typography>
 
-                  </Box>
-                  <Box sx={{ height: '80%', pr: 1 }}>
+                      <Divider sx={{ mb: 2 }} />
+
+                      <Stack spacing={1}>
+                        {splitBalance.length === 0 ? (
+                          <Typography variant="body2" color="text.secondary">
+                            No pending balances. All settled! ✅
+                          </Typography>
+                        ) : (
+                          splitBalance.map((balance, index) => (
+                              <Typography 
+                                key={index}
+                                variant="body2" 
+                                sx={{ fontSize: '12px', color: '#333', pl:'2rem' }}
+                              >
+                                <strong>{balance.from}</strong> owes <strong>{balance.to}</strong> 
+                                <span style={{ color: '#d32f2f', marginLeft: 5 }}>
+                                  ₹{balance.amount.toFixed(2)}
+                                </span>
+                              </Typography>
+                          ))
+                        )}
+                      </Stack>
+                    </Box>
+                  <Box sx={{ height: '70%', pr: 1,overflowY: 'scroll' }}>
                     <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
                       {expense.map((expense) => {
                         let lent_borrowed_amt = 0;
@@ -288,7 +348,7 @@ useEffect(() => {
                           <ListItem key={expense._id}>
                             <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
                               setExpense_details(expense);
-                              setExpense_container(true)
+                              setExpense_container(true);
                               }}>
                               <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
                                 <p style={{ margin: '0px', fontSize: '14px' }}>
