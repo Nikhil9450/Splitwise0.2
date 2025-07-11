@@ -66,7 +66,7 @@ export default function TransitionsModal() {
     const [groupName,setGroupName]=useState("")
     const [selectedGroupMember,setSelectedGroupMember]=useState([])
     const [paidBy, setPaidBy] = useState("");
-    const [splitType,setSplitType]=useState("Equally");
+    const [splitType, setSplitType] = useState("Equally");
     const [splitContainer,setSplitContainer]=useState(false)
     const [remainingAmt,setRemainingAmt]=useState(0)
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
@@ -127,10 +127,23 @@ export default function TransitionsModal() {
     useEffect(()=>{
       setSelectedUser (user?.id ? [user.id] : [])
     },[user])
-    
+    useEffect(()=>{
+      console.log('splitType------------------------>',splitType) ;
+    })
     useEffect(() => {
-      if (modalProps?.groupMemberList) {
-        setSelectedGroupMember(modalProps.groupMemberList.map((member) => member._id));
+      if (modalProps.title === 'Edit Expense' && modalProps['expenseDetail']['splitType']==="Equally"){
+        const selectedMember = modalProps.expenseDetail.splitBetweenWithAmt
+          ?.filter(user => user.amount !== 0)
+          .map(user => user.user._id);
+
+          console.log("selectedMember------------------------->",selectedMember)
+          setSelectedGroupMember(selectedMember)
+      }else if(modalProps.title === 'Edit Expense' && modalProps['expenseDetail']['splitType']==="Unequally"){
+           
+      }else{
+        if (modalProps?.groupMemberList) {
+          setSelectedGroupMember(modalProps.groupMemberList.map((member) => member._id));
+        }
       }
       if(user){
         setPaidBy(user.id)
@@ -146,7 +159,12 @@ export default function TransitionsModal() {
               newPassword: "",
             });
           }
-          
+            if (
+          modalProps.title === "Edit Expense" &&
+          modalProps.expenseDetail?.splitType
+        ) {
+          setSplitType(modalProps.expenseDetail.splitType);
+        }
     }, [modalType, modalProps]);
 
     const selectUser=(event)=>{
@@ -284,6 +302,12 @@ export default function TransitionsModal() {
               {modalProps.groupMemberList.map((user) => {
                 const userId=user._id;
                 const labelId = `checkbox-list-secondary-label-${user._id}`;
+                let filteredUser;
+                if(modalProps.title==="Edit Expense"){
+                  filteredUser = modalProps['expenseDetail']['splitBetweenWithAmt'].filter((user)=>user.user._id === userId);
+                  console.log(filteredUser[0].user.name,"filteredUser amount--------------->",filteredUser[0].amount);   
+                }
+
                 return (
                   <ListItem
                     key={user._id}
@@ -306,7 +330,7 @@ export default function TransitionsModal() {
                                   }));
                               }
                             } 
-                            value={splitByAmount[userId].amount} />
+                            value={ (modalProps.title==="Edit Expense")?filteredUser[0].amount : splitByAmount[userId].amount} />
                           }
                         disablePadding
                       >
@@ -572,7 +596,7 @@ export default function TransitionsModal() {
                             >
                             <DescriptionIcon sx={{ color: '#1976d2' }} />
                           </Box>
-                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} value={description} />
+                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} value={(modalProps.title ==="Edit Expense")?modalProps["expenseDetail"].description:description} />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                           <Box 
@@ -589,7 +613,7 @@ export default function TransitionsModal() {
                             >
                             <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
                           </Box>
-                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={amount}/>
+                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={(modalProps.title ==="Edit Expense")?modalProps["expenseDetail"].amount:amount}/>
                         </Box>
                     </Box>
                     <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem' ,justifyContent:'space-between'}}>
@@ -599,7 +623,7 @@ export default function TransitionsModal() {
                             labelId="demo-simple-select-standard-label"
                             id="demo-simple-select-standard"
                             sx={{fontSize:'smaller'}}
-                            value={paidBy}
+                            value={(modalProps.title ==="Edit Expense")?modalProps["expenseDetail"].paidBy._id:paidBy}
                             onChange={(event)=>setPaidBy(event.target.value)}
                             label="Paid By"
                           >
@@ -629,7 +653,7 @@ export default function TransitionsModal() {
                                 sx: { width: 200 },        // change width
                               },
                             }}
-                          value={selectedDate}
+                          value={(modalProps.title ==="Edit Expense") ? dayjs(modalProps.expenseDetail.date):selectedDate}
                           onChange={(newValue) => setSelectedDate(newValue)}
                           format="YYYY-MM-DD"
                         />
