@@ -14,6 +14,8 @@ const addExpense =async(req,res)=>{
     let decodedUser;
     try {
         decodedUser = jwt.verify(token, secretKey);
+        console.log("user id -------------->",decodedUser);
+
     } catch (err) {
         return res.status(401).json({ error: "Invalid or expired token." });
     }
@@ -32,7 +34,7 @@ const addExpense =async(req,res)=>{
             amount,
             paidBy,
             addedBy,
-            updatedBy:user.id,
+            updatedBy:decodedUser.id,
             group,
             splitType,
             splitBetweenWithAmt,

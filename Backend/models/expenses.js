@@ -22,7 +22,9 @@ const expenseSchema = new mongoose.Schema(
         },
         updatedBy: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required:true,
+
         },
         splitType:{
             type:String,

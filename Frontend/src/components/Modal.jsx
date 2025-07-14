@@ -95,6 +95,7 @@ export default function TransitionsModal() {
     };
 
     const resetUnequallyAmt =()=>{
+      if(modalProps?.title !== "Edit Expense"){
         if (modalProps?.groupMemberList?.length) {
         const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
           // acc[user._id] = "";
@@ -107,7 +108,29 @@ export default function TransitionsModal() {
         }, []);
           setSplitByAmount(initialSplit);
         }
+      }
     }
+
+    useEffect(() => {
+      if (modalProps.title === "Edit Expense" && modalProps.expenseDetail?.splitBetweenWithAmt) {
+        const initial = {};
+        modalProps.expenseDetail.splitBetweenWithAmt.forEach((item) => {
+          initial[item.user._id] = {
+            userId: item.user._id,
+            owesTo: modalProps.expenseDetail.paidBy._id,
+            amount:Number(item.amount.toFixed(2))
+          };
+        });
+        console.log("initial-------------->",initial)
+        setSplitByAmount(initial);
+        setAmount(modalProps.expenseDetail.amount);
+        setSelectedDate(dayjs(modalProps.expenseDetail.date));
+      }else{
+        setDescription("");
+        setAmount("");
+      }
+    }, [modalProps]);
+
 
     useEffect(() => {
       resetUnequallyAmt();
@@ -115,14 +138,16 @@ export default function TransitionsModal() {
 
     useEffect(()=>{
       console.log("splitByAmount----------->",splitByAmount)
-        const ItemPrice = Number(amount);
-        const sumOfSplitAmount = Object.values(splitByAmount).reduce((acc, user) =>
-          {
-            const sum= acc + Number(user.amount);
-            return sum;
-          } , 0);
-          setRemainingAmt(ItemPrice-sumOfSplitAmount);
-    },[splitByAmount])
+      const ItemPrice = Number(amount);
+      console.log("ItemPrice----------->",ItemPrice)
+
+      const sumOfSplitAmount = Object.values(splitByAmount).reduce((acc, user) =>
+            {
+              const sum= acc + Number(user.amount);
+              return sum;
+            } , 0);
+            setRemainingAmt(Math.floor(ItemPrice-sumOfSplitAmount));
+    },[splitByAmount,amount])
 
     useEffect(()=>{
       setSelectedUser (user?.id ? [user.id] : [])
@@ -305,7 +330,8 @@ export default function TransitionsModal() {
                 let filteredUser;
                 if(modalProps.title==="Edit Expense"){
                   filteredUser = modalProps['expenseDetail']['splitBetweenWithAmt'].filter((user)=>user.user._id === userId);
-                  console.log(filteredUser[0].user.name,"filteredUser amount--------------->",filteredUser[0].amount);   
+                  console.log(filteredUser[0].user.name,"filteredUser amount--------------->",filteredUser[0].amount);  
+                  console.log("splitByAmount[userId].amount-------->",splitByAmount[userId].amount) ;
                 }
 
                 return (
@@ -330,7 +356,9 @@ export default function TransitionsModal() {
                                   }));
                               }
                             } 
-                            value={ (modalProps.title==="Edit Expense")?filteredUser[0].amount : splitByAmount[userId].amount} />
+                            // value={ (modalProps.title==="Edit Expense")?filteredUser[0].amount : splitByAmount[userId].amount} 
+                            value={splitByAmount[userId]?.amount || ""}  
+                            />
                           }
                         disablePadding
                       >
@@ -368,6 +396,8 @@ export default function TransitionsModal() {
                     setSplitContainer(false);
                     setSplitType("Equally");
                     resetUnequallyAmt();
+                    // setDescription("");
+                    // setAmount("");
                   }}
                   sx={{mr:1}}
               > 
@@ -648,12 +678,14 @@ export default function TransitionsModal() {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
                           slotProps={{
-                              textField: {
-                                size: 'small',             // small | medium (default)
-                                sx: { width: 200 },        // change width
-                              },
-                            }}
-                          value={(modalProps.title ==="Edit Expense") ? dayjs(modalProps.expenseDetail.date):selectedDate}
+                            textField: {
+                              size: 'small',
+                              sx: { width: 200 },
+                            },
+                          }}
+                          value={
+                            selectedDate
+                          }
                           onChange={(newValue) => setSelectedDate(newValue)}
                           format="YYYY-MM-DD"
                         />
