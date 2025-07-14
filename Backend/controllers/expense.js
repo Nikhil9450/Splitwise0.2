@@ -32,6 +32,7 @@ const addExpense =async(req,res)=>{
             amount,
             paidBy,
             addedBy,
+            updatedBy:user.id,
             group,
             splitType,
             splitBetweenWithAmt,
@@ -113,5 +114,9 @@ const groupExpenses=async(req,res)=>{
         return res.status(500).json({"error":error})
         
     }
+}
+
+const updateExpenses = async(req,res)=>{
+    
 }
 module.exports={addExpense,groupExpenses}
