@@ -17,6 +17,20 @@ export const addExpense = createAsyncThunk("expense/addExpense",async(data,thunk
     }
 })
 
+export const updateExpense = createAsyncThunk("expense/updateExpense",async(data,thunkAPI)=>{
+    console.log('data inside the addExpense thunk---------->',data);
+    console.log('groupid inside the addExpense thunk---------->',data.group);
+    try {
+        const response=  await axios.post("http://localhost:5000/expense/updateExpense",{data},{withCredentials:true})
+        console.log("response---------->",response.data) 
+        await thunkAPI.dispatch(fetchGroupExpenses(data.group));
+        return response.data;       
+    } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.error || "failed to add expense"
+        );
+    }
+})
 export const fetchGroupExpenses = createAsyncThunk('expenses/fetchGroupExpenses',async(GroupId,thunkAPI)=>{
     console.log('GroupId inside the fetchGroupExpenses thunk---------->',GroupId);
     try {
@@ -44,6 +58,9 @@ const expenseSlice = createSlice({
 
         fetchExpenseStatus: 'idle',
         fetchExpenseError: null,
+
+        updateExpenseStatus: 'idle',
+        updateExpenseError: null,
     },
     extraReducers: (builder)=>{
         builder 
@@ -57,7 +74,18 @@ const expenseSlice = createSlice({
             .addCase(addExpense.rejected,(state,action)=>{
                 state.error= action.payload || "Fetching list failed";
                 state.status='failed';
-                state.expense=[];
+            })
+
+            .addCase(updateExpense.pending,(state)=>{
+                state.updateExpenseStatus="loading"
+            })
+            .addCase(updateExpense.fulfilled,(state,action)=>{
+                state.addResponse=action.payload;
+                state.updateExpenseStatus='succeeded';
+            })
+            .addCase(updateExpense.rejected,(state,action)=>{
+                state.updateExpenseError= action.payload || "Updating failed";
+                state.updateExpenseStatus='failed';
             })
 
             .addCase(fetchGroupExpenses.pending,(state)=>{

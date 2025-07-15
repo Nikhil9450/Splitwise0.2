@@ -176,6 +176,7 @@ useEffect(() => {
                       groupId:groupId,
                       groupMemberList:groupMemberList,
                       expenseDetail: expense_details,
+                      closeExpenseContainer:()=>setExpense_container(false)
                     }
       }))
     }

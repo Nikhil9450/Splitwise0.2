@@ -37,7 +37,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
-import { addExpense } from '../redux/expense/expenseSlice';
+import { addExpense,updateExpense } from '../redux/expense/expenseSlice';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -125,9 +125,11 @@ export default function TransitionsModal() {
         setSplitByAmount(initial);
         setAmount(modalProps.expenseDetail.amount);
         setSelectedDate(dayjs(modalProps.expenseDetail.date));
+        setDescription(modalProps.expenseDetail.description);
       }else{
         setDescription("");
         setAmount("");
+        setSelectedDate(dayjs())
       }
     }, [modalProps]);
 
@@ -439,7 +441,7 @@ export default function TransitionsModal() {
       } else if (splitType === "Unequally") {
         split = splitByAmount;
       }
-
+      
       // optionally update the state
       setSplitBetweenUsers(split);
 
@@ -453,13 +455,26 @@ export default function TransitionsModal() {
         splitBetweenWithAmt: split,
         date:selectedDate,
       };
+      console.log("data before comparision------->",data);
       if(data.description===""||data.amount===0 || data.amount===""){
         toast.error("Please fill the details.")
       }else{
-        console.log("data-------->", data);
-        dispatch(addExpense(data));
-        dispatch(closeModal());
+        console.log("modalProps.expenseDetail-------->", modalProps.expenseDetail);
+          if(modalProps.title==="Edit Expense"){
+            const previousDetails = modalProps.expenseDetail;
+            console.log("previousDetails------------>",previousDetails)
+            data['expenseId'] = modalProps.expenseDetail._id;
+            console.log("currentDetails------------>",data)
+            dispatch(updateExpense(data));
+            dispatch(closeModal());
+            modalProps.closeExpenseContainer();
+          }else{
+            dispatch(addExpense(data));
+            dispatch(closeModal());
+          }
+
       }
+
     };
 
     const save=(type)=>{
@@ -626,7 +641,7 @@ export default function TransitionsModal() {
                             >
                             <DescriptionIcon sx={{ color: '#1976d2' }} />
                           </Box>
-                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} value={(modalProps.title ==="Edit Expense")?modalProps["expenseDetail"].description:description} />
+                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} value={description} />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                           <Box 
@@ -643,7 +658,7 @@ export default function TransitionsModal() {
                             >
                             <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
                           </Box>
-                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={(modalProps.title ==="Edit Expense")?modalProps["expenseDetail"].amount:amount}/>
+                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={amount}/>
                         </Box>
                     </Box>
                     <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem' ,justifyContent:'space-between'}}>
@@ -688,9 +703,11 @@ export default function TransitionsModal() {
                           }
                           onChange={(newValue) => setSelectedDate(newValue)}
                           format="YYYY-MM-DD"
+                          maxDate={dayjs()} 
+                          minDate={dayjs('2020-01-01')}  
                         />
                       </LocalizationProvider>
-                    <Button variant='contained' startIcon={<AddIcon />} onClick={()=>add_Expense()}>Add</Button>
+                    <Button variant='contained' startIcon={<AddIcon />} onClick={()=>add_Expense()}>{(modalProps.title==="Edit Expense")?"Update":"Add"}</Button>
                   </Box>
               </>
               }

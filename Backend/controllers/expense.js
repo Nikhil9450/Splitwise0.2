@@ -47,6 +47,56 @@ const addExpense =async(req,res)=>{
     }
 
 }
+const updateExpenses = async(req,res)=>{
+    const user = req.user;
+    if(!user){
+        return res.status(400).json({error:"User is not authenticated"});  
+    }
+    const token = req.cookies?.token;
+    let decodedUser;
+    try {
+        decodedUser = jwt.verify(token, secretKey);
+        console.log("user id -------------->",decodedUser);
+
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token." });
+    }
+    let {description,amount,paidBy,splitBetweenWithAmt,group,addedBy,date,splitType,expenseId}=req.body.data;
+    console.log( "req.body.data-------->",req.body.data)
+    if (!Array.isArray(splitBetweenWithAmt)) {
+        splitBetweenWithAmt = Object.values(splitBetweenWithAmt).map((item) => ({
+        user: item.userId,
+        owesTo: item.owesTo,
+        amount: item.amount,
+        }));
+    }
+    const updatedData = {
+            description,
+            amount,
+            paidBy,
+            updatedBy:decodedUser.id,
+            group,
+            splitType,
+            splitBetweenWithAmt,
+            date,
+        };
+
+    try{
+        await Expense.findByIdAndUpdate(
+            expenseId,
+            updatedData,
+            // { new: true, runValidators: true }
+            );
+        return res.status(200).json("Expense updated successfully.")    
+    }catch(err){
+        console.log("error in EditExpense------->",err)
+        res.status(400).json({ error: 'Expense addition failed.' })
+    }
+}
+
+const deleteExpense = async(req,res)=>{
+    
+}
 const groupExpenses=async(req,res)=>{
     const user = req.user;
     const groupId = req.query.groupId;
@@ -118,7 +168,5 @@ const groupExpenses=async(req,res)=>{
     }
 }
 
-const updateExpenses = async(req,res)=>{
-    
-}
-module.exports={addExpense,groupExpenses}
+
+module.exports={addExpense,groupExpenses,updateExpenses}
