@@ -31,6 +31,22 @@ export const updateExpense = createAsyncThunk("expense/updateExpense",async(data
         );
     }
 })
+
+export const deleteExpense = createAsyncThunk("expense/deleteExpense",async(data,thunkAPI)=>{
+    console.log('data inside the addExpense thunk---------->',data);
+    console.log('groupid inside the addExpense thunk---------->',data.group);
+    try {
+        const response=  await axios.post("http://localhost:5000/expense/deleteExpense",{data},{withCredentials:true})
+        console.log("response---------->",response.data) 
+        await thunkAPI.dispatch(fetchGroupExpenses(data.group));
+        return response.data;       
+    } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.error || "failed to add expense"
+        );
+    }
+})
+
 export const fetchGroupExpenses = createAsyncThunk('expenses/fetchGroupExpenses',async(GroupId,thunkAPI)=>{
     console.log('GroupId inside the fetchGroupExpenses thunk---------->',GroupId);
     try {
@@ -61,6 +77,9 @@ const expenseSlice = createSlice({
 
         updateExpenseStatus: 'idle',
         updateExpenseError: null,
+
+        deleteExpenseStatus: 'idle',
+        deleteExpenseError: null,
     },
     extraReducers: (builder)=>{
         builder 
@@ -74,6 +93,18 @@ const expenseSlice = createSlice({
             .addCase(addExpense.rejected,(state,action)=>{
                 state.error= action.payload || "Fetching list failed";
                 state.status='failed';
+            })
+
+            .addCase(deleteExpense.pending,(state)=>{
+                state.deleteExpenseStatus="loading"
+            })
+            .addCase(deleteExpense.fulfilled,(state,action)=>{
+                state.addResponse=action.payload;
+                state.deleteExpenseStatus='succeeded';
+            })
+            .addCase(deleteExpense.rejected,(state,action)=>{
+                state.deleteExpenseError= action.payload || "Deletion failed";
+                state.deleteExpenseStatus='failed';
             })
 
             .addCase(updateExpense.pending,(state)=>{

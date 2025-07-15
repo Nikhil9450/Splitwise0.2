@@ -94,9 +94,32 @@ const updateExpenses = async(req,res)=>{
     }
 }
 
-const deleteExpense = async(req,res)=>{
-    
-}
+const deleteExpense = async (req, res) => {
+    const user = req.user;
+    if (!user) {
+        return res.status(401).json({ error: "User is not authenticated." });
+    }
+
+    const { expenseId } = req.body.data;
+
+    if (!expenseId) {
+        return res.status(400).json({ error: "Expense ID is required." });
+    }
+
+    try {
+        const deletedExpense = await Expense.findByIdAndDelete(expenseId);
+
+        if (!deletedExpense) {
+            return res.status(404).json({ error: "Expense not found." });
+        }
+
+        return res.status(200).json({ message: "Expense deleted successfully." });
+    } catch (err) {
+        console.error("Error in deleteExpense ----->", err);
+        return res.status(500).json({ error: "Internal server error during expense deletion." });
+    }
+};
+
 const groupExpenses=async(req,res)=>{
     const user = req.user;
     const groupId = req.query.groupId;
@@ -169,4 +192,4 @@ const groupExpenses=async(req,res)=>{
 }
 
 
-module.exports={addExpense,groupExpenses,updateExpenses}
+module.exports={addExpense,groupExpenses,updateExpenses,deleteExpense}
