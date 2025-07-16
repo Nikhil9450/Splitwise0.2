@@ -22,7 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
@@ -168,17 +168,30 @@ useEffect(() => {
       }))
     }
       const editExpenseHandler =()=>{
-      console.log("expense_details--------->",expense_details);
-      dispatch(openModal({
-                    modalType: 'ADD_EXPENSE',
+        console.log("expense_details--------->",expense_details);
+        dispatch(openModal({
+                      modalType: 'ADD_EXPENSE',
+                      modalProps: {
+                        title: 'Edit Expense',
+                        groupId:groupId,
+                        groupMemberList:groupMemberList,
+                        expenseDetail: expense_details,
+                      }
+        }))
+        setExpense_container(false);
+    }
+
+    const deleteExpenseHandler=()=>{
+        dispatch(openModal({
+                    modalType: 'DELETE_EXPENSE',
                     modalProps: {
-                      title: 'Edit Expense',
+                      title: 'Delete Expense',
+                      expenseId: expense_details._id,
                       groupId:groupId,
-                      groupMemberList:groupMemberList,
-                      expenseDetail: expense_details,
-                      closeExpenseContainer:()=>setExpense_container(false)
                     }
-      }))
+          }))
+        setExpense_container(false);
+
     }
   return (
       <Box sx={{height:'100%'}}>
@@ -282,6 +295,14 @@ useEffect(() => {
                   <IconButton
                     aria-label="close"
                     size="small"
+                    onClick={() => deleteExpenseHandler()}
+                    sx={{ position: 'absolute', bottom: 40, right: 80 }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    aria-label="close"
+                    size="small"
                     onClick={() => editExpenseHandler()}
                     sx={{ position: 'absolute', bottom: 40, right: 40 }}
                   >
@@ -290,14 +311,15 @@ useEffect(() => {
               </Box>
               : (selectedGroup)
                 ?<Box sx={{  height: '100%'}}>
+                  <Box sx={{display:'flex',height: '100%'}}>
                     <Box 
                       sx={{
                         bgcolor: '#e3f2fd',
-                        borderRadius: '1rem',
                         p: 3,
-                        m: 2,
+                        height:'100%',
+                        width:'40%'
                         // boxShadow: 3,
-                        minHeight: '20%',
+                        // minHeight: '20%',
                       }}
                     >
                       <Typography 
@@ -321,7 +343,7 @@ useEffect(() => {
                               <Typography 
                                 key={index}
                                 variant="body2" 
-                                sx={{ fontSize: '12px', color: '#333', pl:'2rem' }}
+                                sx={{ fontSize: '12px', color: '#333' }}
                               >
                                 <strong>{balance.from}</strong> owes <strong>{balance.to}</strong> 
                                 <span style={{ color: '#d32f2f', marginLeft: 5 }}>
@@ -332,59 +354,59 @@ useEffect(() => {
                         )}
                       </Stack>
                     </Box>
-                  <Box sx={{ height: '70%', pr: 1,overflowY: 'scroll' }}>
-                    <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
-                      {expense.map((expense) => {
-                        let lent_borrowed_amt = 0;
-                        const userEntry = expense.splitBetweenWithAmt.find(
-                          (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
-                        );
-                        if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
-                          lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
-                        } else {
-                          lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
-                        }
-                        const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
-                        return (
-                          <ListItem key={expense._id}>
-                            <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
-                              setExpense_details(expense);
-                              setExpense_container(true);
-                              }}>
-                              <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
-                                <p style={{ margin: '0px', fontSize: '14px' }}>
-                                  {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>
-                                </p>
-                              </Box>
-                              <ListItemAvatar>
-                                <Avatar sx={{ borderRadius: '0' }}>
-                                  <ShoppingBagIcon />
-                                </Avatar>
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={expense.description}
-                                secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
-                              />
-                              <ListItemText
-                                sx={{ textAlign: 'right', paddingRight: '1rem' }}
-                                primary={
-                                  <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
-                                    {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
-                                  </Typography>
-                                }
-                                secondary={
-                                  <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
-                                    ₹{lent_borrowed_amt}
-                                  </Typography>
-                                }
-                              />
-                            </ListItemButton>
-                          </ListItem>
-                        );
-                      })}
-                    </List>
+                    <Box sx={{ height: '100%', width:'60%', pr: 1,overflowY: 'scroll' }}>
+                      <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
+                        {expense.map((expense) => {
+                          let lent_borrowed_amt = 0;
+                          const userEntry = expense.splitBetweenWithAmt.find(
+                            (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
+                          );
+                          if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
+                            lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
+                          } else {
+                            lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
+                          }
+                          const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
+                          return (
+                            <ListItem key={expense._id}>
+                              <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
+                                setExpense_details(expense);
+                                setExpense_container(true);
+                                }}>
+                                <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
+                                  <p style={{ margin: '0px', fontSize: '14px' }}>
+                                    {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>
+                                  </p>
+                                </Box>
+                                <ListItemAvatar>
+                                  <Avatar sx={{ borderRadius: '0' }}>
+                                    <ShoppingBagIcon />
+                                  </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                  primary={expense.description}
+                                  secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
+                                />
+                                <ListItemText
+                                  sx={{ textAlign: 'right', paddingRight: '1rem' }}
+                                  primary={
+                                    <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
+                                      {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
+                                    </Typography>
+                                  }
+                                  secondary={
+                                    <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
+                                      ₹{lent_borrowed_amt}
+                                    </Typography>
+                                  }
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          );
+                        })}
+                      </List>
+                    </Box>
                   </Box>
-                  {/* Floating Add Button */}
                   <Fab
                     onClick={() => addExpenseHandler('ADD_EXPENSE')}
                     color="primary"

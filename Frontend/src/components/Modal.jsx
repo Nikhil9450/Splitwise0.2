@@ -37,7 +37,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
-import { addExpense,updateExpense } from '../redux/expense/expenseSlice';
+import { addExpense,updateExpense,deleteExpense } from '../redux/expense/expenseSlice';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -186,12 +186,11 @@ export default function TransitionsModal() {
               newPassword: "",
             });
           }
-            if (
-          modalProps.title === "Edit Expense" &&
-          modalProps.expenseDetail?.splitType
-        ) {
-          setSplitType(modalProps.expenseDetail.splitType);
-        }
+          if (modalProps.title === "Edit Expense" && modalProps.expenseDetail?.splitType) {
+            setSplitType(modalProps.expenseDetail.splitType);
+          }else{
+            setSplitType("Equally");
+          }
     }, [modalType, modalProps]);
 
     const selectUser=(event)=>{
@@ -477,6 +476,20 @@ export default function TransitionsModal() {
 
     };
 
+    const delete_Expense =()=>{
+      const data ={
+            group:modalProps.groupId,
+            expenseId:modalProps.expenseId
+      }
+      if(data.group===""||data.expenseId===0 ){
+        toast.error("data insufficient");
+      }else{
+        console.log("expenseId-------->", modalProps.expenseId);
+            dispatch(deleteExpense(data));
+            dispatch(closeModal());
+      }
+    }
+
     const save=(type)=>{
       if(type==="Equally"){
         if(selectedGroupMember.length===0){
@@ -505,6 +518,7 @@ export default function TransitionsModal() {
     }
 
     const renderModalContent = () => {
+      console.log("modalType------------>",modalType)
       switch (modalType) {
           case "EDIT_PROFILE":
           return (
@@ -714,6 +728,18 @@ export default function TransitionsModal() {
 
               </>
             );
+          case "DELETE_EXPENSE":
+            console.log("inside delete expense",modalProps)
+          return (
+            <>
+                <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} ?</Typography>
+                <Typography variant="body2"  >Are you sure you want to delete this expense? This will remove this expense for all people involved not just you.</Typography>
+                <Box sx={{display:'flex',justifyContent:'end'}}>
+                  <Button variant="text" onClick={()=>dispatch(closeModal())}>Cancel</Button>
+                  <Button variant="text" onClick={()=>delete_Expense()}>OK</Button>
+                </Box>
+            </>
+          );  
           default:
           return null;
       }
