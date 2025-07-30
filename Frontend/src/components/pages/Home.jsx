@@ -64,24 +64,24 @@ const Home = () => {
           >
             Groups
           </Button>
-          <Button
+          {/* <Button
             variant={buttonType === 'expenses' ? 'contained' : 'outlined'}
             onClick={() => handlePageChange('expenses')}
           >
             Expenses
-          </Button>
+          </Button> */}
           <Button
             variant={buttonType === 'friends' ? 'contained' : 'outlined'}
             onClick={() => handlePageChange('friends')}
           >
             Friends
           </Button>
-          <Button
+          {/* <Button
             variant={buttonType === 'balances' ? 'contained' : 'outlined'}
             onClick={() => handlePageChange('balances')}
           >
             Balances
-          </Button>
+          </Button> */}
         </ButtonGroup>
         <Divider sx={{ borderColor: '#82bdf7' }} />
       </Box>

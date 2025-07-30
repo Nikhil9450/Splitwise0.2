@@ -69,48 +69,17 @@ function DrawerAppBar(props) {
     }
   };
 
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      {/* <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
-      </Typography> */}
-      <Typography
-            variant="h6"
-            component={Link} to="/"
-            sx={{ my:2, textDecoration:'none',lineHeight:'3'}}
-          >
-            Home
-          </Typography>
-      <Divider />
-      <List>
-        {/* <ListItem key="Home" disablePadding>
-        <ListItemButton component={Link} to="/" sx={{ textAlign: 'center' }}>
-            <ListItemText primary="Home" />
-        </ListItemButton>
-        </ListItem> */}
-        {userRole === 'admin' && (
-        <ListItem key="Admin" disablePadding>
-            <ListItemButton sx={{ textAlign: 'start' }}>
-              <ListItemText primary="Admin Dashboard" />
-            </ListItemButton>
-          </ListItem>
-          )
-        }
-        <ListItem key="Other Item" disablePadding>
-            <ListItemButton sx={{ textAlign: 'start' }}>
-                <ListItemText primary="Other Items" />
-            </ListItemButton>
-        </ListItem>
-      </List>
-    </Box>
-  );
-
-  const container = window !== undefined ? () => window().document.body : undefined;
-
+  // const container = window !== undefined ? () => window().document.body : undefined;
+  
+  // console.log("container--------->", container);
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex',mb:{xs:0,sm:10} }}>
       <CssBaseline />
-      <AppBar component="nav">
+      <AppBar component="nav"  sx={{     
+                                    mt:{xs:10,sm:0},                       
+                                    top: { xs: 'auto', sm: 0 },
+                                    bottom: { xs: 0, sm: 'auto' },
+                                  }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -220,27 +189,6 @@ function DrawerAppBar(props) {
           </Box>
         </Toolbar>
       </AppBar>
-
-      <nav>
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        
-      </nav>
-      <Box component="main" sx={{ pt: 10, px: 3 }}>
-      </Box>
     </Box>
   );
 }

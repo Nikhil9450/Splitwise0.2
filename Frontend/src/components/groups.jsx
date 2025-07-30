@@ -134,27 +134,10 @@ useEffect(() => {
 
 }, [expense]);
 
-
-  // useEffect(()=>{
-  //   console.log("splitBalance------------->",splitBalance)
-    
-  // },[splitBalance])
-
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
   },[UserGroupList])
-    const fetchgroupList =async()=>{
-        try {
-           const groupList = await axios.post("http://localhost:5000/group/fetchUserGroups",{},{withCredentials:true});
-           console.log("groupList----------------->",groupList.data)
-          //  SetUserGroupList(groupList.data)
-        } catch (error) {
-            console.log("error---------------->",error);
-        }
-    }
-//  useEffect(()=>{
-//    console.log("groupMemberList from group.jsx----->",groupMemberList)
-//  },[groupMemberList])
+
     const addExpenseHandler =()=>{
          console.log("groupMemberList from group.jsx----->",groupMemberList)
 
@@ -474,7 +457,241 @@ useEffect(() => {
               </List>
             </Grid>
          </Grid>
+         {/* mobile view */}
+         <Grid >
+            <Box>
+                <List
+                      sx={{
+                        width: '100%',
+                        // maxWidth: 360,
+                        bgcolor: 'background.paper',
+                        position: 'relative',
+                        overflow: 'auto',
+                        // maxHeight: 300,
+                        height:'100%',
+                        paddingBottom:0,
+                        '& ul': { padding: 0 },
+                      }}
+                      subheader={<li />}
+                    >
+                      <ListSubheader sx={{bgcolor:'#1976d2',color:'white',marginBottom:'.5rem'}}>Groups</ListSubheader>
+                        <li >
+                            <ul>
+                              {UserGroupList.map((item) => (
+                                <ListItem key={item.id}>
+                                  {/* <ListItemText primary={item.name} /> */}
+                                  <Button 
+                                    variant={(selectedGroup==item.id)?"outlined":"text"} 
+                                    sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} 
+                                    onClick={()=>{
+                                      SetGroupMemberList(item.members);
+                                      SetGroupId(item.id);
+                                      setSelectedGroup(item.id)
+                                    }} 
+                                    startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
+                                  </Button>
+                                </ListItem>
+                              ))}
+                            </ul>
+                        </li>
+                </List>
+            </Box>
+            <Box>
+              {(expense_container)
+              ?<Box
+                  component={Paper}
+                  // elevation={3}
+                  sx={{
+                    p: 3,
+                    width: '100%',
+                    height:'100%',
+                    mx: 'auto',
+                    // bgcolor: 'background.paper',
+                    position: 'relative',
+                  }}
+                >
+                  {/* Close Button */}
+                  <IconButton
+                    aria-label="close"
+                    size="small"
+                    onClick={() => setExpense_container(false)}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
 
+                  {/* Expense Details */}
+                  <Typography variant="h5" fontWeight={500} gutterBottom>
+                    {(expense_details.description).toUpperCase()}
+                  </Typography>
+
+                  <Typography variant="h4" color="primary" gutterBottom>
+                    ₹{expense_details.amount}
+                  </Typography>
+
+                  <Divider sx={{ mb: 2 }} />
+
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Added by <strong>{expense_details.addedBy.name}</strong> on <strong>{dayjs(expense_details.date).format('YYYY-MM-DD')}</strong>
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <strong>{expense_details.paidBy.name}</strong> paid ₹{expense_details.amount}
+                  </Typography>
+                  <Divider sx={{ my: 2 }} />
+
+                  {/* Split Details */}
+                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                    Split Details:
+                  </Typography>
+
+                  {expense_details.splitBetweenWithAmt.map((member, idx) => (
+                    <Typography
+                      key={idx}
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ pl: 1 }}
+                    >
+                      {member.user.name} owes ₹{(member.amount).toFixed(2)}
+                    </Typography>
+                  ))}
+                  <IconButton
+                    aria-label="close"
+                    size="small"
+                    onClick={() => deleteExpenseHandler()}
+                    sx={{ position: 'absolute', bottom: 40, right: 80 }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    aria-label="close"
+                    size="small"
+                    onClick={() => editExpenseHandler()}
+                    sx={{ position: 'absolute', bottom: 40, right: 40 }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+              </Box>
+              : (selectedGroup)
+                ?<Box sx={{  height: '100%'}}>
+                  <Box sx={{display:'flex',height: '100%'}}>
+                    <Box 
+                      sx={{
+                        bgcolor: '#e3f2fd',
+                        p: 3,
+                        height:'100%',
+                        width:'40%'
+                        // boxShadow: 3,
+                        // minHeight: '20%',
+                      }}
+                    >
+                      <Typography 
+                        variant="h6" 
+                        color="primary" 
+                        gutterBottom 
+                        // sx={{ fontWeight: 'bold' }}
+                      >
+                      Total Group Balance: ₹{groupTotalAmt.toFixed(2)}
+                      </Typography>
+
+                      <Divider sx={{ mb: 2 }} />
+
+                      <Stack spacing={1}>
+                        {splitBalance.length === 0 ? (
+                          <Typography variant="body2" color="text.secondary">
+                            No pending balances. All settled! ✅
+                          </Typography>
+                        ) : (
+                          splitBalance.map((balance, index) => (
+                              <Typography 
+                                key={index}
+                                variant="body2" 
+                                sx={{ fontSize: '12px', color: '#333' }}
+                              >
+                                <strong>{balance.from}</strong> owes <strong>{balance.to}</strong> 
+                                <span style={{ color: '#d32f2f', marginLeft: 5 }}>
+                                  ₹{balance.amount.toFixed(2)}
+                                </span>
+                              </Typography>
+                          ))
+                        )}
+                      </Stack>
+                    </Box>
+                    <Box sx={{ height: '100%', width:'60%', pr: 1,overflowY: 'scroll' }}>
+                      <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
+                        {expense.map((expense) => {
+                          let lent_borrowed_amt = 0;
+                          const userEntry = expense.splitBetweenWithAmt.find(
+                            (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
+                          );
+                          if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
+                            lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
+                          } else {
+                            lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
+                          }
+                          const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
+                          return (
+                            <ListItem key={expense._id}>
+                              <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
+                                setExpense_details(expense);
+                                setExpense_container(true);
+                                }}>
+                                <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
+                                  <p style={{ margin: '0px', fontSize: '14px' }}>
+                                    {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>
+                                  </p>
+                                </Box>
+                                <ListItemAvatar>
+                                  <Avatar sx={{ borderRadius: '0' }}>
+                                    <ShoppingBagIcon />
+                                  </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                  primary={expense.description}
+                                  secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
+                                />
+                                <ListItemText
+                                  sx={{ textAlign: 'right', paddingRight: '1rem' }}
+                                  primary={
+                                    <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
+                                      {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
+                                    </Typography>
+                                  }
+                                  secondary={
+                                    <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
+                                      ₹{lent_borrowed_amt}
+                                    </Typography>
+                                  }
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          );
+                        })}
+                      </List>
+                    </Box>
+                  </Box>
+                  <Fab
+                    onClick={() => addExpenseHandler('ADD_EXPENSE')}
+                    color="primary"
+                    aria-label="Add Expenses"
+                    variant="extended"
+                    sx={{
+                      position: 'absolute',
+                      bottom: 16,
+                      right: 16,
+                      zIndex: 10,
+                    }}
+                  >
+                    <AddIcon />
+                    Add Expenses
+                  </Fab>
+                </Box>
+                :<Box sx={{  height: '100%',display:'flex',justifyContent:'center',alignItems:"center"}}>
+                    <Typography> Select Group to view expense. </Typography>
+                </Box> 
+              }
+            </Box>
+         </Grid>
       </Box>
   )
 }

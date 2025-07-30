@@ -43,10 +43,54 @@ const FriendListContainer = (props) => {
                                             secondary={user.email} />
                                         </ListItem>
                                 })}
-                            </List>
+                                {recievedRequests.map((user)=>{
+                                    return  <ListItem
+                                        key={user.id}
+                                        secondaryAction={
+                                        <Box>
+                                            <>
+                                            <Button sx={{fontSize:'10px',marginRight:'5px'}} variant="outlined" edge="end" aria-label="Accept" onClick={() => dispatch(acceptFriendRequest(user._id))}>
+                                                {/* <PersonAddIcon /> */}
+                                                Accept
+                                            </Button>
+                                            <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Delete" onClick={() => dispatch(deleteFriendRequest(user._id))}>
+                                                {/* <DeleteIcon /> */}
+                                                Delete
+                                            </Button>
+                                            </>
+                                        </Box>
+                                        }
+                                    >
+                                        <ListItemText   
+                                        primaryTypographyProps={{ fontSize: '13px' }}
+                                        secondaryTypographyProps={{ fontSize: '12px', color: 'text.secondary' }} 
+                                        primary={user.name} 
+                                        secondary={user.email} />
+                                    </ListItem>
+                                })}
+                                {sentRequests.map((user)=>{
+                                    return  <ListItem
+                                            key={user.id}
+                                            secondaryAction={
+                                            <Box>
+                                                <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Cancel" onClick={() => dispatch(deleteFriendRequest(user._id))}>
+                                                {/* <DeleteIcon /> */}
+                                                    Cancel Request
+                                                </Button>
+                                            </Box>
+                                            }
+                                        >
+                                            <ListItemText   
+                                            primaryTypographyProps={{ fontSize: '13px' }}
+                                            secondaryTypographyProps={{ fontSize: '12px', color: 'text.secondary' }} 
+                                            primary={user.name} 
+                                            secondary={user.email} />
+                                        </ListItem>
+                                })}
+                        </List>                                               
                     </Box>
                 </Grid>
-                <Grid size={{ xs: 12, md: 4 }} sx={{border:'1px solid #82bdf7'}} >
+                {/* <Grid size={{ xs: 12, md: 4 }} sx={{border:'1px solid #82bdf7'}} >
                     <Box>
                             <List
                                 sx={{ width: '100%', bgcolor: 'background.paper' }}
@@ -60,7 +104,6 @@ const FriendListContainer = (props) => {
                                             secondaryAction={
                                             <Box>
                                                 <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Cancel" onClick={() => dispatch(deleteFriendRequest(user._id))}>
-                                                {/* <DeleteIcon /> */}
                                                     Cancel Request
                                                 </Button>
                                             </Box>
@@ -91,11 +134,9 @@ const FriendListContainer = (props) => {
                                         <Box>
                                             <>
                                             <Button sx={{fontSize:'10px',marginRight:'5px'}} variant="outlined" edge="end" aria-label="Accept" onClick={() => dispatch(acceptFriendRequest(user._id))}>
-                                                {/* <PersonAddIcon /> */}
                                                 Accept
                                             </Button>
                                             <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Delete" onClick={() => dispatch(deleteFriendRequest(user._id))}>
-                                                {/* <DeleteIcon /> */}
                                                 Delete
                                             </Button>
                                             </>
@@ -112,7 +153,7 @@ const FriendListContainer = (props) => {
                                 
                             </List>                    
                     </Box>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Grid>
     </Box>
