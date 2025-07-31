@@ -27,6 +27,10 @@ import { useEffect } from 'react';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { closeModal ,openModal} from '../../redux/modal/modalSlice';
+import GroupIcon from '@mui/icons-material/Group';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Stack from '@mui/material/Stack';
 const drawerWidth = 240;
 
 
@@ -80,16 +84,7 @@ function DrawerAppBar(props) {
                                     top: { xs: 'auto', sm: 0 },
                                     bottom: { xs: 0, sm: 'auto' },
                                   }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
+        <Toolbar sx={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
           <Typography
             variant="h6"
             component={Link} to="/"
@@ -97,6 +92,19 @@ function DrawerAppBar(props) {
           >
             Home
           </Typography>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <IconButton aria-label="delete" size="small">
+              <GroupIcon fontSize="small" />
+            </IconButton>
+
+            <IconButton aria-label="delete" size="small">
+              <AccountBalanceWalletIcon fontSize="small" />
+            </IconButton> 
+
+            <IconButton aria-label="delete" size="small">
+              <PersonAddIcon fontSize="small" />
+            </IconButton>
+          </Stack>
           <Box sx={{ml:'auto', display: { xs: 'block', sm: 'block' } }}>
             {/* <Button key="Home" sx={{ color: '#fff' }} component={Link} to="/">
                 Home
@@ -108,10 +116,11 @@ function DrawerAppBar(props) {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
-            sx={{ color: 'white' }}
+            sx={{ color: 'white',display:{xs:'none',sm:'flex'} }}
             >
               
             <Avatar sx={{bgcolor:'white' ,color:'grey'}}><PersonIcon sx={{fontSize:'xx-large'}}/></Avatar>
+
             <Box sx={{flexDirection:'column',justifyContent:'center',alignItems:'start',ml:'10px',display: { xs: 'none', sm: 'flex' },}}>
               <Typography variant="body2" gutterBottom sx={{ display: 'block' ,marginBottom:'-3px',fontSize:'12px'}}>
                 {user && user.name}
@@ -121,6 +130,10 @@ function DrawerAppBar(props) {
               </Typography>
             </Box>
             </Button>
+
+            <IconButton aria-label="delete" size="small" onClick={handleClick} sx={{fontSize:'small',display:{xs:'block',sm:'none'}}}>
+              <AccountBalanceWalletIcon fontSize="small" />
+            </IconButton> 
             <Menu
             id="basic-menu"
             anchorEl={anchorEl}

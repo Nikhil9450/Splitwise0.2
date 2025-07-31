@@ -11,9 +11,9 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Divider from '@mui/material/Divider';
-import FriendListContainer from '../FriendListContainer';
+import FriendListContainer from './FriendListContainer';
 import Grid from '@mui/material/Grid';
-import Groups from '../groups'
+import Groups from './groups'
 const Home = () => {
   // const dispatch = useDispatch();
   // const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)

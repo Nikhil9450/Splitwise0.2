@@ -13,6 +13,9 @@ import Unaurthorize from './components/Unaurthorize';
 import DrawerAppBar from './components/Navbar/Navbar';
 import { useLocation } from 'react-router-dom';
 import Profile from './components/pages/Profile';
+import FriendListContainer from './components/pages/FriendListContainer';
+import Groups from './components/pages/groups';
+import Balances from './components/pages/Balances';
 function App() {
   const dispatch = useDispatch();
    const location = useLocation();
@@ -48,6 +51,27 @@ function App() {
           isAuthenticated ? <Navigate to="/" replace /> : <SignIn />
         }
       />
+
+      <Route
+        path="/friends"
+        element={
+          isAuthenticated ? <Navigate to="/friends" replace /> : <FriendListContainer />
+        }
+      />
+
+      <Route
+        path="/balances"
+        element={
+          isAuthenticated ? <Navigate to="/balances" replace /> : <Balances />
+        }
+      />    
+
+      <Route
+        path="/groups"
+        element={
+          isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+        }
+      />               
 
       {/* Admin Routes (RBAC handled inside ProtectedRoute) */}
       <Route
