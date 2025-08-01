@@ -84,7 +84,7 @@ function DrawerAppBar(props) {
                                     top: { xs: 'auto', sm: 0 },
                                     bottom: { xs: 0, sm: 'auto' },
                                   }}>
-        <Toolbar sx={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <Toolbar sx={{display:'flex',justifyContent:'space-around',alignItems:'center'}}>
           <Typography
             variant="h6"
             component={Link} to="/"
@@ -92,24 +92,20 @@ function DrawerAppBar(props) {
           >
             Home
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <IconButton aria-label="delete" size="small">
+          {/* <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}> */}
+            <IconButton aria-label="group" size="small" component={Link} to="/groups">
               <GroupIcon fontSize="small" />
             </IconButton>
 
-            <IconButton aria-label="delete" size="small">
+            <IconButton aria-label="balances" size="small" component={Link} to="/balances">
               <AccountBalanceWalletIcon fontSize="small" />
             </IconButton> 
 
-            <IconButton aria-label="delete" size="small">
+            <IconButton aria-label="friends" size="small" component={Link} to="/friends">
               <PersonAddIcon fontSize="small" />
             </IconButton>
-          </Stack>
-          <Box sx={{ml:'auto', display: { xs: 'block', sm: 'block' } }}>
-            {/* <Button key="Home" sx={{ color: '#fff' }} component={Link} to="/">
-                Home
-            </Button> */}
-
+          {/* </Stack> */}
+          <Box sx={{display: { xs: 'block', sm: 'block' } }}> 
             <Button
             id="basic-button"
             aria-controls={open ? 'basic-menu' : undefined}
@@ -132,7 +128,7 @@ function DrawerAppBar(props) {
             </Button>
 
             <IconButton aria-label="delete" size="small" onClick={handleClick} sx={{fontSize:'small',display:{xs:'block',sm:'none'}}}>
-              <AccountBalanceWalletIcon fontSize="small" />
+              <PersonIcon fontSize="small" />
             </IconButton> 
             <Menu
             id="basic-menu"

@@ -55,21 +55,26 @@ function App() {
       <Route
         path="/friends"
         element={
-          isAuthenticated ? <Navigate to="/friends" replace /> : <FriendListContainer />
+          // isAuthenticated ? <Navigate to="/friends" replace /> : <FriendListContainer />
+          isAuthenticated ? <FriendListContainer /> : <Navigate to="/signin" replace />
         }
       />
 
       <Route
         path="/balances"
         element={
-          isAuthenticated ? <Navigate to="/balances" replace /> : <Balances />
+          // isAuthenticated ? <Navigate to="/balances" replace /> : <Balances />
+          isAuthenticated ? <Balances /> : <Navigate to="/signin" replace />
+
         }
       />    
 
       <Route
         path="/groups"
         element={
-          isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+          // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+          isAuthenticated ? <Groups /> : <Navigate to="/signin" replace />
+
         }
       />               
 
