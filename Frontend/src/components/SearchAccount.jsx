@@ -57,9 +57,8 @@ const SearchAccount = () => {
     },[User])
 
   return (
-    <div>
-
-        <Box sx={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'end',margin:'0rem 1rem'}} >
+    <>
+        <Box sx={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'end',padding:'1rem .3rem'}} >
             <Box sx={{padding:'0.3rem 0.3rem 0.3rem 1rem;',border:'1px solid #1976d2',borderRadius:'2rem',width:'20rem',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <input type='email' placeholder='Find user by email'  style={{border:'none',background:'none',outline: 'none',fontSize:'1rem',color:'#1976d2', width:'100%'}} onChange={(event)=>setEmailToSearch(event.target.value)}/>
                 <IconButton
@@ -180,7 +179,7 @@ const SearchAccount = () => {
         }
         </List>
       </Menu>
-    </div>
+    </>
   )
 }
 

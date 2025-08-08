@@ -10,18 +10,19 @@ const FriendListContainer = (props) => {
   return (
     <Box sx={{height:'100%'}}>
         <Grid container spacing={2} sx={{height:'100%'}} direction="column">
-            <Grid>
+            {/* <Grid>
                 <SearchAccount />
-            </Grid>
+            </Grid> */}
             <Grid container spacing={2} size="grow" sx={{height:'100%'}} >
                 <Grid size={{ xs: 12, md: 4 }}  sx={{border:'1px solid #82bdf7'}}>
                     <Box>
                         <List
                             sx={{ width: '100%', bgcolor: 'background.paper' }}
                             subheader={<ListSubheader sx={{bgcolor:'#dcedff',color:'#1976d2'}}>
-                                            Friends         
+                                            <SearchAccount />     
                                         </ListSubheader>}
                         >
+                        
                             <Divider sx={{ borderColor: '#82bdf7' }} />
 
                                 {friends.map((user)=>{

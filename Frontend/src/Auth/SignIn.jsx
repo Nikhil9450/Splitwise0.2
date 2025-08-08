@@ -68,7 +68,7 @@ const signupHandler = async () => {
       }
     } catch (error) {
       console.log("Error posting data", error);
-      toast.error(error.response.data.error); 
+      toast.error(error?.response?.data.error || "server not started."); 
 
     }
   };

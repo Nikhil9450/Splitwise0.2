@@ -37,6 +37,7 @@ const Groups = () => {
   const [groupTotalAmt,setGroupTotalAmt]=useState(0);
   const [viewMembers,setViewMembers]=useState(false);
   const [viewType,setViewType]=useState("groups");
+  const [groupName,setGroupName]=useState("");
   const dispatch = useDispatch();
   useEffect(()=>{
     // fetchgroupList();
@@ -207,8 +208,9 @@ useEffect(() => {
                                         onClick={()=>{
                                           SetGroupMemberList(item.members);
                                           SetGroupId(item.id);
-                                          setSelectedGroup(item.id)
-                                          setViewType("expenses")
+                                          setSelectedGroup(item.id);
+                                          setViewType("expenses");
+                                          setGroupName(item.name);
                                         }} 
                                         startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
                                       </Button>
@@ -220,199 +222,196 @@ useEffect(() => {
                   </Box>
         case 'expenses':
           return  <Box sx={{  height: '100%'}}>
-                  <Box sx={{display:'flex',justifyContent:'end',height:'10%', bgcolor: '#e3f2fd',}}>
-                    <IconButton aria-label="close" size="small" onClick={()=>{setSelectedGroup(""); setViewType("groups")}} sx={{padding:'1rem'}}>
-                      <CloseIcon size="small"/>
-                    </IconButton>
-                  </Box>
-                  <Box sx={{display:'flex',flexDirection:'column',height:'90%'}}>
-                    <Box 
+                    <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
+                      <IconButton aria-label="close" size="small" onClick={()=>{setSelectedGroup(""); setViewType("groups")}} sx={{padding:'2rem'}}>
+                        <CloseIcon size="small"/>
+                      </IconButton>
+                    </Box>
+                    <Box sx={{display:'flex',flexDirection:'column',height:'93%'}}>
+                      <Box 
+                        sx={{
+                          bgcolor: '#e3f2fd',
+                          padding:'0rem 2rem 1rem 2rem',
+                          // width:'40%'
+                          // boxShadow: 3,
+                          // minHeight: '20%',
+                        }}
+                      >
+                        <Typography 
+                          variant="h6" 
+                          color="primary" 
+                          gutterBottom 
+                          // sx={{ fontWeight: 'bold' }}
+                        >
+                        {groupName}
+                        {/* Total Group Balance: ₹{groupTotalAmt.toFixed(2)} */}
+                        </Typography>
+
+                        <Divider sx={{ mb: 2 }} />
+
+                        <Stack spacing={1}>
+                          {splitBalance.length === 0 ? (
+                            <Typography variant="body2" color="text.secondary">
+                              No pending balances. All settled! ✅
+                            </Typography>
+                          ) : (
+                            splitBalance.map((balance, index) => (
+                                <Typography 
+                                  key={index}
+                                  variant="body2" 
+                                  sx={{ fontSize: '12px', color: '#333' }}
+                                >
+                                  <strong>{balance.from}</strong> owes <strong>{balance.to}</strong> 
+                                  <span style={{ color: '#d32f2f', marginLeft: 5 }}>
+                                    ₹{balance.amount.toFixed(2)}
+                                  </span>
+                                </Typography>
+                            ))
+                          )}
+                        </Stack>
+                        <Box sx={{display:'flex',justifyContent:'end'}}>
+                          <Button onClick={()=>setViewType("balances")}>Balance</Button>
+                          <Button onClick={()=>setViewType("group_members")}>View Members</Button>
+                        </Box>
+                      </Box>
+                      <Box sx={{ pr: 1,overflowY: 'scroll'}}>
+                        <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
+                          {expense.map((expense) => {
+                            let lent_borrowed_amt = 0;
+                            const userEntry = expense.splitBetweenWithAmt.find(
+                              (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
+                            );
+                            if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
+                              lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
+                            } else {
+                              lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
+                            }
+                            const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
+                            return (
+                              <ListItem key={expense._id}>
+                                <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
+                                  setExpense_details(expense);
+                                  setExpense_container(true);
+                                  setViewType("expense_details");
+                                  }}>
+                                  <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
+                                    <p style={{ margin: '0px', fontSize: '14px' }}>
+                                      {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>
+                                    </p>
+                                  </Box>
+                                  <ListItemAvatar>
+                                    <Avatar sx={{ borderRadius: '0' }}>
+                                      <ShoppingBagIcon />
+                                    </Avatar>
+                                  </ListItemAvatar>
+                                  <ListItemText
+                                    primary={expense.description}
+                                    secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
+                                  />
+                                  <ListItemText
+                                    sx={{ textAlign: 'right', paddingRight: '1rem' }}
+                                    primary={
+                                      <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
+                                        {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
+                                      </Typography>
+                                    }
+                                    secondary={
+                                      <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
+                                        ₹{lent_borrowed_amt}
+                                      </Typography>
+                                    }
+                                  />
+                                </ListItemButton>
+                              </ListItem>
+                            );
+                          })}
+                        </List>
+                      </Box>
+                    </Box>
+                    <Fab
+                      onClick={() => addExpenseHandler('ADD_EXPENSE')}
+                      color="primary"
+                      aria-label="Add Expenses"
+                      variant="extended"
                       sx={{
-                        bgcolor: '#e3f2fd',
-                        padding:'0rem 2rem 2rem 2rem',
-                        // width:'40%'
-                        // boxShadow: 3,
-                        // minHeight: '20%',
+                        position: 'absolute',
+                        bottom: {xs:70,sm:20},
+                        right: 16,
+                        zIndex: 10,
+                        width:{xs:'1rem',md:'10rem'}
                       }}
                     >
-                      <Typography 
-                        variant="h6" 
-                        color="primary" 
-                        gutterBottom 
-                        // sx={{ fontWeight: 'bold' }}
-                      >
-                      Total Group Balance: ₹{groupTotalAmt.toFixed(2)}
-                      </Typography>
-
-                      <Divider sx={{ mb: 2 }} />
-
-                      <Stack spacing={1}>
-                        {splitBalance.length === 0 ? (
-                          <Typography variant="body2" color="text.secondary">
-                            No pending balances. All settled! ✅
-                          </Typography>
-                        ) : (
-                          splitBalance.map((balance, index) => (
-                              <Typography 
-                                key={index}
-                                variant="body2" 
-                                sx={{ fontSize: '12px', color: '#333' }}
-                              >
-                                <strong>{balance.from}</strong> owes <strong>{balance.to}</strong> 
-                                <span style={{ color: '#d32f2f', marginLeft: 5 }}>
-                                  ₹{balance.amount.toFixed(2)}
-                                </span>
-                              </Typography>
-                          ))
-                        )}
-                        <Button onClick={()=>setViewType("group_members")}>View Members</Button>
-                      </Stack>
-                    </Box>
-                    <Box sx={{ pr: 1,overflowY: 'scroll'}}>
-                      <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
-                        {expense.map((expense) => {
-                          let lent_borrowed_amt = 0;
-                          const userEntry = expense.splitBetweenWithAmt.find(
-                            (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
-                          );
-                          if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
-                            lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
-                          } else {
-                            lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
-                          }
-                          const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
-                          return (
-                            <ListItem key={expense._id}>
-                              <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
-                                setExpense_details(expense);
-                                setExpense_container(true);
-                                setViewType("expense_details");
-                                }}>
-                                <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
-                                  <p style={{ margin: '0px', fontSize: '14px' }}>
-                                    {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>
-                                  </p>
-                                </Box>
-                                <ListItemAvatar>
-                                  <Avatar sx={{ borderRadius: '0' }}>
-                                    <ShoppingBagIcon />
-                                  </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                  primary={expense.description}
-                                  secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
-                                />
-                                <ListItemText
-                                  sx={{ textAlign: 'right', paddingRight: '1rem' }}
-                                  primary={
-                                    <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
-                                      {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
-                                    </Typography>
-                                  }
-                                  secondary={
-                                    <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
-                                      ₹{lent_borrowed_amt}
-                                    </Typography>
-                                  }
-                                />
-                              </ListItemButton>
-                            </ListItem>
-                          );
-                        })}
-                      </List>
-                    </Box>
-                  </Box>
-                  <Fab
-                    onClick={() => addExpenseHandler('ADD_EXPENSE')}
-                    color="primary"
-                    aria-label="Add Expenses"
-                    variant="extended"
-                    sx={{
-                      position: 'absolute',
-                      bottom: {xs:70,sm:20},
-                      right: 16,
-                      zIndex: 10,
-                      width:{xs:'1rem',md:'10rem'}
-                    }}
-                  >
-                    <AddIcon />
-                    <Typography sx={{display:{xs:'none',md:'block'}}}>Add Expenses</Typography>
-                  </Fab>
+                      <AddIcon />
+                      <Typography sx={{display:{xs:'none',md:'block'}}}>Add Expenses</Typography>
+                    </Fab>
                   </Box>      
         case 'expense_details':
           return  <Box
-                  component={Paper}
-                  // elevation={3}
-                  sx={{
-                    p: 3,
-                    width: '100%',
-                    height:'100%',
-                    mx: 'auto',
-                    // bgcolor: 'background.paper',
-                    // position: 'relative',
-                  }}
-                >
-                  {/* Close Button */}
-                  <IconButton
-                    aria-label="close"
-                    size="small"
-                    onClick={() => {setExpense_container(false); setViewType("expenses")}}
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                    component={Paper}
+                    // elevation={3}
+                    sx={{
+                      p: 3,
+                      width: '100%',
+                      height:'100%',
+                      mx: 'auto',
+                      // bgcolor: 'background.paper',
+                      // position: 'relative',
+                    }}
                   >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-
-                  {/* Expense Details */}
-                  <Typography variant="h5" fontWeight={500} gutterBottom>
-                    {(expense_details.description).toUpperCase()}
-                  </Typography>
-
-                  <Typography variant="h4" color="primary" gutterBottom>
-                    ₹{expense_details.amount}
-                  </Typography>
-
-                  <Divider sx={{ mb: 2 }} />
-
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Added by <strong>{expense_details.addedBy.name}</strong> on <strong>{dayjs(expense_details.date).format('YYYY-MM-DD')}</strong>
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    <strong>{expense_details.paidBy.name}</strong> paid ₹{expense_details.amount}
-                  </Typography>
-                  <Divider sx={{ my: 2 }} />
-
-                  {/* Split Details */}
-                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                    Split Details:
-                  </Typography>
-
-                  {expense_details.splitBetweenWithAmt.map((member, idx) => (
-                    <Typography
-                      key={idx}
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ pl: 1 }}
-                    >
-                      {member.user.name} owes ₹{(member.amount).toFixed(2)}
+                    <Box sx={{display:'flex',justifyContent:'end',marginBottom:'1rem'}}>
+                      <IconButton aria-label="close" size="small" onClick={()=>{setExpense_container(false); setViewType("expenses")}} >
+                        <CloseIcon size="small"/>
+                      </IconButton>
+                    </Box>
+                    {/* Expense Details */}
+                    <Typography variant="h5" fontWeight={500} gutterBottom>
+                      {(expense_details.description).toUpperCase()}
                     </Typography>
-                  ))}
-                  <IconButton
-                    aria-label="close"
-                    size="small"
-                    onClick={() => deleteExpenseHandler()}
-                    sx={{ position: 'absolute', bottom: 40, right: 80 }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    aria-label="close"
-                    size="small"
-                    onClick={() => editExpenseHandler()}
-                    sx={{ position: 'absolute', bottom: 40, right: 40 }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
+
+                    <Typography variant="h4" color="primary" gutterBottom>
+                      ₹{expense_details.amount}
+                    </Typography>
+
+                    <Divider sx={{ mb: 2 }} />
+
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Added by <strong>{expense_details.addedBy.name}</strong> on <strong>{dayjs(expense_details.date).format('YYYY-MM-DD')}</strong>
+                    </Typography>
+
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      <strong>{expense_details.paidBy.name}</strong> paid ₹{expense_details.amount}
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+
+                    {/* Split Details */}
+                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                      Split Details:
+                    </Typography>
+
+                    {expense_details.splitBetweenWithAmt.map((member, idx) => (
+                      <Typography
+                        key={idx}
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ pl: 1 }}
+                      >
+                        {member.user.name} owes ₹{(member.amount).toFixed(2)}
+                      </Typography>
+                    ))}
+                    <Box sx={{display:'flex',justifyContent:'space-evenly'}}>
+                      <Button
+                        size="small"
+                        onClick={() => deleteExpenseHandler()}
+                      >
+                        <DeleteIcon fontSize="small" sx={{mr:'.5rem'}}/>  DELETE EXPENSE 
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={() => editExpenseHandler()}
+                      >
+                        <EditIcon fontSize="small" sx={{mr:'.5rem'}} /> EDIT EXPENSE  
+                      </Button>
+                    </Box>
                   </Box> 
         case 'group_members':
           return  <Box>
@@ -464,6 +463,14 @@ useEffect(() => {
                               </ul>
                           </li>
                       </List>
+                  </Box>
+        case 'balances':
+          return  <Box>
+                    <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
+                      <IconButton aria-label="close" size="small" onClick={()=>{setViewType("expenses")}} sx={{padding:'2rem'}}>
+                        <CloseIcon size="small"/>
+                      </IconButton>
+                    </Box>
                   </Box>
       }
     }
