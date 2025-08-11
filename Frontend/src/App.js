@@ -36,7 +36,7 @@ function App() {
       <Route
         path="/"
         element={
-          isAuthenticated ? <Home /> : <Navigate to="/signin" replace />
+          isAuthenticated ? <Groups /> : <Navigate to="/signin" replace />
         }
       />
       <Route

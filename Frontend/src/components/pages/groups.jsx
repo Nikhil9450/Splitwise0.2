@@ -476,7 +476,7 @@ useEffect(() => {
     }
   return (
       <Box sx={{height:'100%'}}>
-         <Grid container spacing={2} sx={{height:'100%',width:'100%',flexGrow:1,display:{xs:'none',md:'flex'}}}>
+         <Grid container spacing={2} sx={{height:'100%',width:'100%',flexGrow:1, display:{xs:'none',md:'flex'}}}>
             <Grid size={{ xs: 12, md: 3 }}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'100%'}}>
               <List
                     sx={{
