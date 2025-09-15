@@ -5,6 +5,7 @@ import modalReducer from './modal/modalSlice';
 import friendListReducer from './friendList/friendlistSlice';
 import userGroupListReducer from './userGroups/userGroupsSlice';
 import expensesReducer from './expense/expenseSlice';
+import ViewTypeReducer  from './GroupViewType/viewTypeSlice';
 const store = configureStore({
     reducer:{
         auth:authReducer,
@@ -13,6 +14,7 @@ const store = configureStore({
         friendList:friendListReducer,
         userGroups:userGroupListReducer,
         expenses:expensesReducer,
+        viewType:ViewTypeReducer
     }
 })
 

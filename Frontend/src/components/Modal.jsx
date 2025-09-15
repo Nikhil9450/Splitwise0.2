@@ -43,7 +43,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { logout } from '../redux/auth/authSlice';
-
+import { setViewType } from '../redux/GroupViewType/viewTypeSlice';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -62,6 +62,7 @@ export default function TransitionsModal() {
     const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
     const {UserGroupList,GroupDetails} = useSelector((state)=>state.friendList)
     const {status,user} = useSelector((state)=>state.auth)
+    const {viewType}=useSelector((state)=>state.viewType)
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState("")
     const [selectedGroupMember,setSelectedGroupMember]=useState([])
@@ -126,6 +127,7 @@ export default function TransitionsModal() {
         setAmount(modalProps.expenseDetail.amount);
         setSelectedDate(dayjs(modalProps.expenseDetail.date));
         setDescription(modalProps.expenseDetail.description);
+        setPaidBy(modalProps["expenseDetail"].paidBy._id);
       }else{
         setDescription("");
         setAmount("");
@@ -466,7 +468,7 @@ export default function TransitionsModal() {
             console.log("currentDetails------------>",data)
             dispatch(updateExpense(data));
             dispatch(closeModal());
-            modalProps.closeExpenseContainer();
+            dispatch(setViewType("expenses"));
           }else{
             dispatch(addExpense(data));
             dispatch(closeModal());
@@ -487,6 +489,9 @@ export default function TransitionsModal() {
         console.log("expenseId-------->", modalProps.expenseId);
             dispatch(deleteExpense(data));
             dispatch(closeModal());
+            dispatch(setViewType("expenses"));
+
+            
       }
     }
 
@@ -682,7 +687,7 @@ export default function TransitionsModal() {
                             labelId="demo-simple-select-standard-label"
                             id="demo-simple-select-standard"
                             sx={{fontSize:'smaller'}}
-                            value={(modalProps.title ==="Edit Expense")?modalProps["expenseDetail"].paidBy._id:paidBy}
+                            value={paidBy}
                             onChange={(event)=>setPaidBy(event.target.value)}
                             label="Paid By"
                           >

@@ -23,11 +23,13 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
   const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
+  const {viewType} = useSelector((state)=>state.viewType)
   const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
   const [selectedGroup,setSelectedGroup]= useState("");
@@ -36,7 +38,7 @@ const Groups = () => {
   const [splitBalance,setSplitBalance]= useState([]);
   const [groupTotalAmt,setGroupTotalAmt]=useState(0);
   const [viewMembers,setViewMembers]=useState(false);
-  const [viewType,setViewType]=useState("groups");
+  // const [viewType,setViewType]=useState("groups");
   const [groupName,setGroupName]=useState("");
   const dispatch = useDispatch();
   useEffect(()=>{
@@ -209,7 +211,8 @@ useEffect(() => {
                                           SetGroupMemberList(item.members);
                                           SetGroupId(item.id);
                                           setSelectedGroup(item.id);
-                                          setViewType("expenses");
+                                          // setViewType("expenses");
+                                          dispatch(setViewType("expenses"));
                                           setGroupName(item.name);
                                         }} 
                                         startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
@@ -223,7 +226,7 @@ useEffect(() => {
         case 'expenses':
           return  <Box sx={{  height: '100%'}}>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
-                      <IconButton aria-label="close" size="small" onClick={()=>{setSelectedGroup(""); setViewType("groups")}} sx={{padding:'2rem'}}>
+                      <IconButton aria-label="close" size="small" onClick={()=>{setSelectedGroup(""); dispatch(setViewType("groups"));}} sx={{padding:'2rem'}}>
                         <CloseIcon size="small"/>
                       </IconButton>
                     </Box>
@@ -270,8 +273,8 @@ useEffect(() => {
                           )}
                         </Stack>
                         <Box sx={{display:'flex',justifyContent:'end'}}>
-                          <Button onClick={()=>setViewType("balances")}>Balance</Button>
-                          <Button onClick={()=>setViewType("group_members")}>View Members</Button>
+                          <Button onClick={()=>dispatch(setViewType("balances"))}>Balance</Button>
+                          <Button onClick={()=>dispatch(setViewType("group_members"))}>View Members</Button>
                         </Box>
                       </Box>
                       <Box sx={{ pr: 1,overflowY: 'scroll'}}>
@@ -292,7 +295,7 @@ useEffect(() => {
                                 <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
                                   setExpense_details(expense);
                                   setExpense_container(true);
-                                  setViewType("expense_details");
+                                  dispatch(setViewType("expense_details"));
                                   }}>
                                   <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
                                     <p style={{ margin: '0px', fontSize: '14px' }}>
@@ -359,7 +362,7 @@ useEffect(() => {
                     }}
                   >
                     <Box sx={{display:'flex',justifyContent:'end',marginBottom:'1rem'}}>
-                      <IconButton aria-label="close" size="small" onClick={()=>{setExpense_container(false); setViewType("expenses")}} >
+                      <IconButton aria-label="close" size="small" onClick={()=>{setExpense_container(false); dispatch(setViewType("expenses"));}} >
                         <CloseIcon size="small"/>
                       </IconButton>
                     </Box>
@@ -416,7 +419,7 @@ useEffect(() => {
         case 'group_members':
           return  <Box>
                       <Box sx={{display:'flex',justifyContent:'end',height:'10%', bgcolor: '#e3f2fd',}}>
-                        <IconButton aria-label="close" size="small" onClick={()=>{ setViewType("expenses")}} sx={{padding:'1rem'}}>
+                        <IconButton aria-label="close" size="small" onClick={()=>{ dispatch(setViewType("expenses"))}} sx={{padding:'1rem'}}>
                           <CloseIcon size="small"/>
                         </IconButton>
                       </Box>
@@ -467,7 +470,7 @@ useEffect(() => {
         case 'balances':
           return  <Box>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
-                      <IconButton aria-label="close" size="small" onClick={()=>{setViewType("expenses")}} sx={{padding:'2rem'}}>
+                      <IconButton aria-label="close" size="small" onClick={()=>{dispatch(setViewType("expenses"))}} sx={{padding:'2rem'}}>
                         <CloseIcon size="small"/>
                       </IconButton>
                     </Box>
