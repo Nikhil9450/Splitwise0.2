@@ -1,8 +1,42 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import dayjs from 'dayjs';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal } from '../../redux/modal/modalSlice';
+import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
+import { fetchGroupExpenses, deleteExpense } from '../../redux/expense/expenseSlice';
+import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
+
+// MUI Core
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  Fab,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+
+  Stack,
+  Typography,
+} from '@mui/material';
+
+// MUI Icons
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+
 
 const Expenses = () => {
+  const {user} =useSelector((state)=>state.auth);
+  const {expense}=useSelector((state)=>state.expenses);
+  
   return (
     <Box sx={{  height: '100%'}}>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
@@ -15,9 +49,6 @@ const Expenses = () => {
                         sx={{
                           bgcolor: '#e3f2fd',
                           padding:'0rem 2rem 1rem 2rem',
-                          // width:'40%'
-                          // boxShadow: 3,
-                          // minHeight: '20%',
                         }}
                       >
                         <Typography 
