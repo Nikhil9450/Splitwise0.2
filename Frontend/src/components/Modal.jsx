@@ -113,6 +113,7 @@ export default function TransitionsModal() {
     }
 
     useEffect(() => {
+      console.log("modalProps----->",modalProps);
       if (modalProps.title === "Edit Expense" && modalProps.expenseDetail?.splitBetweenWithAmt) {
         const initial = {};
         modalProps.expenseDetail.splitBetweenWithAmt.forEach((item) => {
@@ -132,6 +133,7 @@ export default function TransitionsModal() {
         setDescription("");
         setAmount("");
         setSelectedDate(dayjs())
+        // setPaidBy(user.id)
       }
     }, [modalProps]);
 
@@ -174,7 +176,7 @@ export default function TransitionsModal() {
           setSelectedGroupMember(modalProps.groupMemberList.map((member) => member._id));
         }
       }
-      if(user){
+      if(user && (modalProps.title !== "Edit Expense")){
         setPaidBy(user.id)
       }
     }, [modalProps?.groupMemberList,user]);
