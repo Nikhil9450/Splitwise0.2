@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
+import { Link } from 'react-router-dom';
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const [groupMemberList,SetGroupMemberList]=useState([]);
@@ -216,6 +217,12 @@ useEffect(() => {
                                           setGroupName(item.name);
                                         }} 
                                         startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
+                                      </Button>
+                                      <Button
+                                        component={Link}
+                                        to={`/expenses/${item.id}`}
+                                      >
+                                        exp
                                       </Button>
                                     </ListItem>
                                   ))}

@@ -16,6 +16,8 @@ import Profile from './components/pages/Profile';
 import FriendListContainer from './components/pages/FriendListContainer';
 import Groups from './components/pages/groups';
 import Balances from './components/pages/Balances';
+import Expenses from './components/pages/Expenses';
+import ExpenseDetails from './components/pages/ExpenseDetails';
 function App() {
   const dispatch = useDispatch();
    const location = useLocation();
@@ -77,6 +79,34 @@ function App() {
 
         }
       />               
+
+      <Route
+        path="/expenses/:id"
+        element={
+          // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+          isAuthenticated ? <Expenses /> : <Navigate to="/signin" replace />
+
+        }
+      /> 
+
+      <Route
+        path="/expenseDetails"
+        element={
+          // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+          isAuthenticated ? <ExpenseDetails /> : <Navigate to="/signin" replace />
+
+        }
+      /> 
+
+
+      <Route
+        path="/groups"
+        element={
+          // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+          isAuthenticated ? <Groups /> : <Navigate to="/signin" replace />
+
+        }
+      /> 
 
       {/* Admin Routes (RBAC handled inside ProtectedRoute) */}
       <Route

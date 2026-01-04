@@ -1,6 +1,7 @@
 import { createSlice ,createAsyncThunk, isRejected} from "@reduxjs/toolkit";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import { fetchFriendLists } from "../friendList/friendlistSlice";
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
     try {

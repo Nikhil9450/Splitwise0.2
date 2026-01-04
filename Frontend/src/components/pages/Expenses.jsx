@@ -31,12 +31,65 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-
+import { useParams } from 'react-router-dom';
 
 const Expenses = () => {
   const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
+  const [groupMemberList,SetGroupMemberList]=useState([]);
+  const [groupId,SetGroupId]=useState(null);
+  const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
+  const {viewType} = useSelector((state)=>state.viewType);
+  const [selectedGroup,setSelectedGroup]= useState("");
+  const [expense_details,setExpense_details]=useState({});
+  const [expense_container,setExpense_container] = useState(false);
+  const [splitBalance,setSplitBalance]= useState([]);
+  const [groupTotalAmt,setGroupTotalAmt]=useState(0);
+  const [viewMembers,setViewMembers]=useState(false);
+  // const [viewType,setViewType]=useState("groups");
+  const [groupName,setGroupName]=useState("");
+  const dispatch = useDispatch();
   
+  const { id } = useParams();
+
+  console.log(id); // item.id
+  const addExpenseHandler =()=>{
+        console.log("groupMemberList from group.jsx----->",groupMemberList)
+
+    dispatch(openModal({
+                  modalType: 'ADD_EXPENSE',
+                  modalProps: {
+                    title: 'Add Expense',
+                    groupId:groupId,
+                    groupMemberList:groupMemberList,
+                  }
+    }))
+  }
+  const editExpenseHandler =()=>{
+      console.log("expense_details--------->",expense_details);
+      dispatch(openModal({
+                    modalType: 'ADD_EXPENSE',
+                    modalProps: {
+                      title: 'Edit Expense',
+                      groupId:groupId,
+                      groupMemberList:groupMemberList,
+                      expenseDetail: expense_details,
+                    }
+      }))
+      setExpense_container(false);
+  }
+  const deleteExpenseHandler=()=>{
+      dispatch(openModal({
+                  modalType: 'DELETE_EXPENSE',
+                  modalProps: {
+                    title: 'Delete Expense',
+                    expenseId: expense_details._id,
+                    groupId:groupId,
+                  }
+        }))
+      setExpense_container(false);
+
+  }
   return (
     <Box sx={{  height: '100%'}}>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
