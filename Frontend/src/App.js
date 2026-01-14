@@ -90,7 +90,7 @@ function App() {
       /> 
 
       <Route
-        path="/expenseDetails"
+        path="/expenseDetails/:id"
         element={
           // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
           isAuthenticated ? <ExpenseDetails /> : <Navigate to="/signin" replace />

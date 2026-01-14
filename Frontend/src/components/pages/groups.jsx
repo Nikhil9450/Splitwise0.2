@@ -14,7 +14,7 @@ import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider,St
 import { openModal } from '../../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
-import { fetchGroupExpenses,deleteExpense } from '../../redux/expense/expenseSlice';
+import { fetchGroupExpenses,deleteExpense,fetchSingleExpense } from '../../redux/expense/expenseSlice';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';

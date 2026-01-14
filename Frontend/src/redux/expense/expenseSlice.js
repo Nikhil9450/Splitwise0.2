@@ -64,10 +64,27 @@ export const fetchGroupExpenses = createAsyncThunk('expenses/fetchGroupExpenses'
     }
 })
 
+export const fetchSingleExpense = createAsyncThunk('expense/fetchExpenseDetails',async(expenseId,thunkAPI)=>{
+    console.log("expense Id insde fetchSingleExpense",expenseId);
+    try {
+        const response = await axios.get('http://localhost:5000/expense/fetchExpenseDetails',{
+            params:{'expenseId':expenseId},
+            withCredentials:true
+        })
+        console.log("response---------->",response.data) 
+       
+        return response.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.error || "failed to fetch expense"
+        );
+    }    
+})
 const expenseSlice = createSlice({
     name:'expense',
     initialState:{
         expense:[],
+        expenseDetail:"",
         addResponse:"",
         status: 'idle',
         error: null,
@@ -80,6 +97,9 @@ const expenseSlice = createSlice({
 
         deleteExpenseStatus: 'idle',
         deleteExpenseError: null,
+
+        fetchSingleExpenseStatus: 'idle',
+        fetchSingleExpenseError: null,
     },
     extraReducers: (builder)=>{
         builder 
@@ -131,6 +151,20 @@ const expenseSlice = createSlice({
                 state.fetchExpenseStatus='failed';
                 state.expense=[];
             })
+
+            .addCase(fetchSingleExpense.pending,(state)=>{
+                state.fetchSingleExpenseStatus="loading"
+            })
+            .addCase(fetchSingleExpense.fulfilled,(state,action)=>{
+                state.expenseDetail=action.payload;
+                state.fetchSingleExpenseStatus='succeeded';
+            })
+            .addCase(fetchSingleExpense.rejected,(state,action)=>{
+                state.fetchSingleExpenseError= action.payload || "Fetching expense failed.";
+                state.fetchSingleExpenseStatus='failed';
+                state.expenseDetail="";
+            })
+
     }
 })
 

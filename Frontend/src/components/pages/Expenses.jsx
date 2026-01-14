@@ -6,9 +6,9 @@ import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../redux/modal/modalSlice';
 import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
-import { fetchGroupExpenses, deleteExpense } from '../../redux/expense/expenseSlice';
+import { fetchGroupExpenses, deleteExpense, fetchSingleExpense } from '../../redux/expense/expenseSlice';
 import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
-
+import { Link } from 'react-router-dom';
 // MUI Core
 import {
   Avatar,
@@ -35,9 +35,9 @@ import { useParams } from 'react-router-dom';
 
 const Expenses = () => {
   const {user} =useSelector((state)=>state.auth);
-  const {expense}=useSelector((state)=>state.expenses);
+  const {expense,expenseDetail}=useSelector((state)=>state.expenses);
   const [groupMemberList,SetGroupMemberList]=useState([]);
-  const [groupId,SetGroupId]=useState(null);
+  // const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
   const {viewType} = useSelector((state)=>state.viewType);
   const [selectedGroup,setSelectedGroup]= useState("");
@@ -50,9 +50,9 @@ const Expenses = () => {
   const [groupName,setGroupName]=useState("");
   const dispatch = useDispatch();
   
-  const { id } = useParams();
+  const { id: groupId } = useParams();
 
-  console.log(id); // item.id
+  console.log(groupId); // item.id
   const addExpenseHandler =()=>{
         console.log("groupMemberList from group.jsx----->",groupMemberList)
 
@@ -90,6 +90,12 @@ const Expenses = () => {
       setExpense_container(false);
 
   }
+  useEffect(()=>{
+    dispatch(fetchGroupExpenses(groupId));
+  },[])
+
+
+  console.log("expense in expenses",expense)
   return (
     <Box sx={{  height: '100%'}}>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
@@ -156,11 +162,10 @@ const Expenses = () => {
                             const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
                             return (
                               <ListItem key={expense._id}>
-                                <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
-                                  setExpense_details(expense);
-                                  setExpense_container(true);
-                                  dispatch(setViewType("expense_details"));
-                                  }}>
+                                <ListItemButton sx={{ padding: '0px' }} 
+                                  component={Link}
+                                  to={`/expenseDetails/${expense._id}`}
+                                  >
                                   <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
                                     <p style={{ margin: '0px', fontSize: '14px' }}>
                                       {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>

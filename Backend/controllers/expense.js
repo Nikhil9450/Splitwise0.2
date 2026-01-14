@@ -120,6 +120,31 @@ const deleteExpense = async (req, res) => {
     }
 };
 
+const fetchExpenseDetails=async(req,res)=>{
+    const user = req.user;
+    const expenseId  = req.query.expenseId;
+    console.log("expenseId------->",expenseId)
+    if(!user){
+        return res.status(400).json({error: "User is not authenticated"});
+    }
+    const token = req.cookies?.token;
+    let decodedUser;
+    try{
+        decodedUser = jwt.verify(token,secretKey);
+    } catch (err){
+        return res.status(401).json({error:"Invalid or expired token." })
+    }
+
+    try{
+        const ExpenseDetails = await Expense.findById(expenseId);
+        console.log("expense details ------>",ExpenseDetails)
+        return res.status(200).json(ExpenseDetails);
+    }catch(error){
+        console.log("error----------->", error);
+        return res.status(500).json({"error":error})
+    }
+}
+
 const groupExpenses=async(req,res)=>{
     const user = req.user;
     const groupId = req.query.groupId;
@@ -192,4 +217,4 @@ const groupExpenses=async(req,res)=>{
 }
 
 
-module.exports={addExpense,groupExpenses,updateExpenses,deleteExpense}
+module.exports={addExpense,groupExpenses,updateExpenses,deleteExpense,fetchExpenseDetails}
