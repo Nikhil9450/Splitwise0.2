@@ -141,6 +141,14 @@ const fetchExpenseDetails=async(req,res)=>{
             .populate("addedBy", "name")
             .populate("splitBetweenWithAmt.user", "name")
             .populate("splitBetweenWithAmt.owesTo", "name")
+            .populate({
+                        path: "group",
+                        populate: {
+                        path: "members",
+                        select: "name"
+                        }
+                    });
+
         console.log(
             JSON.stringify(ExpenseDetails, null, 2)
         );
