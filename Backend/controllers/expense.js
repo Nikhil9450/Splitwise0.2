@@ -136,8 +136,14 @@ const fetchExpenseDetails=async(req,res)=>{
     }
 
     try{
-        const ExpenseDetails = await Expense.findById(expenseId);
-        console.log("expense details ------>",ExpenseDetails)
+        const ExpenseDetails = await Expense.findById(expenseId)
+            .populate("paidBy", "name")
+            .populate("addedBy", "name")
+            .populate("splitBetweenWithAmt.user", "name")
+            .populate("splitBetweenWithAmt.owesTo", "name")
+        console.log(
+            JSON.stringify(ExpenseDetails, null, 2)
+        );
         return res.status(200).json(ExpenseDetails);
     }catch(error){
         console.log("error----------->", error);

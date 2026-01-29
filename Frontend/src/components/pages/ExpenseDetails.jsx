@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSingleExpense } from '../../redux/expense/expenseSlice';
 import { openModal } from '../../redux/modal/modalSlice';
-
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Typography,
   Paper,
@@ -13,12 +14,12 @@ import {
   IconButton
 } from '@mui/material';
 
-import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from 'dayjs';
 
 const ExpenseDetails = () => {
+  const navigate = useNavigate();
   const { id: expenseId } = useParams();
   const dispatch = useDispatch();
 
@@ -123,8 +124,8 @@ const ExpenseDetails = () => {
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <IconButton size="small">
-          <CloseIcon />
+        <IconButton size="small" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
         </IconButton>
       </Box>
 

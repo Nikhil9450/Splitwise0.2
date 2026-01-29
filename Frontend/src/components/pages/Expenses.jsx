@@ -32,7 +32,9 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useParams } from 'react-router-dom';
-
+import arrorBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const Expenses = () => {
   const {user} =useSelector((state)=>state.auth);
   const {expense,expenseDetail}=useSelector((state)=>state.expenses);
@@ -48,7 +50,9 @@ const Expenses = () => {
   const [viewMembers,setViewMembers]=useState(false);
   // const [viewType,setViewType]=useState("groups");
   const [groupName,setGroupName]=useState("");
+  
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   const { id: groupId } = useParams();
 
@@ -65,42 +69,106 @@ const Expenses = () => {
                   }
     }))
   }
-  const editExpenseHandler =()=>{
-      console.log("expense_details--------->",expense_details);
-      dispatch(openModal({
-                    modalType: 'ADD_EXPENSE',
-                    modalProps: {
-                      title: 'Edit Expense',
-                      groupId:groupId,
-                      groupMemberList:groupMemberList,
-                      expenseDetail: expense_details,
-                    }
-      }))
-      setExpense_container(false);
-  }
-  const deleteExpenseHandler=()=>{
-      dispatch(openModal({
-                  modalType: 'DELETE_EXPENSE',
-                  modalProps: {
-                    title: 'Delete Expense',
-                    expenseId: expense_details._id,
-                    groupId:groupId,
-                  }
-        }))
-      setExpense_container(false);
 
-  }
   useEffect(()=>{
     dispatch(fetchGroupExpenses(groupId));
   },[])
 
 
+  useEffect(() => {
+    console.log("expenses------------>", expense);
+    const balances = {};
+
+    // Step 1: Build raw balances
+    let totalBalance=0;
+    expense.forEach((expense) => {
+      expense.splitBetweenWithAmt.forEach((split) => {
+        const from = split.user._id;
+        const to = split.owesTo._id;
+        const amount = split.amount;
+        totalBalance = totalBalance + amount;
+        if (from !== to) {
+          if (!balances[from]) balances[from] = {};
+          if (!balances[from][to]) balances[from][to] = 0;
+          balances[from][to] += amount;
+        }
+      });
+    });
+    setGroupTotalAmt(totalBalance);
+    console.log("balances ----------->", balances);
+
+    // Step 2: Filter only balances for current user
+    const filteredBalance = balances[user.id];
+    const filteredWithName = [];
+
+    for (const toId in filteredBalance) {
+      const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+      const amount = filteredBalance[toId];
+
+      filteredWithName.push({
+        name: toUser,
+        amount: amount
+      });
+    }
+
+    console.log("filteredWithName----------->", filteredWithName);
+
+    // Step 3: Convert all balances to flat array with names
+    let split_balance = [];
+    for (const fromId in balances) {
+      for (const toId in balances[fromId]) {
+        const fromUser = groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+        const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+        const amount = balances[fromId][toId];
+
+        split_balance.push({
+          from: fromUser,
+          to: toUser,
+          amount: parseFloat(amount.toFixed(2))
+        });
+      }
+    }
+
+    console.log("split balance-------->",split_balance);
+
+    // Step 4: Simplify mutual transactions
+    const netMap = {};
+    split_balance.forEach(({ from, to, amount }) => {
+      const key = `${from}->${to}`;
+      const reverseKey = `${to}->${from}`;
+
+      if (netMap[reverseKey]) {
+        if (netMap[reverseKey] > amount) {
+          netMap[reverseKey] -= amount;
+        } else if (netMap[reverseKey] < amount) {
+          netMap[key] = amount - netMap[reverseKey];
+          delete netMap[reverseKey];
+        } else {
+          delete netMap[reverseKey]; // balances out
+        }
+      } else {
+        netMap[key] = (netMap[key] || 0) + amount;
+      }
+    });
+
+    const reduced_amt = Object.entries(netMap).map(([key, amount]) => {
+      const [from, to] = key.split("->");
+      return { from, to, amount };
+    });
+
+    console.log("reduced amt------------->", reduced_amt);
+
+    // Step 5: Save reduced result to state
+    setSplitBalance(reduced_amt);
+
+  }, [expense]);  
+
   console.log("expense in expenses",expense)
   return (
     <Box sx={{  height: '100%'}}>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
-                      <IconButton aria-label="close" size="small" onClick={()=>{setSelectedGroup(""); dispatch(setViewType("groups"));}} sx={{padding:'2rem'}}>
-                        <CloseIcon size="small"/>
+                      <IconButton aria-label="close" size="small" onClick={()=>navigate(-1)} sx={{padding:'2rem'}}>
+                        <ArrowBackIcon size="small"/>
                       </IconButton>
                     </Box>
                     <Box sx={{display:'flex',flexDirection:'column',height:'93%'}}>
