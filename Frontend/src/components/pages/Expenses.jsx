@@ -6,9 +6,9 @@ import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../redux/modal/modalSlice';
 import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
-import { fetchGroupExpenses, deleteExpense } from '../../redux/expense/expenseSlice';
+import { fetchGroupExpenses, deleteExpense, fetchSingleExpense } from '../../redux/expense/expenseSlice';
 import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
-
+import { Link } from 'react-router-dom';
 // MUI Core
 import {
   Avatar,
@@ -32,12 +32,15 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useParams } from 'react-router-dom';
-
+import arrorBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { fetchGroupById } from '../../redux/userGroups/userGroupsSlice';
 const Expenses = () => {
   const {user} =useSelector((state)=>state.auth);
-  const {expense}=useSelector((state)=>state.expenses);
+  const {expense,expenseDetail}=useSelector((state)=>state.expenses);
   const [groupMemberList,SetGroupMemberList]=useState([]);
-  const [groupId,SetGroupId]=useState(null);
+  // const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
   const {viewType} = useSelector((state)=>state.viewType);
   const [selectedGroup,setSelectedGroup]= useState("");
@@ -48,11 +51,13 @@ const Expenses = () => {
   const [viewMembers,setViewMembers]=useState(false);
   // const [viewType,setViewType]=useState("groups");
   const [groupName,setGroupName]=useState("");
-  const dispatch = useDispatch();
   
-  const { id } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  const { id: groupId } = useParams();
 
-  console.log(id); // item.id
+  console.log(groupId); // item.id
   const addExpenseHandler =()=>{
         console.log("groupMemberList from group.jsx----->",groupMemberList)
 
@@ -65,36 +70,113 @@ const Expenses = () => {
                   }
     }))
   }
-  const editExpenseHandler =()=>{
-      console.log("expense_details--------->",expense_details);
-      dispatch(openModal({
-                    modalType: 'ADD_EXPENSE',
-                    modalProps: {
-                      title: 'Edit Expense',
-                      groupId:groupId,
-                      groupMemberList:groupMemberList,
-                      expenseDetail: expense_details,
-                    }
-      }))
-      setExpense_container(false);
-  }
-  const deleteExpenseHandler=()=>{
-      dispatch(openModal({
-                  modalType: 'DELETE_EXPENSE',
-                  modalProps: {
-                    title: 'Delete Expense',
-                    expenseId: expense_details._id,
-                    groupId:groupId,
-                  }
-        }))
-      setExpense_container(false);
 
+  useEffect(()=>{
+    console.log("GroupDetails from Expenses.jsx---------->",GroupDetails);
+    const group = UserGroupList?.find((item)=>item.id===groupId);
+    console.log("group from Expenses.jsx---------->",group);
+    if(group){
+      setGroupName(group.name);
+      SetGroupMemberList(group.members);
+    }
+  },[GroupDetails])
+
+
+  useEffect(()=>{
+    console.log("groupId inside useEffect---------->",groupId);
+    dispatch(fetchGroupExpenses(groupId));
+    dispatch(fetchGroupById(groupId));
+  },[])
+
+
+useEffect(() => {
+  if (!expense || expense.length === 0) return;
+
+  const balances = {};
+  let totalBalance = 0;
+
+  // Step 1: Build balances map
+expense.forEach((exp) => {
+  exp.splitBetweenWithAmt.forEach((split) => {
+    const from = split.user.name;
+    const to = split.owesTo.name;
+    const amount = split.amount;
+
+    if (from === to) return;
+
+    totalBalance += amount;
+
+    if (!balances[from]) balances[from] = {};
+    balances[from][to] = (balances[from][to] || 0) + amount;
+  });
+});
+
+
+  setGroupTotalAmt(Number(totalBalance.toFixed(2)));
+  console.log("balances ----------->", balances);
+
+  // Step 2: Build flat list with names
+  const flatBalances = [];
+
+  for (const fromId in balances) {
+    for (const toId in balances[fromId]) {
+      const fromUser =
+        groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+
+      const toUser =
+        groupMemberList.find((u) => u._id === toId)?.name || toId;
+
+      flatBalances.push({
+        from: fromUser,
+        to: toUser,
+        amount: Number(balances[fromId][toId].toFixed(2)),
+      });
+    }
   }
+
+  console.log("flatBalances ----------->", flatBalances);
+
+  // Step 3: Net mutual balances
+  const netMap = {};
+
+  flatBalances.forEach(({ from, to, amount }) => {
+    const key = `${from}->${to}`;
+    const reverseKey = `${to}->${from}`;
+
+    if (netMap[reverseKey]) {
+      const diff = netMap[reverseKey] - amount;
+
+      if (diff > 0) {
+        netMap[reverseKey] = diff;
+      } else if (diff < 0) {
+        netMap[key] = -diff;
+        delete netMap[reverseKey];
+      } else {
+        delete netMap[reverseKey];
+      }
+    } else {
+      netMap[key] = (netMap[key] || 0) + amount;
+    }
+  });
+
+  const reducedBalances = Object.entries(netMap).map(([key, amount]) => {
+    const [from, to] = key.split("->");
+    return { from, to, amount };
+  });
+
+  console.log("reducedBalances ----------->", reducedBalances);
+
+  setSplitBalance(reducedBalances);
+
+}, [expense, groupMemberList, user.id]);
+
+
+  console.log("expense in expenses",expense)
   return (
     <Box sx={{  height: '100%'}}>
                     <Box sx={{display:'flex',justifyContent:'end',height:'7%', bgcolor: '#e3f2fd',}}>
-                      <IconButton aria-label="close" size="small" onClick={()=>{setSelectedGroup(""); dispatch(setViewType("groups"));}} sx={{padding:'2rem'}}>
-                        <CloseIcon size="small"/>
+                      <IconButton aria-label="close" size="small" onClick={()=>navigate(-1)} sx={{padding:'2rem'}}>
+                        <ArrowBackIcon size="small"/>
                       </IconButton>
                     </Box>
                     <Box sx={{display:'flex',flexDirection:'column',height:'93%'}}>
@@ -156,11 +238,10 @@ const Expenses = () => {
                             const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
                             return (
                               <ListItem key={expense._id}>
-                                <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
-                                  setExpense_details(expense);
-                                  setExpense_container(true);
-                                  dispatch(setViewType("expense_details"));
-                                  }}>
+                                <ListItemButton sx={{ padding: '0px' }} 
+                                  component={Link}
+                                  to={`/expenseDetails/${expense._id}`}
+                                  >
                                   <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
                                     <p style={{ margin: '0px', fontSize: '14px' }}>
                                       {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>

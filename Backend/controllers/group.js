@@ -107,4 +107,35 @@ const fetchUserGroups = async( req,res)=>{
     }
 }
 
-module.exports={fetchUserGroups,createGroup}
+const fetchGroupById = async(req,res)=>{
+    const loginuser = req.user;
+    console.log("loginuser------>",loginuser);
+    const groupId = req.query.groupId;
+    console.log("groupId------>",groupId)
+    if(!loginuser){
+        return res.status(400).json({error:"User is not authenticated"});  
+    }
+    const token = req.cookies?.token;
+    let decodedUser;
+    try {
+        decodedUser = jwt.verify(token, secretKey);
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token." });
+    }
+    const userID = decodedUser.id;
+
+    try{
+        const user = await User.findById(userID);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const groupDetail = await Group.findById(groupId)
+            .populate('members');
+
+        return res.status(200).json(groupDetail);
+
+    }catch(error){
+        console.log("error-------->",error);
+        return res.status(500).json({error:"internal server error"});
+    }    
+}
+module.exports={fetchUserGroups,createGroup, fetchGroupById}
