@@ -49,10 +49,6 @@ const Groups = () => {
     dispatch(fetchUserGroups());
   },[])
 
-  useEffect(()=>{
-    dispatch(fetchGroupExpenses(groupId));
-  },[groupId])
-
 useEffect(() => {
   console.log("expenses------------>", expense);
   const balances = {};

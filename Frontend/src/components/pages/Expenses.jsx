@@ -35,6 +35,7 @@ import { useParams } from 'react-router-dom';
 import arrorBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { fetchGroupById } from '../../redux/userGroups/userGroupsSlice';
 const Expenses = () => {
   const {user} =useSelector((state)=>state.auth);
   const {expense,expenseDetail}=useSelector((state)=>state.expenses);
@@ -71,97 +72,104 @@ const Expenses = () => {
   }
 
   useEffect(()=>{
+    console.log("GroupDetails from Expenses.jsx---------->",GroupDetails);
+    const group = UserGroupList?.find((item)=>item.id===groupId);
+    console.log("group from Expenses.jsx---------->",group);
+    if(group){
+      setGroupName(group.name);
+      SetGroupMemberList(group.members);
+    }
+  },[GroupDetails])
+
+
+  useEffect(()=>{
+    console.log("groupId inside useEffect---------->",groupId);
     dispatch(fetchGroupExpenses(groupId));
+    dispatch(fetchGroupById(groupId));
   },[])
 
 
-  useEffect(() => {
-    console.log("expenses------------>", expense);
-    const balances = {};
+useEffect(() => {
+  if (!expense || expense.length === 0) return;
 
-    // Step 1: Build raw balances
-    let totalBalance=0;
-    expense.forEach((expense) => {
-      expense.splitBetweenWithAmt.forEach((split) => {
-        const from = split.user._id;
-        const to = split.owesTo._id;
-        const amount = split.amount;
-        totalBalance = totalBalance + amount;
-        if (from !== to) {
-          if (!balances[from]) balances[from] = {};
-          if (!balances[from][to]) balances[from][to] = 0;
-          balances[from][to] += amount;
-        }
-      });
-    });
-    setGroupTotalAmt(totalBalance);
-    console.log("balances ----------->", balances);
+  const balances = {};
+  let totalBalance = 0;
 
-    // Step 2: Filter only balances for current user
-    const filteredBalance = balances[user.id];
-    const filteredWithName = [];
+  // Step 1: Build balances map
+expense.forEach((exp) => {
+  exp.splitBetweenWithAmt.forEach((split) => {
+    const from = split.user.name;
+    const to = split.owesTo.name;
+    const amount = split.amount;
 
-    for (const toId in filteredBalance) {
-      const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
-      const amount = filteredBalance[toId];
+    if (from === to) return;
 
-      filteredWithName.push({
-        name: toUser,
-        amount: amount
+    totalBalance += amount;
+
+    if (!balances[from]) balances[from] = {};
+    balances[from][to] = (balances[from][to] || 0) + amount;
+  });
+});
+
+
+  setGroupTotalAmt(Number(totalBalance.toFixed(2)));
+  console.log("balances ----------->", balances);
+
+  // Step 2: Build flat list with names
+  const flatBalances = [];
+
+  for (const fromId in balances) {
+    for (const toId in balances[fromId]) {
+      const fromUser =
+        groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+
+      const toUser =
+        groupMemberList.find((u) => u._id === toId)?.name || toId;
+
+      flatBalances.push({
+        from: fromUser,
+        to: toUser,
+        amount: Number(balances[fromId][toId].toFixed(2)),
       });
     }
+  }
 
-    console.log("filteredWithName----------->", filteredWithName);
+  console.log("flatBalances ----------->", flatBalances);
 
-    // Step 3: Convert all balances to flat array with names
-    let split_balance = [];
-    for (const fromId in balances) {
-      for (const toId in balances[fromId]) {
-        const fromUser = groupMemberList.find((u) => u._id === fromId)?.name || fromId;
-        const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
-        const amount = balances[fromId][toId];
+  // Step 3: Net mutual balances
+  const netMap = {};
 
-        split_balance.push({
-          from: fromUser,
-          to: toUser,
-          amount: parseFloat(amount.toFixed(2))
-        });
-      }
-    }
+  flatBalances.forEach(({ from, to, amount }) => {
+    const key = `${from}->${to}`;
+    const reverseKey = `${to}->${from}`;
 
-    console.log("split balance-------->",split_balance);
+    if (netMap[reverseKey]) {
+      const diff = netMap[reverseKey] - amount;
 
-    // Step 4: Simplify mutual transactions
-    const netMap = {};
-    split_balance.forEach(({ from, to, amount }) => {
-      const key = `${from}->${to}`;
-      const reverseKey = `${to}->${from}`;
-
-      if (netMap[reverseKey]) {
-        if (netMap[reverseKey] > amount) {
-          netMap[reverseKey] -= amount;
-        } else if (netMap[reverseKey] < amount) {
-          netMap[key] = amount - netMap[reverseKey];
-          delete netMap[reverseKey];
-        } else {
-          delete netMap[reverseKey]; // balances out
-        }
+      if (diff > 0) {
+        netMap[reverseKey] = diff;
+      } else if (diff < 0) {
+        netMap[key] = -diff;
+        delete netMap[reverseKey];
       } else {
-        netMap[key] = (netMap[key] || 0) + amount;
+        delete netMap[reverseKey];
       }
-    });
+    } else {
+      netMap[key] = (netMap[key] || 0) + amount;
+    }
+  });
 
-    const reduced_amt = Object.entries(netMap).map(([key, amount]) => {
-      const [from, to] = key.split("->");
-      return { from, to, amount };
-    });
+  const reducedBalances = Object.entries(netMap).map(([key, amount]) => {
+    const [from, to] = key.split("->");
+    return { from, to, amount };
+  });
 
-    console.log("reduced amt------------->", reduced_amt);
+  console.log("reducedBalances ----------->", reducedBalances);
 
-    // Step 5: Save reduced result to state
-    setSplitBalance(reduced_amt);
+  setSplitBalance(reducedBalances);
 
-  }, [expense]);  
+}, [expense, groupMemberList, user.id]);
+
 
   console.log("expense in expenses",expense)
   return (

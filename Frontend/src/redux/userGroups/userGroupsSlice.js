@@ -15,7 +15,22 @@ import axios from "axios";
         }
 })
 
+ export const fetchGroupById = createAsyncThunk('userGroup/fetchGroupById',async(groupId,thunkAPI)=>{
+        try{
+           const response = axios.get("http://localhost:5000/group/fetchGroupById", {
+                                params: { groupId },
+                                withCredentials: true,
+                            });
 
+           console.log("groupDetails----------------->",response.data)
+           return response.data
+        } catch(error) {
+            console.log("error---------------->",error);
+            return thunkAPI.rejectWithValue(
+            error.response?.data?.error || "Failed to fetch friend list"
+        );
+        }
+})
 const userGroupSlice = createSlice({
     name:'userGroup',
     initialState:{
@@ -35,6 +50,17 @@ const userGroupSlice = createSlice({
             })
             .addCase(fetchUserGroups.rejected,(state,action)=>{
                 state.UserGroupList=null;
+                state.status='failed'
+            })
+            .addCase(fetchGroupById.pending,(state)=>{
+                state.status='loading';
+            })
+            .addCase(fetchGroupById.fulfilled,(state,action)=>{
+                state.GroupDetails=action.payload;
+                state.status='succeeded'
+            })
+            .addCase(fetchGroupById.rejected,(state,action)=>{
+                state.GroupDetails=null;
                 state.status='failed'
             })
     }

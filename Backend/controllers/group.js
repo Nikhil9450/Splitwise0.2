@@ -109,6 +109,7 @@ const fetchUserGroups = async( req,res)=>{
 
 const fetchGroupById = async(req,res)=>{
     const loginuser = req.user;
+    console.log("loginuser------>",loginuser);
     const groupId = req.query.groupId;
     console.log("groupId------>",groupId)
     if(!loginuser){
@@ -128,6 +129,7 @@ const fetchGroupById = async(req,res)=>{
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const groupDetail = await Group.findById(groupId)
+            .populate('members');
 
         return res.status(200).json(groupDetail);
 

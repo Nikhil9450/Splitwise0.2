@@ -162,6 +162,7 @@ const fetchExpenseDetails=async(req,res)=>{
 const groupExpenses=async(req,res)=>{
     const user = req.user;
     const groupId = req.query.groupId;
+    console.log("groupId------->",groupId);
     if(!user){
         return res.status(400).json({error:"User is not authenticated"});  
     }

@@ -44,6 +44,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { logout } from '../redux/auth/authSlice';
 import { setViewType } from '../redux/GroupViewType/viewTypeSlice';
+import { useNavigate } from 'react-router-dom';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -81,6 +82,7 @@ export default function TransitionsModal() {
     const [splitByAmount,setSplitByAmount]=useState({});
     const [splitBetweenUsers,setSplitBetweenUsers]=useState({});
     const [selectedDate, setSelectedDate] = useState(dayjs());
+    const navigate = useNavigate();
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -492,6 +494,7 @@ export default function TransitionsModal() {
             dispatch(deleteExpense(data));
             dispatch(closeModal());
             dispatch(setViewType("expenses"));
+            navigate(-1)
 
             
       }
