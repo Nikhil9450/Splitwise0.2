@@ -137,7 +137,7 @@ const groupExpenses=async(req,res)=>{
         const expenses = await Expense.find({group:groupId});
         const grp =await Group.findById(groupId);
         console.log("grp------>",grp);
-        const grp_members = grp.members;
+        const grp_members = grp?.members;
         const grp_members_with_name = await User.find({_id:{$in:grp_members}},'_id name');
         const id_name_mapping = grp_members_with_name.reduce((acc,user)=>{
             acc[user._id]=user.name;
