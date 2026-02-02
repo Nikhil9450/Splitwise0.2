@@ -129,7 +129,7 @@ const fetchGroupById = async(req,res)=>{
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const groupDetail = await Group.findById(groupId)
-            .populate('members');
+            .populate('members','name email');
 
         return res.status(200).json(groupDetail);
 

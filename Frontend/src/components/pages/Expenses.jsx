@@ -42,7 +42,6 @@ const Expenses = () => {
   const [groupMemberList,SetGroupMemberList]=useState([]);
   // const [groupId,SetGroupId]=useState(null);
   const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
-  const {viewType} = useSelector((state)=>state.viewType);
   const [selectedGroup,setSelectedGroup]= useState("");
   const [expense_details,setExpense_details]=useState({});
   const [expense_container,setExpense_container] = useState(false);
@@ -51,6 +50,7 @@ const Expenses = () => {
   const [viewMembers,setViewMembers]=useState(false);
   // const [viewType,setViewType]=useState("groups");
   const [groupName,setGroupName]=useState("");
+  const [balances,setBalances]=useState([]);
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,14 +73,13 @@ const Expenses = () => {
 
   useEffect(()=>{
     console.log("GroupDetails from Expenses.jsx---------->",GroupDetails);
-    const group = UserGroupList?.find((item)=>item.id===groupId);
-    console.log("group from Expenses.jsx---------->",group);
-    if(group){
-      setGroupName(group.name);
-      SetGroupMemberList(group.members);
-    }
+    setGroupName(GroupDetails?.name);
+    SetGroupMemberList(GroupDetails?.members);
   },[GroupDetails])
 
+  useEffect(()=>{
+    console.log("group member list---------->",groupMemberList)
+  },[groupMemberList])
 
   useEffect(()=>{
     console.log("groupId inside useEffect---------->",groupId);
@@ -96,35 +95,35 @@ useEffect(() => {
   let totalBalance = 0;
 
   // Step 1: Build balances map
-expense.forEach((exp) => {
-  exp.splitBetweenWithAmt.forEach((split) => {
-    const from = split.user.name;
-    const to = split.owesTo.name;
-    const amount = split.amount;
+  expense.forEach((exp) => {
+    exp.splitBetweenWithAmt.forEach((split) => {
+      const from = split.user.name;
+      const to = split.owesTo.name;
+      const amount = split.amount;
 
-    if (from === to) return;
+      if (from === to) return;
 
-    totalBalance += amount;
+      totalBalance += amount;
 
-    if (!balances[from]) balances[from] = {};
-    balances[from][to] = (balances[from][to] || 0) + amount;
+      if (!balances[from]) balances[from] = {};
+      balances[from][to] = (balances[from][to] || 0) + amount;
+    });
   });
-});
 
 
   setGroupTotalAmt(Number(totalBalance.toFixed(2)));
   console.log("balances ----------->", balances);
-
+  setBalances(balances);
   // Step 2: Build flat list with names
   const flatBalances = [];
-
+  console.log("group member list inside -------->",groupMemberList)
   for (const fromId in balances) {
     for (const toId in balances[fromId]) {
       const fromUser =
-        groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+        groupMemberList?.find((u) => u._id === fromId)?.name || fromId;
 
       const toUser =
-        groupMemberList.find((u) => u._id === toId)?.name || toId;
+        groupMemberList?.find((u) => u._id === toId)?.name || toId;
 
       flatBalances.push({
         from: fromUser,
@@ -219,8 +218,31 @@ expense.forEach((exp) => {
                           )}
                         </Stack>
                         <Box sx={{display:'flex',justifyContent:'end'}}>
-                          <Button onClick={()=>dispatch(setViewType("balances"))}>Balance</Button>
-                          <Button onClick={()=>dispatch(setViewType("group_members"))}>View Members</Button>
+                          <Button 
+                            onClick={()=>dispatch(openModal({
+                                            modalType: 'VIEW_BALANCES',
+                                            modalProps: {
+                                              title: 'Balances',
+                                              groupId:groupId,
+                                              groupMemberList:groupMemberList,
+                                              balances:balances,
+                                            }
+                                        }))
+                                      }
+                          >Balance</Button>
+                          <Button 
+                            onClick={()=>dispatch(openModal({
+                                            modalType: 'VIEW_MEMBERS',
+                                            modalProps: {
+                                              title: 'Group Members',
+                                              groupId:groupId,
+                                              groupMemberList:groupMemberList,
+                                            }
+                                        }))
+                                      }
+                          >
+                            View Members
+                          </Button>
                         </Box>
                       </Box>
                       <Box sx={{ pr: 1,overflowY: 'scroll'}}>

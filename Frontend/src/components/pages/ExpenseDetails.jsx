@@ -115,7 +115,7 @@ const ExpenseDetails = () => {
   =============================== */
   return (
     <Box
-      component={Paper}
+      // component={Paper}
       sx={{
         p: 3,
         width: '100%',

@@ -17,7 +17,7 @@ import axios from "axios";
 
  export const fetchGroupById = createAsyncThunk('userGroup/fetchGroupById',async(groupId,thunkAPI)=>{
         try{
-           const response = axios.get("http://localhost:5000/group/fetchGroupById", {
+           const response =await axios.get("http://localhost:5000/group/fetchGroupById", {
                                 params: { groupId },
                                 withCredentials: true,
                             });
