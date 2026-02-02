@@ -23,6 +23,9 @@ import {
   ListItemAvatar,
   Checkbox,
   Avatar,
+  Collapse ,
+  ListItemIcon,
+  ListSubheader ,
 } from '@mui/material';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -46,6 +49,8 @@ import { logout } from '../redux/auth/authSlice';
 import { setViewType } from '../redux/GroupViewType/viewTypeSlice';
 import { useNavigate } from 'react-router-dom';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -56,6 +61,8 @@ const style = {
   // border: '2px solid lightgrey',
   borderRadius:'10px',
   boxShadow: 24,
+  maxHeight: '90vh',
+  overflowY: 'auto',
   p: 4,
 };
 
@@ -84,7 +91,7 @@ export default function TransitionsModal() {
     const [splitBetweenUsers,setSplitBetweenUsers]=useState({});
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const navigate = useNavigate();
-
+    const [openMap, setOpenMap] = useState({});
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const dispatch = useDispatch()
@@ -752,87 +759,140 @@ export default function TransitionsModal() {
             </>
           );
           case "VIEW_MEMBERS":
-            return (
-              <>
-                <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} </Typography>
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', padding:'0' }} >
-                  {
-                    modalProps.groupMemberList?.map((item)=>{
-                      return <>
-                            <ListItem sx={{padding:'0'}} key={item._id}>
-                              <ListItemAvatar sx={{minWidth:'40px'}}>
-                                <Avatar 
-                                  sx={{ width: 30, height: 30 }}
-                                />
-                              </ListItemAvatar>
-                              <ListItemText 
-                                primary={item.name} 
-                                secondary={item.email} 
-                                slotProps={{
-                                      primary: {
-                                      sx: { fontSize: '13px', fontWeight: 'bold',color:'#636262' },
-                                      },
-                                      secondary: {
-                                      sx: { fontSize: '0.85rem', color: 'text.secondary' ,fontSize:'12px'},
-                                      },
-                                  }}
+          return (
+            <>
+              <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} </Typography>
+              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', padding:'0' }} >
+                {
+                  modalProps.groupMemberList?.map((item)=>{
+                    return <>
+                          <ListItem sx={{padding:'0'}} key={item._id}>
+                            <ListItemAvatar sx={{minWidth:'40px'}}>
+                              <Avatar 
+                                sx={{ width: 30, height: 30 }}
                               />
-                            </ListItem>
-                      </>
-                    })
-                  }
-                </List>
-              </>
-            ) 
-          case "VIEW_BALANCES":
-            return (
-              <>  
-                  {/* <List
-                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-                    component="nav"
-                    aria-labelledby="nested-list-subheader"
-                    subheader={
-                      <ListSubheader component="div" id="nested-list-subheader">
-                        Nested List Items
-                      </ListSubheader>
-                    }
-                  >
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <SendIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Sent mail" />
-                    </ListItemButton>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <DraftsIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Drafts" />
-                    </ListItemButton>
-                    <ListItemButton onClick={handleClick}>
-                      <ListItemIcon>
-                        <InboxIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Inbox" />
-                      {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                          <ListItemIcon>
-                            <StarBorder />
-                          </ListItemIcon>
-                          <ListItemText primary="Starred" />
-                        </ListItemButton>
-                      </List>
-                    </Collapse>
-                  </List> */}
-              </>
-            )
+                            </ListItemAvatar>
+                            <ListItemText 
+                              primary={item.name} 
+                              secondary={item.email} 
+                              slotProps={{
+                                    primary: {
+                                    sx: { fontSize: '13px', fontWeight: 'bold',color:'#636262' },
+                                    },
+                                    secondary: {
+                                    sx: { fontSize: '0.85rem', color: 'text.secondary' ,fontSize:'12px'},
+                                    },
+                                }}
+                            />
+                          </ListItem>
+                    </>
+                  })
+                }
+              </List>
+            </>
+          ); 
+         case "VIEW_BALANCES": {
+  const splitwiseData = buildSplitwiseView(modalProps.balances);
+  console.log("splitwiseData----------->",splitwiseData);
+  return (
+    <List>
+      {Object.entries(splitwiseData).map(([person, data]) => {
+        const isOpen = openMap[person];
+        const isOwing = data.total < 0;
+        const amount = Math.abs(data.total);
+
+        return (
+          <Box key={person} sx={{ mb: 2 }}>
+            {/* HEADER */}
+            <ListItemButton onClick={() => togglePerson(person)}>
+              <ListItemText
+                primary={`${person} ${
+                  isOwing ? "owes" : "gets back"
+                } ₹${amount.toLocaleString()}`}
+                primaryTypographyProps={{
+                  fontWeight: 600,
+                  color: isOwing ? "#ff8a65" : "#66bb6a",
+                }}
+              />
+              {isOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+
+            {/* DROPDOWN */}
+            <Collapse in={isOpen} timeout="auto" unmountOnExit>
+              {data.details.map((d, i) => (
+                <ListItem key={i} sx={{ pl: 6 }}>
+                  <ListItemText
+                    primary={`${person} owes ₹${d.amount} to ${d.other}`}
+                  />
+                </ListItem>
+              ))}
+
+              {isOwing && (
+                <Box sx={{ pl: 6, display: "flex", gap: 2 }}>
+                  <Button variant="outlined">Remind</Button>
+                  <Button variant="outlined">Settle up</Button>
+                </Box>
+              )}
+            </Collapse>
+          </Box>
+        );
+      })}
+    </List>
+  );
+}
+
           default:
           return null;
       }
     };
+
+    const togglePerson = (person) => {
+      setOpenMap((prev) => ({
+        ...prev,
+        [person]: !prev[person],
+      }));
+    };
+const buildSplitwiseView = (balances = {}) => {
+  const pairNet = {};
+
+  // Step 1: net pairwise balances
+  Object.entries(balances).forEach(([from, obj]) => {
+    Object.entries(obj).forEach(([to, amount]) => {
+      pairNet[from] ??= {};
+      pairNet[to] ??= {};
+
+      pairNet[from][to] = (pairNet[from][to] || 0) + amount;
+      pairNet[to][from] = (pairNet[to][from] || 0) - amount;
+    });
+  });
+
+  const result = {};
+
+  // Step 2: build Splitwise view (BOTH SIDES)
+  Object.entries(pairNet).forEach(([person, relations]) => {
+    result[person] = { total: 0, details: [] };
+  });
+
+  Object.entries(pairNet).forEach(([person, relations]) => {
+    Object.entries(relations).forEach(([other, amount]) => {
+      if (amount > 0) {
+        // person owes other
+        result[person].details.push({ other, amount });
+        result[person].total -= amount;
+
+        // other gets from person
+        result[other].details.push({ other: person, amount });
+        result[other].total += amount;
+      }
+    });
+  });
+
+  return result;
+};
+
+
+
+
 
   return (
     <div>
