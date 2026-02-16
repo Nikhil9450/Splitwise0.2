@@ -793,51 +793,66 @@ export default function TransitionsModal() {
           ); 
          case "VIEW_BALANCES": {
   const splitwiseData = buildSplitwiseView(modalProps.balances);
+  const expenses = calculateBalances(modalProps.expense || []);
   console.log("splitwiseData----------->",splitwiseData);
+  console.log("splitwiseData expenses----------->",expenses);
+  console.log("splitwiseData modalProps.expenses----------->",modalProps.expense);
   return (
-    <List>
-      {Object.entries(splitwiseData).map(([person, data]) => {
-        const isOpen = openMap[person];
-        const isOwing = data.total < 0;
-        const amount = Math.abs(data.total);
+<List>
+  {Object.entries(expenses).map(([person, data]) => {
+    const isOpen = openMap[person];
+    const isOwing = data.netBalance < 0;
+    const amount = Math.abs(data.netBalance);
 
-        return (
-          <Box key={person} sx={{ mb: 2 }}>
-            {/* HEADER */}
-            <ListItemButton onClick={() => togglePerson(person)}>
+    return (
+      <Box key={person} sx={{ mb: 2 }}>
+        {/* HEADER */}
+        <ListItemButton onClick={() => togglePerson(person)}>
+          <ListItemText
+            primary={
+              amount === 0
+                ? `${person} is settled`
+                : `${person} ${isOwing ? "owes" : "gets back"} ₹${amount.toLocaleString()}`
+            }
+            primaryTypographyProps={{
+              fontWeight: 600,
+              color:
+                amount === 0
+                  ? "text.secondary"
+                  : isOwing
+                  ? "#ff8a65"
+                  : "#66bb6a",
+            }}
+          />
+          {amount !== 0 && (isOpen ? <ExpandLess /> : <ExpandMore />)}
+        </ListItemButton>
+
+        {/* DROPDOWN */}
+        <Collapse in={isOpen && amount !== 0} timeout="auto" unmountOnExit>
+          {Object.entries(data.relations).map(([other, value]) => (
+            <ListItem key={other} sx={{ pl: 6 }}>
               <ListItemText
-                primary={`${person} ${
-                  isOwing ? "owes" : "gets back"
-                } ₹${amount.toLocaleString()}`}
-                primaryTypographyProps={{
-                  fontWeight: 600,
-                  color: isOwing ? "#ff8a65" : "#66bb6a",
-                }}
+                primary={
+                  value < 0
+                    ? `${person} owes ₹${Math.abs(value)} to ${other}`
+                    : `${other} owes ₹${value} to ${person}`
+                }
               />
-              {isOpen ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
+            </ListItem>
+          ))}
 
-            {/* DROPDOWN */}
-            <Collapse in={isOpen} timeout="auto" unmountOnExit>
-              {data.details.map((d, i) => (
-                <ListItem key={i} sx={{ pl: 6 }}>
-                  <ListItemText
-                    primary={`${person} owes ₹${d.amount} to ${d.other}`}
-                  />
-                </ListItem>
-              ))}
+          {isOwing && (
+            <Box sx={{ pl: 6, display: "flex", gap: 2 }}>
+              <Button variant="outlined">Remind</Button>
+              <Button variant="outlined">Settle up</Button>
+            </Box>
+          )}
+        </Collapse>
+      </Box>
+    );
+  })}
+</List>
 
-              {isOwing && (
-                <Box sx={{ pl: 6, display: "flex", gap: 2 }}>
-                  <Button variant="outlined">Remind</Button>
-                  <Button variant="outlined">Settle up</Button>
-                </Box>
-              )}
-            </Collapse>
-          </Box>
-        );
-      })}
-    </List>
   );
 }
 
@@ -889,7 +904,66 @@ const buildSplitwiseView = (balances = {}) => {
 
   return result;
 };
+function calculateBalances(expenses) {
+  const people = {};
 
+  const ensureUser = (user) => {
+    if (!people[user.name]) {
+      people[user.name] = {
+        userId: user._id,
+        netBalance: 0,      // single source of truth
+        relations: {}       // person-to-person net
+      };
+    }
+  };
+
+  // STEP 1: Build net balances & relations
+  expenses.forEach(expense => {
+    expense.splitBetweenWithAmt.forEach(({ user, owesTo, amount }) => {
+      if (user._id === owesTo._id) return;
+
+      ensureUser(user);
+      ensureUser(owesTo);
+
+      // user owes → negative
+      people[user.name].netBalance -= amount;
+      // owesTo gets → positive
+      people[owesTo.name].netBalance += amount;
+
+      // relation tracking
+      people[user.name].relations[owesTo.name] =
+        (people[user.name].relations[owesTo.name] || 0) - amount;
+
+      people[owesTo.name].relations[user.name] =
+        (people[owesTo.name].relations[user.name] || 0) + amount;
+    });
+  });
+
+  // STEP 2: Normalize relations (remove zeros)
+  Object.values(people).forEach(person => {
+    Object.keys(person.relations).forEach(other => {
+      if (person.relations[other] === 0) {
+        delete person.relations[other];
+      }
+    });
+  });
+
+  // STEP 3: Derive totals (🔥 no double counting)
+  Object.values(people).forEach(person => {
+    if (person.netBalance > 0) {
+      person.totalGetsBack = person.netBalance;
+      person.totalOwed = 0;
+    } else if (person.netBalance < 0) {
+      person.totalOwed = Math.abs(person.netBalance);
+      person.totalGetsBack = 0;
+    } else {
+      person.totalOwed = 0;
+      person.totalGetsBack = 0;
+    }
+  });
+
+  return people;
+}
 
 
 

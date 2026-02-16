@@ -226,6 +226,7 @@ useEffect(() => {
                                               groupId:groupId,
                                               groupMemberList:groupMemberList,
                                               balances:balances,
+                                              expense:expense,
                                             }
                                         }))
                                       }
