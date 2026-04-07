@@ -70,6 +70,7 @@ const updateExpenses = async(req,res)=>{
         amount: item.amount,
         }));
     }
+    console.log("splitBetweenWithAmt-------->",splitBetweenWithAmt);
     const updatedData = {
             description,
             amount,

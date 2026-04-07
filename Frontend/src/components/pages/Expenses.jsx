@@ -89,11 +89,12 @@ const Expenses = () => {
 
 
 useEffect(() => {
+  console.log("expense or groupMemberList changed, recalculating balances...")
   if (!expense || expense.length === 0) return;
 
   const balances = {};
   let totalBalance = 0;
-
+  console.log("inside expense useEffect---------->",expense);
   // Step 1: Build balances map
   expense.forEach((exp) => {
     exp.splitBetweenWithAmt.forEach((split) => {
@@ -219,6 +220,8 @@ useEffect(() => {
                         </Stack>
                         <Box sx={{display:'flex',justifyContent:'end'}}>
                           <Button 
+                            // component={Link}
+                            // to={`/balances/${item.id}`}                           
                             onClick={()=>dispatch(openModal({
                                             modalType: 'VIEW_BALANCES',
                                             modalProps: {
@@ -249,6 +252,7 @@ useEffect(() => {
                       <Box sx={{ pr: 1,overflowY: 'scroll'}}>
                         <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
                           {expense.map((expense) => {
+                            console.log("expense inside the map function---------->",expense);
                             let lent_borrowed_amt = 0;
                             const userEntry = expense.splitBetweenWithAmt.find(
                               (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
@@ -282,12 +286,12 @@ useEffect(() => {
                                   <ListItemText
                                     sx={{ textAlign: 'right', paddingRight: '1rem' }}
                                     primary={
-                                      <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
+                                      <Typography variant="subtitle2" sx={{ fontSize: '0.8rem', fontWeight:'normal', color: expense.paidBy._id === user.id ?'green': 'red' }}>
                                         {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
                                       </Typography>
                                     }
                                     secondary={
-                                      <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
+                                      <Typography variant="body2" sx={{ fontSize: '0.9rem', color: 'gray' }}>
                                         ₹{lent_borrowed_amt}
                                       </Typography>
                                     }

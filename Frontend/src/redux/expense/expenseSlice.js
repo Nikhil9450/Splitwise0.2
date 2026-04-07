@@ -24,6 +24,7 @@ export const updateExpense = createAsyncThunk("expense/updateExpense",async(data
         const response=  await axios.post("http://localhost:5000/expense/updateExpense",{data},{withCredentials:true})
         console.log("response---------->",response.data) 
         await thunkAPI.dispatch(fetchGroupExpenses(data.group));
+        await thunkAPI.dispatch(fetchSingleExpense(data.expenseId));
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(
@@ -39,6 +40,7 @@ export const deleteExpense = createAsyncThunk("expense/deleteExpense",async(data
         const response=  await axios.post("http://localhost:5000/expense/deleteExpense",{data},{withCredentials:true})
         console.log("response---------->",response.data) 
         await thunkAPI.dispatch(fetchGroupExpenses(data.group));
+        await thunkAPI.dispatch(fetchSingleExpense(data.expenseId));
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(

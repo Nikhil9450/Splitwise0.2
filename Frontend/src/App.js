@@ -18,7 +18,7 @@ import Groups from './components/pages/groups';
 import Balances from './components/pages/Balances';
 import Expenses from './components/pages/Expenses';
 import ExpenseDetails from './components/pages/ExpenseDetails';
-import Hero from './components/pages/Hero';
+// import Hero from './components/pages/Hero';
 function App() {
   const dispatch = useDispatch();
    const location = useLocation();
@@ -109,12 +109,12 @@ function App() {
         }
       /> 
 
-      <Route
+      {/* <Route
         path="/hero"
         element={
           isAuthenticated ? <Hero /> : <Navigate to="/signin" replace />
         }
-      /> 
+      />  */}
 
       {/* Admin Routes (RBAC handled inside ProtectedRoute) */}
       <Route

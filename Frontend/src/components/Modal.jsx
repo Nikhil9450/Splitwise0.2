@@ -26,7 +26,12 @@ import {
   Collapse ,
   ListItemIcon,
   ListSubheader ,
+  Dialog,
+  IconButton
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
@@ -51,18 +56,12 @@ import { useNavigate } from 'react-router-dom';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import Slide from '@mui/material/Slide';
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  // border: '2px solid lightgrey',
-  borderRadius:'10px',
-  boxShadow: 24,
-  maxHeight: '90vh',
-  overflowY: 'auto',
   p: 4,
 };
 
@@ -495,16 +494,14 @@ export default function TransitionsModal() {
             group:modalProps.groupId,
             expenseId:modalProps.expenseId
       }
+      console.log("data before comparision------->",data);
       if(data.group===""||data.expenseId===0 ){
         toast.error("data insufficient");
       }else{
         console.log("expenseId-------->", modalProps.expenseId);
             dispatch(deleteExpense(data));
             dispatch(closeModal());
-            dispatch(setViewType("expenses"));
-            navigate(-1)
-
-            
+            navigate(`/expenses/${modalProps.groupId._id}`);     
       }
     }
 
@@ -861,12 +858,12 @@ export default function TransitionsModal() {
       }
     };
 
-    const togglePerson = (person) => {
-      setOpenMap((prev) => ({
-        ...prev,
-        [person]: !prev[person],
-      }));
-    };
+  const togglePerson = (person) => {
+    setOpenMap((prev) => ({
+      ...prev,
+      [person]: !prev[person],
+    }));
+  };
 const buildSplitwiseView = (balances = {}) => {
   const pairNet = {};
 
@@ -969,36 +966,64 @@ function calculateBalances(expenses) {
 
 
   return (
-    <div>
-      <Modal
-        // sx={{borderRadius:'10px',border:'none'}}
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={isOpen}
-        onClose={(event, reason) => {
-          if (reason === 'backdropClick') {
-            // ✅ Trigger your custom function here
-            setSplitType("Equally");
-            setSplitContainer(false);
+    // <div>
+    //   <Modal
+    //     // sx={{borderRadius:'10px',border:'none'}}
+    //     aria-labelledby="transition-modal-title"
+    //     aria-describedby="transition-modal-description"
+    //     open={isOpen}
+    //     onClose={(event, reason) => {
+    //       if (reason === 'backdropClick') {
+    //         // ✅ Trigger your custom function here
+    //         setSplitType("Equally");
+    //         setSplitContainer(false);
 
-          }
-          // This will still close the modal
-          dispatch(closeModal());
-        }}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
+    //       }
+    //       // This will still close the modal
+    //       dispatch(closeModal());
+    //     }}
+    //     closeAfterTransition
+    //     slots={{ backdrop: Backdrop }}
+    //     slotProps={{
+    //       backdrop: {
+    //         timeout: 500,
+    //       },
+    //     }}
+    //   >
+    //     <Fade in={isOpen}>
+    //         <Box sx={style}>
+    //             {renderModalContent()}
+    //         </Box>
+    //     </Fade>
+    //   </Modal>
+    // </div>
+     <React.Fragment>
+
+      <Dialog
+        fullScreen
+        open={isOpen}
+        onClose={() => {
+          dispatch(closeModal())
+          }}
+        slots={{
+          transition: Transition,
         }}
       >
-        <Fade in={isOpen}>
-            <Box sx={style}>
-                {renderModalContent()}
-            </Box>
-        </Fade>
-      </Modal>
-    </div>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => dispatch(closeModal())}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+      </Box>
+
+        <Box sx={style}>
+          {renderModalContent()}
+        </Box>
+      </Dialog>
+    </React.Fragment>
   );
 }

@@ -23,9 +23,9 @@ app.use(express.json());
 
 
 
+app.use("/user",userRoute);
 
 app.use("/",checkAuth,staticRoute);
-app.use("/user",userRoute);
 app.use("/admin",checkRole,adminRoutes);
 app.use("/editUser",restrictToLoggedinUserOnly,editUserRoutes);
 app.use("/group",checkAuth,groupRoutes);

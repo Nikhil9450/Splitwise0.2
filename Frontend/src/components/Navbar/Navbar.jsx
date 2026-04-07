@@ -104,9 +104,6 @@ function DrawerAppBar(props) {
             <IconButton aria-label="friends" size="small" component={Link} to="/friends">
               <PersonAddIcon fontSize="small" />
             </IconButton>
-            <IconButton aria-label="hero" size="small" component={Link} to="/hero">
-              Hero
-            </IconButton>
           {/* </Stack> */}
           <Box sx={{display: { xs: 'block', sm: 'block' } }}> 
             <Button

@@ -48,6 +48,8 @@ const ExpenseDetails = () => {
   useEffect(() => {
     if (!expenseDetails?.group) return;
     setGroupId(expenseDetails.group);
+    setGroupMembers(expenseDetails.group.members|| []);
+
   }, [expenseDetails]);
 
   /* ===============================
@@ -59,7 +61,6 @@ const ExpenseDetails = () => {
         (item) => item.id === id
       );
       if (!group) return;
-      setGroupMembers(group.members || []);
     },
     [UserGroupList]
   );
@@ -84,6 +85,8 @@ const ExpenseDetails = () => {
      Handlers
   =============================== */
   const editExpenseHandler = () => {
+    console.log("groupMembers-------->",groupMembers);
+    console.log("expenseDetails-------->",expenseDetails);
     dispatch(
       openModal({
         modalType: 'ADD_EXPENSE',
