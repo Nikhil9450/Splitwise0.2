@@ -83,6 +83,9 @@ function DrawerAppBar(props) {
                                     mt:{xs:10,sm:0},                       
                                     top: { xs: 'auto', sm: 0 },
                                     bottom: { xs: 0, sm: 'auto' },
+                                    bgcolor:'#25291C',
+                                    // borderRadius:'2rem 2rem 0 0',
+                                    pt:{xs:1,sm:0},
                                   }}>
         <Toolbar sx={{display:'flex',justifyContent:'space-around',alignItems:'center'}}>
           <Typography
@@ -94,15 +97,22 @@ function DrawerAppBar(props) {
           </Typography>
           {/* <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}> */}
             <IconButton aria-label="group" size="small" component={Link} to="/groups">
-              <GroupIcon fontSize="small" />
+              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
+                <GroupIcon fontSize="small" sx={{color:"#25291C"}}/>
+              </Avatar>
+            
             </IconButton>
 
             <IconButton aria-label="balances" size="small" component={Link} to="/balances">
-              <AccountBalanceWalletIcon fontSize="small" />
+              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
+                <AccountBalanceWalletIcon fontSize="small" sx={{color:"#25291C"}} />
+              </Avatar>
             </IconButton> 
 
             <IconButton aria-label="friends" size="small" component={Link} to="/friends">
-              <PersonAddIcon fontSize="small" />
+              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
+                <PersonAddIcon fontSize="small" sx={{color:"#25291C"}}/>
+              </Avatar>
             </IconButton>
           {/* </Stack> */}
           <Box sx={{display: { xs: 'block', sm: 'block' } }}> 
@@ -128,7 +138,9 @@ function DrawerAppBar(props) {
             </Button>
 
             <IconButton aria-label="delete" size="small" onClick={handleClick} sx={{fontSize:'small',display:{xs:'block',sm:'none'}}}>
-              <PersonIcon fontSize="small" />
+              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
+                <PersonIcon fontSize="small" sx={{color:"#25291C"}}/>
+              </Avatar>
             </IconButton> 
             <Menu
             id="basic-menu"

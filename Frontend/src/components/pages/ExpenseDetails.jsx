@@ -11,13 +11,17 @@ import {
   Divider,
   Button,
   Box,
-  IconButton
+  IconButton,
+  Avatar,
 } from '@mui/material';
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import dayjs from 'dayjs';
 
+const fontStyle = {
+  fontFamily: "Montserrat, sans-serif",
+}
 const ExpenseDetails = () => {
   const navigate = useNavigate();
   const { id: expenseId } = useParams();
@@ -117,73 +121,186 @@ const ExpenseDetails = () => {
      UI
   =============================== */
   return (
-    <Box
-      // component={Paper}
+<Box
+  sx={{
+    minHeight: '100%',
+    bgcolor: '#DFE0DC',
+    fontFamily: "Montserrat, sans-serif",
+  }}
+>
+  {/* Header */}
+  <Box
+    sx={{
+      bgcolor: '#25291C',
+      color: '#DFE0DC',
+      // borderRadius: 2,
+      p: 3,
+      mb: 3,
+      fontFamily: "Montserrat, sans-serif",
+    }}
+  >
+    {/* Back Button */}
+    <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+      <IconButton onClick={() => navigate(-1)}>
+        <ArrowBackIcon sx={{ color: '#DFE0DC' }} />
+      </IconButton>
+    </Box>
+
+    {/* Title */}
+    <Typography
       sx={{
-        p: 3,
-        width: '100%',
-        height: '100%',
-        mx: 'auto'
+        color: '#129490',
+        letterSpacing: 1,
+        fontWeight: 600,
+        fontFamily: "Montserrat, sans-serif",
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <IconButton size="small" onClick={() => navigate(-1)}>
-          <ArrowBackIcon />
-        </IconButton>
-      </Box>
+      {expenseDetails.description?.toUpperCase()}
+    </Typography>
 
-      <Typography variant="h5" fontWeight={500} gutterBottom>
-        {expenseDetails.description?.toUpperCase()}
-      </Typography>
+    {/* Amount */}
+    <Typography
+      sx={{
+        fontSize: '2rem',
+        fontWeight: 700,
+        mt: 1,
+        color: '#FCFAF9',
+        fontFamily: "Montserrat, sans-serif",
+      }}
+    >
+      ₹{expenseDetails.amount}
+    </Typography>
+  </Box>
 
-      <Typography variant="h4" color="primary" gutterBottom>
-        ₹{expenseDetails.amount}
-      </Typography>
+  {/* Info Section */}
+  <Box
+    sx={{
+      bgcolor: '#FFFFFF',
+      borderRadius: '2rem',
+      p: 3,
+      m: 2,
+      border: '1px solid #DFE0DC',
+      fontFamily: "Montserrat, sans-serif",
+    }}
+  >
+    <Typography sx={{ mb: 1, fontSize: '0.85rem',fontFamily: "Montserrat, sans-serif", fontWeight: 500, }}>
+      Added by <strong>{expenseDetails.addedBy?.name}</strong>
+    </Typography>
 
-      <Divider sx={{ mb: 2 }} />
+    <Typography sx={{ mb: 1, fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif", fontWeight: 500,}}>
+      Date:{" "}
+      <strong>
+        {dayjs(expenseDetails.date).format('DD MMM YYYY')}
+      </strong>
+    </Typography>
 
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        Added by <strong>{expenseDetails.addedBy?.name}</strong> on{' '}
-        <strong>
-          {dayjs(expenseDetails.date).format('YYYY-MM-DD')}
-        </strong>
-      </Typography>
+    <Typography sx={{ fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif",fontWeight: 500, }}>
+      <strong>{expenseDetails.paidBy?.name}</strong> paid ₹
+      {expenseDetails.amount}
+    </Typography>
+  </Box>
 
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        <strong>{expenseDetails.paidBy?.name}</strong> paid ₹
-        {expenseDetails.amount}
-      </Typography>
+  {/* Split Details */}
+  <Box
+    sx={{
+      bgcolor: '#FFFFFF',
+      borderRadius: '2rem',
+      p: 3,
+      m: 2,
+      border: '1px solid #DFE0DC',
+      fontFamily: "Montserrat, sans-serif",
+    }}
+  >
+    <Typography
+      sx={{
+        fontWeight: 600,
+        mb: 2,
+        color: '#129490',
+        fontFamily: "Montserrat, sans-serif",
+      }}
+    >
+      Split Details
+    </Typography>
 
-      <Divider sx={{ my: 2 }} />
-
-      <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-        Split Details:
-      </Typography>
-
-      {expenseDetails.splitBetweenWithAmt?.map((member, idx) => (
-        <Typography
-          key={idx}
-          variant="body2"
-          color="text.secondary"
-          sx={{ pl: 1 }}
-        >
-          {member.user?.name} owes ₹
-          {Number(member.amount).toFixed(2)}
+    {expenseDetails.splitBetweenWithAmt?.map((member, idx) => (
+      <Box
+        key={idx}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          py: 1,
+          borderBottom:
+            idx !== expenseDetails.splitBetweenWithAmt.length - 1
+              ? '1px solid #DFE0DC'
+              : 'none',
+        }}
+      >
+        <Typography sx={{ fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif",fontWeight: 500}}>
+          {member.user?.name}
         </Typography>
-      ))}
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 2 }}>
-        <Button size="small" onClick={deleteExpenseHandler}>
-          <DeleteIcon fontSize="small" sx={{ mr: 0.5 }} />
-          DELETE EXPENSE
-        </Button>
-
-        <Button size="small" onClick={editExpenseHandler}>
-          <EditIcon fontSize="small" sx={{ mr: 0.5 }} />
-          EDIT EXPENSE
-        </Button>
+        <Typography
+          sx={{
+            fontFamily: "Montserrat, sans-serif",
+            fontWeight: 600,
+            fontSize: '0.85rem',
+          }}
+        >
+          ₹{Number(member.amount).toFixed(2)}
+        </Typography>
       </Box>
-    </Box>
+    ))}
+  </Box>
+
+  {/* Actions */}
+  <Box
+    sx={{
+      display: 'flex',
+      gap: 2,
+      mt: 3,
+      fontFamily: "Montserrat, sans-serif",
+      justifyContent: 'end',
+      p:2
+    }}
+  >
+    <Button
+      fullWidth
+      variant="outlined"
+      sx={{
+        bgcolor: '#DFE0DC',
+        color: '#25291C',
+        borderRadius: '2rem',
+        // fontWeight: 600,
+        border: '2px solid #25291C',
+        '&:hover': { bgcolor: '#FCFAF9' },
+        height:'3rem',
+        minWidth:'1rem',
+        width:'3rem',
+      }}
+      onClick={deleteExpenseHandler}
+    >
+      <DeleteOutlineOutlinedIcon />
+    </Button>
+
+    <Button
+      fullWidth
+      variant="outlined"
+      sx={{
+        bgcolor: '#DFE0DC',
+        color: '#25291C',
+        borderRadius: '2rem',
+        border: '2px solid #25291C',
+        '&:hover': { bgcolor: '#FCFAF9' },
+        height:'3rem',
+        minWidth:'1rem',
+        width:'3rem',
+      }}
+      onClick={editExpenseHandler}
+    >
+      <EditOutlinedIcon sx={{height:'1.5rem',width:'1.5rem', }} />
+    </Button>
+  </Box>
+</Box>
   );
 };
 

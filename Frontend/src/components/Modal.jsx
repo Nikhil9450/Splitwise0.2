@@ -63,6 +63,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const style = {
   p: 4,
+  bgcolor:"#DFE0DC",
 };
 
 export default function TransitionsModal() {
@@ -652,93 +653,355 @@ export default function TransitionsModal() {
                 {renderSplitType()}
               </>
               :<>
-                <Typography variant="h6" sx={{marginBottom:'2rem'}} >{modalProps.title}</Typography>
-                  <Box>
-                    <Box >
-                        <Box sx={{ display: 'flex', alignItems: 'flex-end', marginBottom:'1rem' }}>
-                          <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center',
-                                justifyContent:'center', 
-                                padding:'.5rem',
-                                border: '1px solid #82bdf7',
-                                bgcolor:'#dcedff', 
-                                marginRight:'.6rem',
-                                borderRadius:'.5rem'
-                              }}
-                            >
-                            <DescriptionIcon sx={{ color: '#1976d2' }} />
-                          </Box>
-                          <TextField id="input-with-sx" label="Description" variant="standard" sx={{width:'100%'}} size="small" onChange={(e) => setDescription(e.target.value)} value={description} />
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                          <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center',
-                                justifyContent:'center', 
-                                padding:'.5rem',
-                                border: '1px solid #82bdf7',
-                                bgcolor:'#dcedff', 
-                                marginRight:'.6rem',
-                                borderRadius:'.5rem',
-                              }}                        
-                            >
-                            <CurrencyRupeeIcon sx={{ color: '#1976d2' }} />
-                          </Box>
-                          <TextField id="input-with-sx" type="number" label="Amount" variant="standard" sx={{width:'100%'}} size="small" onChange={(e)=>setAmount(Number(e.target.value))} value={amount}/>
-                        </Box>
-                    </Box>
-                    <Box sx={{ display:'flex',flexDirection:'row',marginTop:'3rem' ,justifyContent:'space-between'}}>
-                        <FormControl  sx={{ mr: 1, minWidth: 120 }}  size="small">
-                          <InputLabel id="demo-simple-select-standard-label" sx={{fontSize:'14px'}}>Paid By</InputLabel>
-                          <Select
-                            labelId="demo-simple-select-standard-label"
-                            id="demo-simple-select-standard"
-                            sx={{fontSize:'smaller'}}
-                            value={paidBy}
-                            onChange={(event)=>setPaidBy(event.target.value)}
-                            label="Paid By"
-                          >
-                          {modalProps.groupMemberList.map((user)=> <MenuItem sx={{fontSize:'smaller'}} key={user._id} value={user._id}>{user.name}</MenuItem>)}
+  {/* Title */}
+  <Typography
+    sx={{
+      mb: 3,
+      fontWeight: 600,
+      color: '#25291C',
+      fontFamily: "Montserrat, sans-serif",
+      fontSize:'1.5rem'
+    }}
+  >
+    {modalProps.title}
+  </Typography>
 
-                          </Select>
-                        </FormControl>
+  {/* Input Section */}
+  <Box>
+    {/* Description */}
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 1.4,
+          border: '2px solid #25291C',
+          borderRadius:'2rem',
+          bgcolor: '#DFE0DC',
+          mr: 1,
+        }}
+      >
+        <DescriptionIcon sx={{ color: '#25291C' , height: '1rem' }} />
+      </Box>
 
-      
-                          <ButtonGroup
-                            disableElevation
-                            variant="outlined"
-                            aria-label="Disabled button group"
-                            size='small'
-                          >
-                            <Button  variant={(splitType==="Equally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Equally")}>Equally</Button>
-                            <Button  variant={(splitType==="Unequally")?"contained":"outlined"} onClick={()=>splitTypeHandler("Unequally")}>Unequally</Button>
-                          </ButtonGroup>
-                    </Box>
-                  </Box>
-                  <Box sx={{display:'flex',justifyContent:'space-between',marginTop:'2rem'}} >
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <MobileDatePicker
-                          slotProps={{
-                            textField: {
-                              size: 'small',
-                              sx: { width: 200 },
-                            },
-                          }}
-                          value={
-                            selectedDate
-                          }
-                          onChange={(newValue) => setSelectedDate(newValue)}
-                          format="YYYY-MM-DD"
-                          maxDate={dayjs()} 
-                          minDate={dayjs('2020-01-01')}  
-                        />
-                      </LocalizationProvider>
-                    <Button variant='contained' startIcon={<AddIcon />} onClick={()=>add_Expense()}>{(modalProps.title==="Edit Expense")?"Update":"Add"}</Button>
-                  </Box>
-              </>
+<TextField
+  label="Description"
+  variant="outlined"
+  fullWidth
+  size="small"
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+  InputLabelProps={{
+    sx: {
+      fontFamily: "Montserrat, sans-serif",
+      fontSize: '1rem',
+      fontWeight: 500,
+      color: '#25291C',
+      '&.Mui-focused': {
+        color: '#129490',
+      },
+    },
+  }}
+  InputProps={{
+    sx: {
+      fontFamily: "Montserrat, sans-serif",
+      fontSize: '1rem',
+      fontWeight: 500,
+      borderRadius: '2rem',
+      borderWidth: '2px',
+
+      // Default border
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#25291C',
+        borderWidth: '2px',
+      },
+
+      // Hover
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#25291C',
+        borderWidth: '2px',
+      },
+
+      // Focus
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#129490',
+        borderWidth: '2px',
+      },
+    },
+  }}
+/>
+    </Box>
+
+    {/* Amount */}
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 1.4,
+          border: '2px solid #25291C',
+          borderRadius:'2rem',
+          bgcolor: '#DFE0DC',
+          mr: 1,
+        }}
+      >
+        <CurrencyRupeeIcon sx={{ color: '#25291C', height: '1rem' }} />
+      </Box>
+
+<TextField
+  type="number"
+  label="Amount"
+  variant="outlined"
+  fullWidth
+  size="small"
+  value={amount}
+  onChange={(e) => setAmount(Number(e.target.value))}
+  InputLabelProps={{
+    sx: {
+      fontFamily: "Montserrat, sans-serif",
+      fontSize: '1rem',
+      fontWeight: 500,
+      color: '#25291C',
+      '&.Mui-focused': {
+        color: '#129490',
+      },
+    },
+  }}
+  InputProps={{
+    sx: {
+      fontFamily: "Montserrat, sans-serif",
+      fontSize: '1rem',
+      fontWeight: 500,
+      borderRadius: '2rem',
+      borderWidth: '2px',
+
+      // Default border
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#25291C',
+        borderWidth: '2px',
+      },
+
+      // Hover
+      '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#25291C',
+        borderWidth: '2px',
+      },
+
+      // Focus
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: '#129490',
+        borderWidth: '2px',
+      },
+    },
+  }}
+/>
+    </Box>
+  </Box>
+
+  {/* Paid By + Split */}
+  <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      mt: 4,
+      gap: 2,
+    }}
+  >
+    {/* Paid By */}
+    <FormControl variant="outlined" fullWidth>
+      <InputLabel
+        sx={{
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: '1rem',
+          fontWeight: 500,
+          color: '#25291C',
+        }}
+      >
+        Paid By
+      </InputLabel>
+
+      <Select
+        value={paidBy}
+        label="Paid By"
+        onChange={(e) => setPaidBy(e.target.value)}
+        sx={{
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: '1rem',
+          borderRadius: '2rem',
+          border: '2px',
+          height: '2.5rem',
+
+          // Default (inactive)
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#25291C',
+            borderWidth: '2px',
+          },
+
+          // Hover
+          // '&:hover .MuiOutlinedInput-notchedOutline': {
+          //   borderColor: '#129490',
+          // },
+
+          // Focus (active)
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#129490',
+            borderWidth: '2px',
+          },
+        }}
+      >
+        {modalProps.groupMemberList.map((user) => (
+          <MenuItem
+            key={user._id}
+            value={user._id}
+            sx={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: '.875rem',
+            }}
+          >
+            {user.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+
+
+  </Box>
+    {/* Split Buttons */}
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <MobileDatePicker
+          value={selectedDate}
+          onChange={(newValue) => setSelectedDate(newValue)}
+          format="YYYY-MM-DD"
+          enableAccessibleFieldDOMStructure={false} // 👈 FIX
+          maxDate={dayjs()}
+          minDate={dayjs('2020-01-01')}
+          slots={{
+            textField: (params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                size="small"
+                sx={{
+                  width: 180,
+
+                  // Label
+                  '& .MuiInputLabel-root': {
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    color: '#25291C',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#129490',
+                  },
+
+                  // Input root
+                  '& .MuiOutlinedInput-root': {
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    borderRadius: '2rem',
+
+                    '& fieldset': {
+                      borderColor: '#25291C',
+                      borderWidth: '2px',
+                    },
+
+                    '&:hover fieldset': {
+                      borderColor: '#25291C',
+                    },
+
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#129490',
+                      borderWidth: '2px',
+                    },
+                  },
+                }}
+              />
+            ),
+          }}
+        />
+      </LocalizationProvider>
+<ButtonGroup
+  size="small"
+  sx={{
+    borderRadius: '2rem',
+    overflow: 'hidden', // 👈 important
+     border: '2px solid #25291C', 
+  }}
+>
+  <Button
+    onClick={() => splitTypeHandler("Equally")}
+    sx={{
+      fontFamily: "Montserrat, sans-serif",
+      textTransform: 'none',
+      bgcolor: splitType === "Equally" ? '#25291C' : 'transparent',
+      color: splitType === "Equally" ? '#fff' : '#25291C',
+      borderColor: '#DFE0DC',
+
+      borderTopLeftRadius: '2rem',
+      borderBottomLeftRadius: '2rem',
+
+      '&:hover': {
+        bgcolor: splitType === "Equally" ? '#4f504c' : '#f5f5f5',
+      },
+    }}
+  >
+    Equally
+  </Button>
+
+  <Button
+    onClick={() => splitTypeHandler("Unequally")}
+    sx={{
+      fontFamily: "Montserrat, sans-serif",
+      textTransform: 'none',
+      bgcolor: splitType === "Unequally" ? '#25291C' : 'transparent',
+      color: splitType === "Unequally" ? '#fff' : '#25291C',
+      borderColor: '#DFE0DC',
+
+      borderTopRightRadius: '2rem',
+      borderBottomRightRadius: '2rem',
+
+      '&:hover': {
+        bgcolor: splitType === "Unequally" ? '#4f504c' : '#f5f5f5',
+      },
+    }}
+  >
+    Unequally
+  </Button>
+</ButtonGroup>
+    </Box>
+  {/* Date + Action */}
+  <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'end',
+      mt: 8,
+      alignItems: 'center',
+    }}
+  >
+
+    <Button
+      variant="contained"
+      startIcon={<AddIcon />}
+      onClick={add_Expense}
+      sx={{
+        bgcolor: '#129490',
+        fontFamily: "Montserrat, sans-serif",
+        textTransform: 'none',
+        fontWeight: 500,
+        borderRadius: '2rem',
+        padding:'.6rem 1rem',
+        '&:hover': { bgcolor: '#0f7f7c' },
+      }}
+    >
+      {modalProps.title === "Edit Expense" ? "Update" : "Add"}
+    </Button>
+  </Box>
+</>
               }
 
               </>
@@ -997,7 +1260,7 @@ function calculateBalances(expenses) {
     //     </Fade>
     //   </Modal>
     // </div>
-     <React.Fragment>
+    //  <React.Fragment   >
 
       <Dialog
         fullScreen
@@ -1008,15 +1271,21 @@ function calculateBalances(expenses) {
         slots={{
           transition: Transition,
         }}
+         PaperProps={{
+          sx: {
+            bgcolor: "#DFE0DC",
+          },
+        }}
       >
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2, bgcolor:"#DFE0DC" }}>
+      
             <IconButton
               edge="start"
               color="inherit"
               onClick={() => dispatch(closeModal())}
               aria-label="close"
             >
-              <CloseIcon />
+              <CloseIcon sx={{color:"#25291C"}} />
             </IconButton>
       </Box>
 
@@ -1024,6 +1293,6 @@ function calculateBalances(expenses) {
           {renderModalContent()}
         </Box>
       </Dialog>
-    </React.Fragment>
+    // </React.Fragment>
   );
 }
