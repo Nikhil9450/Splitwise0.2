@@ -653,355 +653,355 @@ export default function TransitionsModal() {
                 {renderSplitType()}
               </>
               :<>
-  {/* Title */}
-  <Typography
-    sx={{
-      mb: 3,
-      fontWeight: 600,
-      color: '#25291C',
-      fontFamily: "Montserrat, sans-serif",
-      fontSize:'1.5rem'
-    }}
-  >
-    {modalProps.title}
-  </Typography>
+                    {/* Title */}
+                    <Typography
+                      sx={{
+                        mb: 3,
+                        fontWeight: 600,
+                        color: '#25291C',
+                        fontFamily: "Montserrat, sans-serif",
+                        fontSize:'1.5rem'
+                      }}
+                    >
+                      {modalProps.title}
+                    </Typography>
 
-  {/* Input Section */}
-  <Box>
-    {/* Description */}
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 1.4,
-          border: '2px solid #25291C',
-          borderRadius:'2rem',
-          bgcolor: '#DFE0DC',
-          mr: 1,
-        }}
-      >
-        <DescriptionIcon sx={{ color: '#25291C' , height: '1rem' }} />
-      </Box>
+                    {/* Input Section */}
+                    <Box>
+                      {/* Description */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: 1.4,
+                            border: '2px solid #25291C',
+                            borderRadius:'2rem',
+                            bgcolor: '#DFE0DC',
+                            mr: 1,
+                          }}
+                        >
+                          <DescriptionIcon sx={{ color: '#25291C' , height: '1rem' }} />
+                        </Box>
 
-<TextField
-  label="Description"
-  variant="outlined"
-  fullWidth
-  size="small"
-  value={description}
-  onChange={(e) => setDescription(e.target.value)}
-  InputLabelProps={{
-    sx: {
-      fontFamily: "Montserrat, sans-serif",
-      fontSize: '1rem',
-      fontWeight: 500,
-      color: '#25291C',
-      '&.Mui-focused': {
-        color: '#129490',
-      },
-    },
-  }}
-  InputProps={{
-    sx: {
-      fontFamily: "Montserrat, sans-serif",
-      fontSize: '1rem',
-      fontWeight: 500,
-      borderRadius: '2rem',
-      borderWidth: '2px',
+                      <TextField
+                        label="Description"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        InputLabelProps={{
+                          sx: {
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            color: '#25291C',
+                            '&.Mui-focused': {
+                              color: '#129490',
+                            },
+                          },
+                        }}
+                        InputProps={{
+                          sx: {
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            borderRadius: '2rem',
+                            borderWidth: '2px',
 
-      // Default border
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#25291C',
-        borderWidth: '2px',
-      },
+                            // Default border
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#25291C',
+                              borderWidth: '2px',
+                            },
 
-      // Hover
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#25291C',
-        borderWidth: '2px',
-      },
+                            // Hover
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#25291C',
+                              borderWidth: '2px',
+                            },
 
-      // Focus
-      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#129490',
-        borderWidth: '2px',
-      },
-    },
-  }}
-/>
-    </Box>
+                            // Focus
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#129490',
+                              borderWidth: '2px',
+                            },
+                          },
+                        }}
+                      />
+                      </Box>
 
-    {/* Amount */}
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 1.4,
-          border: '2px solid #25291C',
-          borderRadius:'2rem',
-          bgcolor: '#DFE0DC',
-          mr: 1,
-        }}
-      >
-        <CurrencyRupeeIcon sx={{ color: '#25291C', height: '1rem' }} />
-      </Box>
+                      {/* Amount */}
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: 1.4,
+                            border: '2px solid #25291C',
+                            borderRadius:'2rem',
+                            bgcolor: '#DFE0DC',
+                            mr: 1,
+                          }}
+                        >
+                          <CurrencyRupeeIcon sx={{ color: '#25291C', height: '1rem' }} />
+                        </Box>
 
-<TextField
-  type="number"
-  label="Amount"
-  variant="outlined"
-  fullWidth
-  size="small"
-  value={amount}
-  onChange={(e) => setAmount(Number(e.target.value))}
-  InputLabelProps={{
-    sx: {
-      fontFamily: "Montserrat, sans-serif",
-      fontSize: '1rem',
-      fontWeight: 500,
-      color: '#25291C',
-      '&.Mui-focused': {
-        color: '#129490',
-      },
-    },
-  }}
-  InputProps={{
-    sx: {
-      fontFamily: "Montserrat, sans-serif",
-      fontSize: '1rem',
-      fontWeight: 500,
-      borderRadius: '2rem',
-      borderWidth: '2px',
+                        <TextField
+                          type="number"
+                          label="Amount"
+                          variant="outlined"
+                          fullWidth
+                          size="small"
+                          value={amount}
+                          onChange={(e) => setAmount(Number(e.target.value))}
+                          InputLabelProps={{
+                            sx: {
+                              fontFamily: "Montserrat, sans-serif",
+                              fontSize: '1rem',
+                              fontWeight: 500,
+                              color: '#25291C',
+                              '&.Mui-focused': {
+                                color: '#129490',
+                              },
+                            },
+                          }}
+                          InputProps={{
+                            sx: {
+                              fontFamily: "Montserrat, sans-serif",
+                              fontSize: '1rem',
+                              fontWeight: 500,
+                              borderRadius: '2rem',
+                              borderWidth: '2px',
 
-      // Default border
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#25291C',
-        borderWidth: '2px',
-      },
+                              // Default border
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#25291C',
+                                borderWidth: '2px',
+                              },
 
-      // Hover
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#25291C',
-        borderWidth: '2px',
-      },
+                              // Hover
+                              '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#25291C',
+                                borderWidth: '2px',
+                              },
 
-      // Focus
-      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#129490',
-        borderWidth: '2px',
-      },
-    },
-  }}
-/>
-    </Box>
-  </Box>
+                              // Focus
+                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#129490',
+                                borderWidth: '2px',
+                              },
+                            },
+                          }}
+                        />
+                      </Box>
+                    </Box>
 
-  {/* Paid By + Split */}
-  <Box
-    sx={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      mt: 4,
-      gap: 2,
-    }}
-  >
-    {/* Paid By */}
-    <FormControl variant="outlined" fullWidth>
-      <InputLabel
-        sx={{
-          fontFamily: "Montserrat, sans-serif",
-          fontSize: '1rem',
-          fontWeight: 500,
-          color: '#25291C',
-        }}
-      >
-        Paid By
-      </InputLabel>
+                    {/* Paid By + Split */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mt: 4,
+                        gap: 2,
+                      }}
+                    >
+                      {/* Paid By */}
+                      <FormControl variant="outlined" fullWidth>
+                        <InputLabel
+                          sx={{
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            color: '#25291C',
+                          }}
+                        >
+                          Paid By
+                        </InputLabel>
 
-      <Select
-        value={paidBy}
-        label="Paid By"
-        onChange={(e) => setPaidBy(e.target.value)}
-        sx={{
-          fontFamily: "Montserrat, sans-serif",
-          fontSize: '1rem',
-          borderRadius: '2rem',
-          border: '2px',
-          height: '2.5rem',
+                        <Select
+                          value={paidBy}
+                          label="Paid By"
+                          onChange={(e) => setPaidBy(e.target.value)}
+                          sx={{
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: '1rem',
+                            borderRadius: '2rem',
+                            border: '2px',
+                            height: '2.5rem',
 
-          // Default (inactive)
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#25291C',
-            borderWidth: '2px',
-          },
+                            // Default (inactive)
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#25291C',
+                              borderWidth: '2px',
+                            },
 
-          // Hover
-          // '&:hover .MuiOutlinedInput-notchedOutline': {
-          //   borderColor: '#129490',
-          // },
+                            // Hover
+                            // '&:hover .MuiOutlinedInput-notchedOutline': {
+                            //   borderColor: '#129490',
+                            // },
 
-          // Focus (active)
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#129490',
-            borderWidth: '2px',
-          },
-        }}
-      >
-        {modalProps.groupMemberList.map((user) => (
-          <MenuItem
-            key={user._id}
-            value={user._id}
-            sx={{
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: '.875rem',
-            }}
-          >
-            {user.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+                            // Focus (active)
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#129490',
+                              borderWidth: '2px',
+                            },
+                          }}
+                        >
+                          {modalProps.groupMemberList.map((user) => (
+                            <MenuItem
+                              key={user._id}
+                              value={user._id}
+                              sx={{
+                                fontFamily: "Montserrat, sans-serif",
+                                fontSize: '.875rem',
+                              }}
+                            >
+                              {user.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
 
 
-  </Box>
-    {/* Split Buttons */}
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <MobileDatePicker
-          value={selectedDate}
-          onChange={(newValue) => setSelectedDate(newValue)}
-          format="YYYY-MM-DD"
-          enableAccessibleFieldDOMStructure={false} // 👈 FIX
-          maxDate={dayjs()}
-          minDate={dayjs('2020-01-01')}
-          slots={{
-            textField: (params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                size="small"
-                sx={{
-                  width: 180,
+                    </Box>
+                    {/*Date + Split Buttons */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MobileDatePicker
+                          value={selectedDate}
+                          onChange={(newValue) => setSelectedDate(newValue)}
+                          format="YYYY-MM-DD"
+                          enableAccessibleFieldDOMStructure={false} // 👈 FIX
+                          maxDate={dayjs()}
+                          minDate={dayjs('2020-01-01')}
+                          slots={{
+                            textField: (params) => (
+                              <TextField
+                                {...params}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                  width: 180,
 
-                  // Label
-                  '& .MuiInputLabel-root': {
-                    fontFamily: "Montserrat, sans-serif",
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    color: '#25291C',
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                    color: '#129490',
-                  },
+                                  // Label
+                                  '& .MuiInputLabel-root': {
+                                    fontFamily: "Montserrat, sans-serif",
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    color: '#25291C',
+                                  },
+                                  '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#129490',
+                                  },
 
-                  // Input root
-                  '& .MuiOutlinedInput-root': {
-                    fontFamily: "Montserrat, sans-serif",
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    borderRadius: '2rem',
+                                  // Input root
+                                  '& .MuiOutlinedInput-root': {
+                                    fontFamily: "Montserrat, sans-serif",
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    borderRadius: '2rem',
 
-                    '& fieldset': {
-                      borderColor: '#25291C',
-                      borderWidth: '2px',
-                    },
+                                    '& fieldset': {
+                                      borderColor: '#25291C',
+                                      borderWidth: '2px',
+                                    },
 
-                    '&:hover fieldset': {
-                      borderColor: '#25291C',
-                    },
+                                    '&:hover fieldset': {
+                                      borderColor: '#25291C',
+                                    },
 
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#129490',
-                      borderWidth: '2px',
-                    },
-                  },
-                }}
-              />
-            ),
-          }}
-        />
-      </LocalizationProvider>
-<ButtonGroup
-  size="small"
-  sx={{
-    borderRadius: '2rem',
-    overflow: 'hidden', // 👈 important
-     border: '2px solid #25291C', 
-  }}
->
-  <Button
-    onClick={() => splitTypeHandler("Equally")}
-    sx={{
-      fontFamily: "Montserrat, sans-serif",
-      textTransform: 'none',
-      bgcolor: splitType === "Equally" ? '#25291C' : 'transparent',
-      color: splitType === "Equally" ? '#fff' : '#25291C',
-      borderColor: '#DFE0DC',
+                                    '&.Mui-focused fieldset': {
+                                      borderColor: '#129490',
+                                      borderWidth: '2px',
+                                    },
+                                  },
+                                }}
+                              />
+                            ),
+                          }}
+                        />
+                      </LocalizationProvider>
+                      <ButtonGroup
+                        size="small"
+                        sx={{
+                          borderRadius: '2rem',
+                          overflow: 'hidden', // 👈 important
+                          border: '2px solid #25291C', 
+                        }}
+                      >
+                        <Button
+                          onClick={() => splitTypeHandler("Equally")}
+                          sx={{
+                            fontFamily: "Montserrat, sans-serif",
+                            textTransform: 'none',
+                            bgcolor: splitType === "Equally" ? '#25291C' : 'transparent',
+                            color: splitType === "Equally" ? '#fff' : '#25291C',
+                            borderColor: '#DFE0DC',
 
-      borderTopLeftRadius: '2rem',
-      borderBottomLeftRadius: '2rem',
+                            borderTopLeftRadius: '2rem',
+                            borderBottomLeftRadius: '2rem',
 
-      '&:hover': {
-        bgcolor: splitType === "Equally" ? '#4f504c' : '#f5f5f5',
-      },
-    }}
-  >
-    Equally
-  </Button>
+                            '&:hover': {
+                              bgcolor: splitType === "Equally" ? '#4f504c' : '#f5f5f5',
+                            },
+                          }}
+                        >
+                          Equally
+                        </Button>
 
-  <Button
-    onClick={() => splitTypeHandler("Unequally")}
-    sx={{
-      fontFamily: "Montserrat, sans-serif",
-      textTransform: 'none',
-      bgcolor: splitType === "Unequally" ? '#25291C' : 'transparent',
-      color: splitType === "Unequally" ? '#fff' : '#25291C',
-      borderColor: '#DFE0DC',
+                        <Button
+                          onClick={() => splitTypeHandler("Unequally")}
+                          sx={{
+                            fontFamily: "Montserrat, sans-serif",
+                            textTransform: 'none',
+                            bgcolor: splitType === "Unequally" ? '#25291C' : 'transparent',
+                            color: splitType === "Unequally" ? '#fff' : '#25291C',
+                            borderColor: '#DFE0DC',
 
-      borderTopRightRadius: '2rem',
-      borderBottomRightRadius: '2rem',
+                            borderTopRightRadius: '2rem',
+                            borderBottomRightRadius: '2rem',
 
-      '&:hover': {
-        bgcolor: splitType === "Unequally" ? '#4f504c' : '#f5f5f5',
-      },
-    }}
-  >
-    Unequally
-  </Button>
-</ButtonGroup>
-    </Box>
-  {/* Date + Action */}
-  <Box
-    sx={{
-      display: 'flex',
-      justifyContent: 'end',
-      mt: 8,
-      alignItems: 'center',
-    }}
-  >
+                            '&:hover': {
+                              bgcolor: splitType === "Unequally" ? '#4f504c' : '#f5f5f5',
+                            },
+                          }}
+                        >
+                          Unequally
+                        </Button>
+                      </ButtonGroup>
+                    </Box>
+                    {/* Date + Action */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'end',
+                        mt: 8,
+                        alignItems: 'center',
+                      }}
+                    >
 
-    <Button
-      variant="contained"
-      startIcon={<AddIcon />}
-      onClick={add_Expense}
-      sx={{
-        bgcolor: '#129490',
-        fontFamily: "Montserrat, sans-serif",
-        textTransform: 'none',
-        fontWeight: 500,
-        borderRadius: '2rem',
-        padding:'.6rem 1rem',
-        '&:hover': { bgcolor: '#0f7f7c' },
-      }}
-    >
-      {modalProps.title === "Edit Expense" ? "Update" : "Add"}
-    </Button>
-  </Box>
-</>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={add_Expense}
+                        sx={{
+                          bgcolor: '#129490',
+                          fontFamily: "Montserrat, sans-serif",
+                          textTransform: 'none',
+                          fontWeight: 500,
+                          borderRadius: '2rem',
+                          padding:'.6rem 1rem',
+                          '&:hover': { bgcolor: '#0f7f7c' },
+                        }}
+                      >
+                        {modalProps.title === "Edit Expense" ? "Update" : "Add"}
+                      </Button>
+                    </Box>
+              </>
               }
 
               </>
@@ -1058,61 +1058,168 @@ export default function TransitionsModal() {
   console.log("splitwiseData expenses----------->",expenses);
   console.log("splitwiseData modalProps.expenses----------->",modalProps.expense);
   return (
-<List>
+<List sx={{ fontFamily: "Montserrat, sans-serif" }}>
   {Object.entries(expenses).map(([person, data]) => {
     const isOpen = openMap[person];
     const isOwing = data.netBalance < 0;
     const amount = Math.abs(data.netBalance);
 
     return (
-      <Box key={person} sx={{ mb: 2 }}>
+      <Box
+        key={person}
+        sx={{
+          mb: 2,
+          border: "1px solid #DFE0DC",
+          borderRadius: 2,
+          overflow: "hidden",
+          bgcolor: "#FFFFFF",
+        }}
+      >
         {/* HEADER */}
-        <ListItemButton onClick={() => togglePerson(person)}>
+        <ListItemButton
+          onClick={() => togglePerson(person)}
+          sx={{
+            px: 2,
+            py: 1.5,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <ListItemText
-            primary={
+            primary={person}
+            secondary={
               amount === 0
-                ? `${person} is settled`
-                : `${person} ${isOwing ? "owes" : "gets back"} ₹${amount.toLocaleString()}`
+                ? "Settled"
+                : isOwing
+                ? `Owes ₹${amount.toLocaleString()}`
+                : `Gets back ₹${amount.toLocaleString()}`
             }
             primaryTypographyProps={{
               fontWeight: 600,
+              fontSize: "0.95rem",
+              fontFamily: "Montserrat, sans-serif",
+              color: "#25291C",
+            }}
+            secondaryTypographyProps={{
+              fontSize: "0.8rem",
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: 500,
               color:
                 amount === 0
-                  ? "text.secondary"
+                  ? "#9e9e9e"
                   : isOwing
-                  ? "#ff8a65"
-                  : "#66bb6a",
+                  ? "#ED474A"
+                  : "#129490",
             }}
           />
-          {amount !== 0 && (isOpen ? <ExpandLess /> : <ExpandMore />)}
+
+          {amount !== 0 && (
+            isOpen ? (
+              <ExpandLess sx={{ color: "#25291C" }} />
+            ) : (
+              <ExpandMore sx={{ color: "#25291C" }} />
+            )
+          )}
         </ListItemButton>
 
         {/* DROPDOWN */}
         <Collapse in={isOpen && amount !== 0} timeout="auto" unmountOnExit>
-          {Object.entries(data.relations).map(([other, value]) => (
-            <ListItem key={other} sx={{ pl: 6 }}>
-              <ListItemText
-                primary={
-                  value < 0
-                    ? `${person} owes ₹${Math.abs(value)} to ${other}`
-                    : `${other} owes ₹${value} to ${person}`
-                }
-              />
-            </ListItem>
-          ))}
+          <Box
+            sx={{
+              borderTop: "1px solid #DFE0DC",
+              px: 2,
+              py: 1,
+              bgcolor: "#FCFAF9",
+            }}
+          >
+            {Object.entries(data.relations).map(([other, value], idx) => (
+              <Box
+                key={other}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  py: 1,
+                  borderBottom:
+                    idx !== Object.entries(data.relations).length - 1
+                      ? "1px solid #DFE0DC"
+                      : "none",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#25291C",
+                  }}
+                >
+                  {other}
+                </Typography>
 
-          {isOwing && (
-            <Box sx={{ pl: 6, display: "flex", gap: 2 }}>
-              <Button variant="outlined">Remind</Button>
-              <Button variant="outlined">Settle up</Button>
-            </Box>
-          )}
+                <Typography
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontWeight: 600,
+                    color: value < 0 ? "#ED474A" : "#129490",
+                  }}
+                >
+                  {value < 0
+                    ? `₹${Math.abs(value)} you owe`
+                    : `₹${value} you get`}
+                </Typography>
+              </Box>
+            ))}
+
+            {/* ACTION BUTTONS */}
+            {isOwing && (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  mt: 2,
+                }}
+              >
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    borderColor: "#ED474A",
+                    color: "#ED474A",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontFamily: "Montserrat, sans-serif",
+                    "&:hover": {
+                      borderColor: "#c93a3d",
+                      backgroundColor: "rgba(237,71,74,0.05)",
+                    },
+                  }}
+                >
+                  Remind
+                </Button>
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#129490",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontFamily: "Montserrat, sans-serif",
+                    "&:hover": {
+                      bgcolor: "#0f7f7c",
+                    },
+                  }}
+                >
+                  Settle Up
+                </Button>
+              </Box>
+            )}
+          </Box>
         </Collapse>
       </Box>
     );
   })}
 </List>
-
   );
 }
 
