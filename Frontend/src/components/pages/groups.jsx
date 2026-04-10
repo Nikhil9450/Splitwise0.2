@@ -460,42 +460,104 @@ useEffect(() => {
             </Grid>
          </Grid>
          {/* mobile view */}
-         <Grid sx={{display:{xs:'block',md:'none'},height:'100vh'}}>
-            <Box>
-                    <List
-                          sx={{
-                            width: '100%',
-                            // maxWidth: 360,
-                            bgcolor: 'background.paper',
-                            position: 'relative',
-                            overflow: 'auto',
-                            // maxHeight: 300,
-                            height:'100%',
-                            paddingBottom:0,
-                            '& ul': { padding: 0 },
-                          }}
-                          subheader={<li />}
-                        >
-                          <ListSubheader sx={{bgcolor:'#1976d2',color:'white',marginBottom:'.5rem'}}>Groups</ListSubheader>
-                            <li >
-                                <ul>
-                                  {UserGroupList.map((item) => (
-                                    <ListItem key={item.id}>
-                                      {/* <ListItemText primary={item.name} /> */}
-                                      <Button 
-                                        variant={(selectedGroup==item.id)?"outlined":"text"} 
-                                        sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} 
-                                        component={Link}
-                                        to={`/expenses/${item.id}`} 
-                                        startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
-                                      </Button>
-                                    </ListItem>
-                                  ))}
-                                </ul>
-                            </li>
-                    </List>
-            </Box>
-         </Grid>
+<Grid
+  sx={{
+    display: { xs: "block", md: "none" },
+    height: "100vh",
+    bgcolor: "#FCFAF9",
+    fontFamily: "Montserrat, sans-serif",
+  }}
+>
+  {/* HEADER */}
+  <Box
+    sx={{
+      p: 2,
+      borderBottom: "1px solid #DFE0DC",
+      bgcolor: "#25291C",
+    }}
+  >
+    <Typography
+      variant="h6" 
+      color="#009F93" 
+      gutterBottom 
+      sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontStyle: "normal" , mt:0, mb:0, lineHeight:0, p:2 }}
+    >
+      Groups
+    </Typography>
+  </Box>
+
+  {/* GROUP LIST */}
+  <Box sx={{ p: 2, overflowY: "auto",mb:6 }}>
+    {UserGroupList.map((item) => {
+      const isSelected = selectedGroup == item.id;
+
+      return (
+        <Box
+          key={item.id}
+          component={Link}
+          to={`/expenses/${item.id}`}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            p: .8,
+            mb: 1.5,
+            borderRadius: '2rem',
+            textDecoration: "none",
+            border: "2px solid #25291C",
+            bgcolor:  "#FFFFFF",
+            color:  "#25291C",
+          }}
+        >
+          {/* ICON */}
+          <Box
+            sx={{
+              height: 45,
+              width: 45,
+              borderRadius: "50%",
+              bgcolor:"#25291C",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px solid #25291C",
+              mr: 2,
+            }}
+          >
+            <GroupsIcon
+              sx={{
+                color: "#DFE0DC ",
+                fontSize: 20,
+              }}
+            />
+          </Box>
+
+          {/* TEXT */}
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography
+              sx={{
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                fontFamily: "Montserrat, sans-serif",
+              }}
+            >
+              {item.name}
+            </Typography>
+
+            <Typography
+              sx={{
+                fontSize: "0.75rem",
+                fontFamily: "Montserrat, sans-serif",
+                fontWeight: 500,
+                color: "#636262",
+              }}
+            >
+              {item.members?.length || 0} members
+            </Typography>
+          </Box>
+        </Box>
+      );
+    })}
+  </Box>
+</Grid>
       </Box>
   )
 }

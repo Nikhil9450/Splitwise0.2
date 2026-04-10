@@ -115,7 +115,6 @@ const Profile = () => {
       {[
         { label: "Name", value: user.name },
         { label: "Email", value: user.email },
-        { label: "Password", value: "**********" },
         { label: "User Type", value: user.role },
       ].map((item, index) => (
         <Box

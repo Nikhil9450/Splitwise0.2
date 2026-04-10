@@ -245,8 +245,8 @@ useEffect(() => {
                               color:'#DFE0DC',
                               borderRadius:'2rem',
                               border:'2px solid #DFE0DC',
-                              fontSize:'0.8rem',
-                              padding:'0.25rem 1rem',
+                              fontSize:'0.6rem',
+                              padding:'0.2rem 1rem',
                               fontFamily: "Montserrat, sans-serif",
                               }}
                           >Balance
@@ -266,13 +266,13 @@ useEffect(() => {
                               color:'#DFE0DC',
                               borderRadius:'2rem',
                               border:'2px solid #DFE0DC',
-                              fontSize:'0.8rem',
-                              padding:'0.5rem 1rem',
+                              fontSize:'0.6rem',
+                              padding:'0.2rem 1rem',
                               fontFamily: "Montserrat, sans-serif",
                               marginLeft:'0.5rem',
                               }}
                           >
-                            View Members
+                          Members
                           </Button>
                         </Box>
                       </Box>
@@ -342,7 +342,8 @@ useEffect(() => {
                                       sx: {
                                         fontSize: '0.7rem',
                                         color: expense.paidBy._id === user.id ? '#009F93' : '#ED6A5A',
-                                        fontWeight: 600
+                                        fontWeight: 600,
+                                        fontFamily: "Montserrat, sans-serif",
                                       }
                                     }}
                                     secondaryTypographyProps={{

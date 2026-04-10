@@ -21,7 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { deleteFriendRequest,removeFriend,acceptFriendRequest,sendFriendRequest } from '../redux/friendList/friendlistSlice';
-import {CircularProgress} from '@mui/material';
+import {CircularProgress,Typography} from '@mui/material';
 const SearchAccount = () => {
     const [emailToSearch,setEmailToSearch] =useState(null)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -57,129 +57,236 @@ const SearchAccount = () => {
     },[User])
 
   return (
-    <>
-        <Box sx={{display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'end',padding:'1rem .3rem'}} >
-            <Box sx={{padding:'0.3rem 0.3rem 0.3rem 1rem;',border:'1px solid #1976d2',borderRadius:'2rem',width:'20rem',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <input type='email' placeholder='Find user by email'  style={{border:'none',background:'none',outline: 'none',fontSize:'1rem',color:'#1976d2', width:'100%'}} onChange={(event)=>setEmailToSearch(event.target.value)}/>
-                <IconButton
-                    onClick={searchUser}
-                    size="small"
-                    sx={{bgcolor:'#1976d2' ,'&:hover': {bgcolor: '#115293'}}}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                >
-                   {loading
-                   ?<CircularProgress size={24}  sx={{color:'white'}} />
-                   :<SearchIcon size={24}  sx={{color:'white'}}/>
-                   }
-                   {/* <CircularProgress size={24}  sx={{color:'white'}} /> */}
-                </IconButton>
-            </Box>
-        </Box>
-        <Menu
-            anchorEl={anchorEl}
-            id="account-menu"
-            open={open}
-            onClose={handleClose}
-            onClick={handleClose}
-            slotProps={{
-            paper: {
-                elevation: 0,
-                sx: {
-                width:'20rem',
-                overflow: 'visible',
-                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                mt: 1.5,
-                '& .MuiAvatar-root': {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                },
-                '&::before': {
-                    content: '""',
-                    display: 'block',
-                    position: 'absolute',
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: 'background.paper',
-                    transform: 'translateY(-50%) rotate(45deg)',
-                    zIndex: 0,
-                },
-                },
-            },
+<>
+  {/* SEARCH BAR */}
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      mb:2,
+      fontFamily: "Montserrat, sans-serif",
+    }}
+  >
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: "24rem",
+        display: "flex",
+        alignItems: "center",
+        border: "1px solid #DFE0DC",
+        borderRadius: "2rem",
+        bgcolor: "#FFFFFF",
+        px: 2,
+        py: 1,
+        border: '2px solid #25291C',
+      }}
+    >
+      <input
+        type="email"
+        placeholder="Find user by email"
+        style={{
+          border: "none",
+          outline: "none",
+          background: "none",
+          flex: 1,
+          fontSize: "0.9rem",
+          fontFamily: "Montserrat, sans-serif",
+          color: "#25291C",
+        }}
+        onChange={(e) => setEmailToSearch(e.target.value)}
+      />
+
+      <IconButton
+        onClick={searchUser}
+        sx={{
+          bgcolor: "#129490",
+          borderRadius: "50%",
+          width: 36,
+          height: 36,
+          "&:hover": { bgcolor: "#0f7f7c" },
+        }}
+      >
+        {loading ? (
+          <CircularProgress size={18} sx={{ color: "#FFFFFF" }} />
+        ) : (
+          <SearchIcon sx={{ color: "#FFFFFF", fontSize: 18 }} />
+        )}
+      </IconButton>
+    </Box>
+  </Box>
+
+  {/* RESULT PANEL */}
+  <Menu
+    anchorEl={anchorEl}
+    open={open}
+    onClose={handleClose}
+    PaperProps={{
+      elevation: 0,
+      sx: {
+        width: "24rem",
+        mt: 1,
+        borderRadius: "2rem",
+        border: "1px solid #DFE0DC",
+        bgcolor: "#FFFFFF",
+        p: 1,
+        fontFamily: "Montserrat, sans-serif",
+      },
+    }}
+    transformOrigin={{ horizontal: "center", vertical: "top" }}
+    anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+  >
+    {User ? (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          p: 1.5,
+        }}
+      >
+        {/* USER INFO */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box
+            sx={{
+              height: 40,
+              width: 40,
+              borderRadius: "50%",
+              bgcolor: "#DFE0DC",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 600,
+              color: "#25291C",
+              fontFamily: "Montserrat, sans-serif",
             }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        >
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        {
-            User ? (
-            <ListItem
-                secondaryAction={
-                <Box>
-                    {
-                    User.requestStatus === "incoming" && (
-                        <>
-                        <Button sx={{fontSize:'10px',marginRight:'5px'}} variant="outlined" edge="end" aria-label="Accept" onClick={() => dispatch(acceptFriendRequest(User.id))}>
-                            {/* <PersonAddIcon /> */}
-                            Accept
-                        </Button>
-                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Delete" onClick={() => dispatch(deleteFriendRequest(User.id))}>
-                            {/* <DeleteIcon /> */}
-                            Delete
-                        </Button>
-                        </>
-                    )
-                    }
+          >
+            {User.name?.charAt(0).toUpperCase()}
+          </Box>
 
-                    {
-                        User.requestStatus === "outgoing" && (
-                        <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="Cancel" onClick={() => dispatch( deleteFriendRequest(User.id))}>
-                        {/* <DeleteIcon /> */}
-                            Cancel Request
-                        </Button>
-                    )
-                    }
-
-                    {
-                        User.requestStatus === "alreadyFriends" && (
-                            <Button sx={{fontSize:'10px'}} color="error" variant="outlined" edge="end" aria-label="remove friend" onClick={() =>dispatch( removeFriend(User.id))}>
-                            {/* <DeleteIcon /> */}
-                            Remove Friend
-                            </Button>
-                        )
-                    }
-
-                    {
-                        User.requestStatus === "none" && (
-                            <Button sx={{fontSize:'10px'}} variant="outlined" edge="end" aria-label="Send" onClick={() => dispatch(sendFriendRequest(User.id))}>
-                            {/* <PersonAddIcon /> */}
-                            Add Friend
-                            </Button>
-                        )
-                    }
-                </Box>
-                }
+          <Box>
+            <Typography
+              sx={{
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                color: "#25291C",
+              }}
             >
-                <ListItemText   
-                primaryTypographyProps={{ fontSize: '13px' }}
-                secondaryTypographyProps={{ fontSize: '12px', color: 'text.secondary' }} 
-                primary={User.name} 
-                secondary={User.email} />
-            </ListItem>
-            ) : (
-            <ListItem>
-                <ListItemText primary="User not found." />
-            </ListItem>
-            )
-        }
-        </List>
-      </Menu>
-    </>
+              {User.name}
+            </Typography>
+
+            <Typography
+              sx={{
+                fontSize: "0.75rem",
+                color: "#9e9e9e",
+              }}
+            >
+              {User.email}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* ACTION BUTTON */}
+        <Box>
+          {User.requestStatus === "incoming" && (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                size="small"
+                variant="contained"
+                sx={{
+                  bgcolor: "#129490",
+                  borderRadius: "2rem",
+                  textTransform: "none",
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  "&:hover": { bgcolor: "#0f7f7c" },
+                }}
+                onClick={() => dispatch(acceptFriendRequest(User.id))}
+              >
+                Accept
+              </Button>
+
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{
+                  borderColor: "#ED474A",
+                  color: "#ED474A",
+                  borderRadius: "2rem",
+                  textTransform: "none",
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                }}
+                onClick={() => dispatch(deleteFriendRequest(User.id))}
+              >
+                Delete
+              </Button>
+            </Box>
+          )}
+
+          {User.requestStatus === "outgoing" && (
+            <Button
+              size="small"
+              variant="outlined"
+              sx={{
+                borderColor: "#ED474A",
+                color: "#ED474A",
+                borderRadius: "2rem",
+                textTransform: "none",
+                fontSize: "0.7rem",
+                fontWeight: 600,
+              }}
+              onClick={() => dispatch(deleteFriendRequest(User.id))}
+            >
+              Cancel
+            </Button>
+          )}
+
+          {User.requestStatus === "alreadyFriends" && (
+            <Button
+              size="small"
+              variant="outlined"
+              sx={{
+                borderColor: "#ED474A",
+                color: "#ED474A",
+                borderRadius: "2rem",
+                textTransform: "none",
+                fontSize: "0.7rem",
+                fontWeight: 600,
+              }}
+              onClick={() => dispatch(removeFriend(User.id))}
+            >
+              Remove
+            </Button>
+          )}
+
+          {User.requestStatus === "none" && (
+            <Button
+              size="small"
+              variant="contained"
+              sx={{
+                bgcolor: "#129490",
+                borderRadius: "2rem",
+                textTransform: "none",
+                fontSize: "0.7rem",
+                fontWeight: 600,
+                "&:hover": { bgcolor: "#0f7f7c" },
+              }}
+              onClick={() => dispatch(sendFriendRequest(User.id))}
+            >
+              Add
+            </Button>
+          )}
+        </Box>
+      </Box>
+    ) : (
+      <Box sx={{ p: 2, textAlign: "center" }}>
+        <Typography sx={{ fontSize: "0.85rem", color: "#9e9e9e" }}>
+          User not found
+        </Typography>
+      </Box>
+    )}
+  </Menu>
+</>
   )
 }
 

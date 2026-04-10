@@ -1019,209 +1019,253 @@ export default function TransitionsModal() {
             </>
           );
           case "VIEW_MEMBERS":
-          return (
-            <>
-              <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} </Typography>
-              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', padding:'0' }} >
-                {
-                  modalProps.groupMemberList?.map((item)=>{
-                    return <>
-                          <ListItem sx={{padding:'0'}} key={item._id}>
-                            <ListItemAvatar sx={{minWidth:'40px'}}>
-                              <Avatar 
-                                sx={{ width: 30, height: 30 }}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText 
-                              primary={item.name} 
-                              secondary={item.email} 
-                              slotProps={{
-                                    primary: {
-                                    sx: { fontSize: '13px', fontWeight: 'bold',color:'#636262' },
-                                    },
-                                    secondary: {
-                                    sx: { fontSize: '0.85rem', color: 'text.secondary' ,fontSize:'12px'},
-                                    },
-                                }}
-                            />
-                          </ListItem>
-                    </>
-                  })
-                }
-              </List>
-            </>
-          ); 
-         case "VIEW_BALANCES": {
-  const splitwiseData = buildSplitwiseView(modalProps.balances);
-  const expenses = calculateBalances(modalProps.expense || []);
-  console.log("splitwiseData----------->",splitwiseData);
-  console.log("splitwiseData expenses----------->",expenses);
-  console.log("splitwiseData modalProps.expenses----------->",modalProps.expense);
-  return (
-<List sx={{ fontFamily: "Montserrat, sans-serif" }}>
-  {Object.entries(expenses).map(([person, data]) => {
-    const isOpen = openMap[person];
-    const isOwing = data.netBalance < 0;
-    const amount = Math.abs(data.netBalance);
-
-    return (
-      <Box
-        key={person}
-        sx={{
-          mb: 2,
-          border: "1px solid #DFE0DC",
-          borderRadius: 2,
-          overflow: "hidden",
-          bgcolor: "#FFFFFF",
-        }}
-      >
-        {/* HEADER */}
-        <ListItemButton
-          onClick={() => togglePerson(person)}
-          sx={{
-            px: 2,
-            py: 1.5,
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <ListItemText
-            primary={person}
-            secondary={
-              amount === 0
-                ? "Settled"
-                : isOwing
-                ? `Owes ₹${amount.toLocaleString()}`
-                : `Gets back ₹${amount.toLocaleString()}`
-            }
-            primaryTypographyProps={{
-              fontWeight: 600,
-              fontSize: "0.95rem",
-              fontFamily: "Montserrat, sans-serif",
-              color: "#25291C",
-            }}
-            secondaryTypographyProps={{
-              fontSize: "0.8rem",
-              fontFamily: "Montserrat, sans-serif",
-              fontWeight: 500,
-              color:
-                amount === 0
-                  ? "#9e9e9e"
-                  : isOwing
-                  ? "#ED474A"
-                  : "#129490",
-            }}
-          />
-
-          {amount !== 0 && (
-            isOpen ? (
-              <ExpandLess sx={{ color: "#25291C" }} />
-            ) : (
-              <ExpandMore sx={{ color: "#25291C" }} />
-            )
-          )}
-        </ListItemButton>
-
-        {/* DROPDOWN */}
-        <Collapse in={isOpen && amount !== 0} timeout="auto" unmountOnExit>
-          <Box
-            sx={{
-              borderTop: "1px solid #DFE0DC",
-              px: 2,
-              py: 1,
-              bgcolor: "#FCFAF9",
-            }}
-          >
-            {Object.entries(data.relations).map(([other, value], idx) => (
-              <Box
-                key={other}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  py: 1,
-                  borderBottom:
-                    idx !== Object.entries(data.relations).length - 1
-                      ? "1px solid #DFE0DC"
-                      : "none",
-                }}
-              >
+            return (
+              <>
+                {/* HEADER */}
                 <Typography
                   sx={{
-                    fontSize: "0.85rem",
-                    fontFamily: "Montserrat, sans-serif",
+                    mb: 2,
+                    fontWeight: 600,
+                    fontSize: "1rem",
                     color: "#25291C",
+                    fontFamily: "Montserrat, sans-serif",
                   }}
                 >
-                  {other}
+                  {modalProps.title}
                 </Typography>
 
-                <Typography
+                {/* LIST */}
+                <Box
                   sx={{
-                    fontSize: "0.85rem",
-                    fontFamily: "Montserrat, sans-serif",
-                    fontWeight: 600,
-                    color: value < 0 ? "#ED474A" : "#129490",
+                    border: "1px solid #DFE0DC",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    // bgcolor: "#FFFFFF",
                   }}
                 >
-                  {value < 0
-                    ? `₹${Math.abs(value)} you owe`
-                    : `₹${value} you get`}
-                </Typography>
-              </Box>
-            ))}
+                  <List sx={{ p: 0 }}>
+                    {modalProps.groupMemberList?.map((item, index) => (
+                      <ListItem
+                        key={item._id}
+                        sx={{
+                          px: 2,
+                          py: 1.2,
+                          border:'2px solid #25291C',
+                          borderRadius: '2rem',
+                          bgcolor: "#FFFFFF",
+                          mb: 1,
+                        }}
+                      >
+                        {/* AVATAR */}
+                        <ListItemAvatar sx={{ minWidth: 45 }}>
+                          <Avatar
+                            sx={{
+                              width: 36,
+                              height: 36,
+                              bgcolor: "#DFE0DC",
+                              color: "#25291C",
+                              fontWeight: 600,
+                              fontFamily: "Montserrat, sans-serif",
+                            }}
+                          >
+                            {item.name?.charAt(0).toUpperCase()}
+                          </Avatar>
+                        </ListItemAvatar>
 
-            {/* ACTION BUTTONS */}
-            {isOwing && (
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  mt: 2,
-                }}
-              >
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  sx={{
-                    borderColor: "#ED474A",
-                    color: "#ED474A",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    fontFamily: "Montserrat, sans-serif",
-                    "&:hover": {
-                      borderColor: "#c93a3d",
-                      backgroundColor: "rgba(237,71,74,0.05)",
-                    },
-                  }}
-                >
-                  Remind
-                </Button>
+                        {/* TEXT */}
+                        <ListItemText
+                          primary={item.name}
+                          secondary={item.email}
+                          primaryTypographyProps={{
+                            fontSize: "0.9rem",
+                            fontWeight: 600,
+                            color: "#25291C",
+                            fontFamily: "Montserrat, sans-serif",
+                          }}
+                          secondaryTypographyProps={{
+                            fontSize: "0.75rem",
+                            color: "#9e9e9e",
+                            fontFamily: "Montserrat, sans-serif",
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              </>
+            ); 
+          case "VIEW_BALANCES": {
+            const splitwiseData = buildSplitwiseView(modalProps.balances);
+            const expenses = calculateBalances(modalProps.expense || []);
+            console.log("splitwiseData----------->",splitwiseData);
+            console.log("splitwiseData expenses----------->",expenses);
+            console.log("splitwiseData modalProps.expenses----------->",modalProps.expense);
+            return (
+            <List sx={{ fontFamily: "Montserrat, sans-serif" }}>
+              {Object.entries(expenses).map(([person, data]) => {
+                const isOpen = openMap[person];
+                const isOwing = data.netBalance < 0;
+                const amount = Math.abs(data.netBalance);
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#129490",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    fontFamily: "Montserrat, sans-serif",
-                    "&:hover": {
-                      bgcolor: "#0f7f7c",
-                    },
-                  }}
-                >
-                  Settle Up
-                </Button>
-              </Box>
-            )}
-          </Box>
-        </Collapse>
-      </Box>
-    );
-  })}
-</List>
-  );
-}
+                return (
+                  <Box
+                    key={person}
+                    sx={{
+                      mb: 2,
+                      border: "1px solid #DFE0DC",
+                      borderRadius:"  2rem",
+                      overflow: "hidden",
+                      bgcolor: "#FFFFFF",
+                    }}
+                  >
+                    {/* HEADER */}
+                    <ListItemButton
+                      onClick={() => togglePerson(person)}
+                      sx={{
+                        px: 2,
+                        py: 1.5,
+                        display: "flex",
+                        borderRadius:"2rem",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <ListItemText
+                        primary={person}
+                        secondary={
+                          amount === 0
+                            ? "Settled"
+                            : isOwing
+                            ? `Owes ₹${amount.toLocaleString()}`
+                            : `Gets back ₹${amount.toLocaleString()}`
+                        }
+                        primaryTypographyProps={{
+                          fontWeight: 600,
+                          fontSize: "0.95rem",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#25291C",
+                        }}
+                        secondaryTypographyProps={{
+                          fontSize: "0.8rem",
+                          fontFamily: "Montserrat, sans-serif",
+                          fontWeight: 500,
+                          color:
+                            amount === 0
+                              ? "#9e9e9e"
+                              : isOwing
+                              ? "#ED474A"
+                              : "#129490",
+                        }}
+                      />
+
+                      {amount !== 0 && (
+                        isOpen ? (
+                          <ExpandLess sx={{ color: "#25291C" }} />
+                        ) : (
+                          <ExpandMore sx={{ color: "#25291C" }} />
+                        )
+                      )}
+                    </ListItemButton>
+
+                    {/* DROPDOWN */}
+                    <Collapse in={isOpen && amount !== 0} timeout="auto" unmountOnExit>
+                      <Box
+                        sx={{
+                          borderTop: "1px solid #DFE0DC",
+                          px: 2,
+                          py: 1,
+                          bgcolor: "#FCFAF9",
+                        }}
+                      >
+                        {Object.entries(data.relations).map(([other, value], idx) => (
+                          <Box
+                            key={other}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              py: 1,
+                              borderBottom:
+                                idx !== Object.entries(data.relations).length - 1
+                                  ? "1px solid #DFE0DC"
+                                  : "none",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                fontSize: "0.85rem",
+                                fontFamily: "Montserrat, sans-serif",
+                                color: "#25291C",
+                              }}
+                            >
+                              {other}
+                            </Typography>
+
+                            <Typography
+                              sx={{
+                                fontSize: "0.85rem",
+                                fontFamily: "Montserrat, sans-serif",
+                                fontWeight: 600,
+                                color: value < 0 ? "#ED474A" : "#129490",
+                              }}
+                            >
+                              {value < 0
+                                ? `₹${Math.abs(value)} you owe`
+                                : `₹${value} you get`}
+                            </Typography>
+                          </Box>
+                        ))}
+
+                        {/* ACTION BUTTONS */}
+                        {/* {isOwing && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 2,
+                              mt: 2,
+                            }}
+                          >
+                            <Button
+                              fullWidth
+                              variant="outlined"
+                              sx={{
+                                borderColor: "#ED474A",
+                                color: "#ED474A",
+                                textTransform: "none",
+                                fontWeight: 600,
+                                fontFamily: "Montserrat, sans-serif",
+                                "&:hover": {
+                                  borderColor: "#c93a3d",
+                                  backgroundColor: "rgba(237,71,74,0.05)",
+                                },
+                              }}
+                            >
+                              Remind
+                            </Button>
+
+                            <Button
+                              fullWidth
+                              variant="contained"
+                              sx={{
+                                bgcolor: "#129490",
+                                textTransform: "none",
+                                fontWeight: 600,
+                                fontFamily: "Montserrat, sans-serif",
+                                "&:hover": {
+                                  bgcolor: "#0f7f7c",
+                                },
+                              }}
+                            >
+                              Settle Up
+                            </Button>
+                          </Box>
+                        )} */}
+                      </Box>
+                    </Collapse>
+                  </Box>
+                );
+              })}
+            </List>
+            );
+          }
 
           default:
           return null;

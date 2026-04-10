@@ -179,7 +179,7 @@ const ExpenseDetails = () => {
       borderRadius: '2rem',
       p: 3,
       m: 2,
-      border: '1px solid #DFE0DC',
+      border: '2px solid #25291C',
       fontFamily: "Montserrat, sans-serif",
     }}
   >
@@ -207,7 +207,7 @@ const ExpenseDetails = () => {
       borderRadius: '2rem',
       p: 3,
       m: 2,
-      border: '1px solid #DFE0DC',
+      border: '2px solid #25291C',
       fontFamily: "Montserrat, sans-serif",
     }}
   >
