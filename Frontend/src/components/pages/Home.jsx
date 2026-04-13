@@ -14,53 +14,22 @@ import Divider from '@mui/material/Divider';
 import FriendListContainer from './FriendListContainer';
 import Grid from '@mui/material/Grid';
 import Groups from './groups'
+// import { motion } from "motion/react";
+import * as motion from "motion/react-client"
 const Home = () => {
-  // const dispatch = useDispatch();
-  // const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
-  // const [buttonType,setButtonType]=useState("groups")
-  // const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
-
-  // if(status===null){
-  //   return <div> loading...</div>
-  // }
-  // const handlePageChange= async (pageName)=>{
-  //          setButtonType(pageName);
-  //          switch (pageName){
-  //           case 'friends':
-  //             console.log(friends,sentRequests,recievedRequests)
-  //           break;
-  //           default:  
-  //             console.log("inside the default")
-  //          }
-  // }
-
-  // const renderComponent = (buttonType) => {
-  //   switch (buttonType) {
-  //     case 'friends':
-  //       return <FriendListContainer />;
-  //     case 'groups':
-  //       return <Groups />;
-  //     case 'expenses':
-  //       return <></>;
-  //     case 'Balances':
-  //       return <></>;
-  //     default:
-  //       return null;
-  //   }
-  // };
   return (
-<Box sx={{ height: '80vh', margin: '1rem 2rem', border: '1px solid #82bdf7' }}>
-  <Grid container spacing={2} direction="column" sx={{ height: '100%',flexWrap:'nowrap',display:{xs:'none',sm:'block'} }}>
-    <Grid >
-      <Box sx={{ bgcolor: '#dcedff' }}>
-        <Divider sx={{ borderColor: '#82bdf7' }} />
+      <Box sx={{ height: '80vh', margin: '1rem 2rem', border: '1px solid #82bdf7' }}>
+        <Grid container spacing={2} direction="column" sx={{ height: '100%',flexWrap:'nowrap',display:{xs:'none',sm:'block'} }}>
+          <Grid >
+            <Box sx={{ bgcolor: '#dcedff' }}>
+              <Divider sx={{ borderColor: '#82bdf7' }} />
+            </Box>
+          </Grid>
+          <Grid size="grow" sx={{height:'80%',margin:'1rem'}}>
+                <Groups />
+          </Grid>
+        </Grid>  
       </Box>
-    </Grid>
-    <Grid size="grow" sx={{height:'80%',margin:'1rem'}}>
-          <Groups />
-    </Grid>
-  </Grid>  
-</Box>
 
   )
 }

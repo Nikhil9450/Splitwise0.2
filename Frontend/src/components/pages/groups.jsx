@@ -26,6 +26,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const navigate = useNavigate(); 
@@ -178,388 +179,125 @@ useEffect(() => {
         setExpense_container(false);
 
     }
-  return (
-      <Box sx={{height:'100%'}}>
-         <Grid container spacing={2} sx={{height:'100%',width:'100%',flexGrow:1, display:{xs:'none',md:'flex'}}}>
-            <Grid size={{ xs: 12, md: 3 }}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'100%'}}>
-              <List
-                    sx={{
-                      width: '100%',
-                      // maxWidth: 360,
-                      bgcolor: 'background.paper',
-                      position: 'relative',
-                      overflow: 'auto',
-                      // maxHeight: 300,
-                      height:'100%',
-                      paddingBottom:0,
-                      '& ul': { padding: 0 },
-                    }}
-                    subheader={<li />}
-                  >
-                    <ListSubheader sx={{bgcolor:'#1976d2',color:'white',marginBottom:'.5rem'}}>Groups</ListSubheader>
-                      <li >
-                          <ul>
-                            {UserGroupList.map((item) => (
-                              <ListItem key={item.id}>
-                                {/* <ListItemText primary={item.name} /> */}
-                                <Button 
-                                  variant={(selectedGroup==item.id)?"outlined":"text"} 
-                                  sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} 
-                                  onClick={()=>{
-                                    SetGroupMemberList(item.members);
-                                    SetGroupId(item.id);
-                                    setSelectedGroup(item.id)
-                                  }} 
-                                  startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>}>{item.name}
-                                </Button>
-                              </ListItem>
-                            ))}
-                          </ul>
-                      </li>
-              </List>
-            </Grid>
-            <Grid item size={{ xs: 12, md:6}} sx={{ position: 'relative', border: '1px solid #82bdf7', height: '100%',}}>
-              {(expense_container)
-              ?<Box
-                  component={Paper}
-                  // elevation={3}
-                  sx={{
-                    p: 3,
-                    width: '100%',
-                    height:'100%',
-                    mx: 'auto',
-                    // bgcolor: 'background.paper',
-                    position: 'relative',
-                  }}
-                >
-                  {/* Close Button */}
-                  <IconButton
-                    aria-label="close"
-                    size="small"
-                    onClick={() => setExpense_container(false)}
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-
-                  {/* Expense Details */}
-                  <Typography variant="h5" fontWeight={500} gutterBottom>
-                    {(expense_details.description).toUpperCase()}
-                  </Typography>
-
-                  <Typography variant="h4" color="primary" gutterBottom>
-                    ₹{expense_details.amount}
-                  </Typography>
-
-                  <Divider sx={{ mb: 2 }} />
-
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Added by <strong>{expense_details.addedBy.name}</strong> on <strong>{dayjs(expense_details.date).format('YYYY-MM-DD')}</strong>
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    <strong>{expense_details.paidBy.name}</strong> paid ₹{expense_details.amount}
-                  </Typography>
-                  <Divider sx={{ my: 2 }} />
-
-                  {/* Split Details */}
-                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                    Split Details:
-                  </Typography>
-
-                  {expense_details.splitBetweenWithAmt.map((member, idx) => (
-                    <Typography
-                      key={idx}
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ pl: 1 }}
-                    >
-                      {member.user.name} owes ₹{(member.amount).toFixed(2)}
-                    </Typography>
-                  ))}
-                  <IconButton
-                    aria-label="close"
-                    size="small"
-                    onClick={() => deleteExpenseHandler()}
-                    sx={{ position: 'absolute', bottom: 40, right: 80 }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    aria-label="close"
-                    size="small"
-                    onClick={() => editExpenseHandler()}
-                    sx={{ position: 'absolute', bottom: 40, right: 40 }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-              </Box>
-              : (selectedGroup)
-                ?<Box sx={{  height: '100%'}}>
-                  <Box sx={{display:'flex',height: '100%'}}>
-                    <Box 
-                      sx={{
-                        bgcolor: '#e3f2fd',
-                        p: 3,
-                        height:'100%',
-                        width:'40%'
-                        // boxShadow: 3,
-                        // minHeight: '20%',
-                      }}
-                    >
-                      <Typography 
-                        variant="h6" 
-                        color="primary" 
-                        gutterBottom 
-                        // sx={{ fontWeight: 'bold' }}
-                      >
-                      Total Group Balance: ₹{groupTotalAmt.toFixed(2)}
-                      </Typography>
-
-                      <Divider sx={{ mb: 2 }} />
-
-                      <Stack spacing={1}>
-                        {splitBalance.length === 0 ? (
-                          <Typography variant="body2" color="text.secondary">
-                            No pending balances. All settled! ✅
-                          </Typography>
-                        ) : (
-                          splitBalance.map((balance, index) => (
-                              <Typography 
-                                key={index}
-                                variant="body2" 
-                                sx={{ fontSize: '12px', color: '#333' }}
-                              >
-                                <strong>{balance.from}</strong> owes <strong>{balance.to}</strong> 
-                                <span style={{ color: '#d32f2f', marginLeft: 5 }}>
-                                  ₹{balance.amount.toFixed(2)}
-                                </span>
-                              </Typography>
-                          ))
-                        )}
-                      </Stack>
-                    </Box>
-                    <Box sx={{ height: '100%', width:'60%', pr: 1,overflowY: 'scroll' }}>
-                      <List sx={{ width: '100%', bgcolor: 'background.paper',paddingBottom:'4rem' }}>
-                        {expense.map((expense) => {
-                          let lent_borrowed_amt = 0;
-                          const userEntry = expense.splitBetweenWithAmt.find(
-                            (entry) => entry.user._id === user.id || entry.user._id.toString() === user.id
-                          );
-                          if (expense.paidBy._id === user.id || expense.paidBy === user.id) {
-                            lent_borrowed_amt = parseFloat((expense.amount - userEntry.amount).toFixed(2));
-                          } else {
-                            lent_borrowed_amt = parseFloat(userEntry.amount.toFixed(2));
-                          }
-                          const dateOnly = dayjs(expense.date).format('YYYY-MM-DD');
-                          return (
-                            <ListItem key={expense._id}>
-                              <ListItemButton sx={{ padding: '0px' }} onClick={()=>{
-                                setExpense_details(expense);
-                                setExpense_container(true);
-                                }}>
-                                <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
-                                  <p style={{ margin: '0px', fontSize: '14px' }}>
-                                    {dayjs(expense.date).format('MMM')} <br /> <span>{dayjs(expense.date).format('D')}</span>
-                                  </p>
-                                </Box>
-                                <ListItemAvatar>
-                                  <Avatar sx={{ borderRadius: '0' }}>
-                                    <ShoppingBagIcon />
-                                  </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                  primary={expense.description}
-                                  secondary={`${expense.paidBy._id === user.id ? 'You' : expense.paidBy.name} paid ₹${expense.amount}`}
-                                />
-                                <ListItemText
-                                  sx={{ textAlign: 'right', paddingRight: '1rem' }}
-                                  primary={
-                                    <Typography variant="subtitle2" sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'green' }}>
-                                      {expense.paidBy._id === user.id ? 'You lent' : 'You borrowed'}
-                                    </Typography>
-                                  }
-                                  secondary={
-                                    <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'gray' }}>
-                                      ₹{lent_borrowed_amt}
-                                    </Typography>
-                                  }
-                                />
-                              </ListItemButton>
-                            </ListItem>
-                          );
-                        })}
-                      </List>
-                    </Box>
-                  </Box>
-                  <Fab
-                    onClick={() => addExpenseHandler('ADD_EXPENSE')}
-                    color="primary"
-                    aria-label="Add Expenses"
-                    variant="extended"
-                    sx={{
-                      position: 'absolute',
-                      bottom: 16,
-                      right: 16,
-                      zIndex: 10,
-                    }}
-                  >
-                    <AddIcon />
-                    Add Expenses
-                  </Fab>
-                </Box>
-                :<Box sx={{  height: '100%',display:'flex',justifyContent:'center',alignItems:"center"}}>
-                    <Typography> Select Group to view expense. </Typography>
-                </Box> 
-              }
-            </Grid>
-            <Grid size={{ xs: 12, md: 3}}  sx={{border:'1px solid #82bdf7' ,overflowY:'scroll',height:'100%'}}>
-              <List
-                    sx={{
-                      width: '100%',
-                      // maxWidth: 360,
-                      bgcolor: 'background.paper',
-                      position: 'relative',
-                      overflow: 'auto',
-                      // maxHeight: 300,
-                      height:'100%',
-                      paddingBottom:0,
-                      '& ul': { padding: 0 },
-                    }}
-                    subheader={<li />}
-                  >
-                    <ListSubheader sx={{bgcolor:'#1976d2',color:'white',marginBottom:'.5rem'}}>Group Members</ListSubheader>
-                      <li >
-                          <ul>
-                            {groupMemberList.map((member) => (
-                                
-                              <ListItem key={member._id} sx={{padding:'0px 10px'}}>
-                              <ListItemAvatar sx={{minWidth:'40px'}}>
-                                <Avatar
-                                  sx={{ width: 30, height: 30 }}
-                                />
-                              </ListItemAvatar>
-                                <ListItemText 
-                                primary={member.name} 
-                                secondary={member.email}
-                                slotProps={{
-                                    primary: {
-                                    sx: { fontSize: '13px', fontWeight: 'bold',color:'#636262' },
-                                    },
-                                    secondary: {
-                                    sx: { fontSize: '0.85rem', color: 'text.secondary' ,fontSize:'12px'},
-                                    },
-                                }}
-                                />
-                                {/* <Button variant="text" sx={{width:'100%',justifyContent:'start',bgcolor:'#dcedff'}} startIcon={<GroupsIcon sx={{marginLeft:'.5rem',marginRight:'1rem'}}/>} >{item.name}</Button> */}
-                              </ListItem>
-                            ))}
-                          </ul>
-                      </li>
-              </List>
-            </Grid>
-         </Grid>
-         {/* mobile view */}
-<Grid
-  sx={{
-    display: { xs: "block", md: "none" },
-    height: "100vh",
-    bgcolor: "#FCFAF9",
-    fontFamily: "Montserrat, sans-serif",
-  }}
->
-  {/* HEADER */}
-  <Box
-    sx={{
-      p: 2,
-      borderBottom: "1px solid #DFE0DC",
-      bgcolor: "#25291C",
-    }}
+return (
+  <motion.div
+    initial={{ opacity: 0, x: 30 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -30 }}
   >
-    <Typography
-      variant="h6" 
-      color="#009F93" 
-      gutterBottom 
-      sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 500, fontStyle: "normal" , mt:0, mb:0, lineHeight:0, p:2 }}
-    >
-      Groups
-    </Typography>
-  </Box>
-
-  {/* GROUP LIST */}
-  <Box sx={{ p: 2, overflowY: "auto",mb:6 }}>
-    {UserGroupList.map((item) => {
-      const isSelected = selectedGroup == item.id;
-
-      return (
+    <Box sx={{ height: "100%" }}>
+      <Grid
+        sx={{
+          height: "100vh",
+          bgcolor: "#FCFAF9",
+          fontFamily: "Montserrat, sans-serif",
+        }}
+      >
+        {/* HEADER */}
         <Box
-          key={item.id}
-          component={Link}
-          to={`/expenses/${item.id}`}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            p: .8,
-            mb: 1.5,
-            borderRadius: '2rem',
-            textDecoration: "none",
-            border: "2px solid #25291C",
-            bgcolor:  "#FFFFFF",
-            color:  "#25291C",
+            p: 2,
+            borderBottom: "1px solid #DFE0DC",
+            bgcolor: "#25291C",
           }}
         >
-          {/* ICON */}
-          <Box
+          <Typography
+            variant="h6"
+            color="#009F93"
             sx={{
-              height: 45,
-              width: 45,
-              borderRadius: "50%",
-              bgcolor:"#25291C",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "2px solid #25291C",
-              mr: 2,
+              fontWeight: 500,
+              lineHeight: 1,
+              p: 2,
             }}
           >
-            <GroupsIcon
-              sx={{
-                color: "#DFE0DC ",
-                fontSize: 20,
-              }}
-            />
-          </Box>
-
-          {/* TEXT */}
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography
-              sx={{
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                fontFamily: "Montserrat, sans-serif",
-              }}
-            >
-              {item.name}
-            </Typography>
-
-            <Typography
-              sx={{
-                fontSize: "0.75rem",
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 500,
-                color: "#636262",
-              }}
-            >
-              {item.members?.length || 0} members
-            </Typography>
-          </Box>
+            Groups
+          </Typography>
         </Box>
-      );
-    })}
-  </Box>
-</Grid>
-      </Box>
-  )
+
+        {/* GROUP LIST */}
+        <Box
+          sx={{ p: 2, overflowY: "auto", mb: 6 }}
+          component={motion.div}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.08, // 🔥 stagger effect
+              },
+            },
+          }}
+        >
+          {UserGroupList.map((item) => {
+            return (
+              <Box
+                key={item.id}
+                component={motion.div}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                whileHover={{ scale: 1.03 }} // 🔥 hover effect
+                transition={{ duration: 0.25 }}
+                sx={{
+                  mb: 1.5,
+                }}
+              >
+                <Box
+                  component={Link}
+                  to={`/expenses/${item.id}`}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    p: 0.8,
+                    borderRadius: "2rem",
+                    textDecoration: "none",
+                    border: "2px solid #25291C",
+                    bgcolor: "#FFFFFF",
+                    color: "#25291C",
+                  }}
+                >
+                  {/* ICON */}
+                  <Box
+                    sx={{
+                      height: 45,
+                      width: 45,
+                      borderRadius: "50%",
+                      bgcolor: "#25291C",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: "2px solid #25291C",
+                      mr: 2,
+                    }}
+                  >
+                    <GroupsIcon sx={{ color: "#DFE0DC", fontSize: 20 }} />
+                  </Box>
+
+                  {/* TEXT */}
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
+                      {item.name}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontSize: "0.75rem",
+                        fontWeight: 500,
+                        color: "#636262",
+                      }}
+                    >
+                      {item.members?.length || 0} members
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+      </Grid>
+    </Box>
+  </motion.div>
+);
 }
 
 export default Groups

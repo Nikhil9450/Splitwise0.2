@@ -1,108 +1,169 @@
 .container {
-  /* max-width: 400px;
-  margin: 80px auto;
-  padding: 2rem;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-  font-family: Arial, sans-serif; */
+  min-height: 100vh;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  height: 100vh;
-}
-.left_container{
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  width:50%;
-  height: 100%;
+  background: linear-gradient(135deg, #DFE0DC, #e9ecf5);
+  font-family: "Montserrat", sans-serif;
+  padding: 1rem;
 }
-.right_container{
-  background-color: #007bff;
-  width: 50%;
-  height: 100%;
-}
-.field {
-  margin-bottom: .5rem;
-  display: flex;
-  flex-direction: column;
-  width: 60%;
 
-}
-.field h1{
-  text-align: start;
-}
-.label {
-    margin-bottom: 0.2rem;
-    font-weight: 700;
-    color: #5b5a5a;
-    text-align: start;
-    font-size: smaller;
-}
-.line{
+.card {
   display: flex;
-  align-items: center;
-  text-align: center;
-  width: 60%;
+  width: 100%;
+  max-width: 1100px;
+  height: 650px;
+  background: #fff;
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
-.line hr{
+
+/* LEFT SIDE */
+.left {
   flex: 1;
-  border: none;
-  border-top: 1px solid #ccc;
-}
-.text {
-  margin: 1rem .5rem;;
-  white-space: nowrap;
-  color: #666;
-  font-size: 0.8rem;
-}
-.input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.button {
+.heading {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #25291C;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.field input {
+  padding: 0.9rem 1rem;
+  border-radius: 2rem;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.3s;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+
+}
+
+.field input:focus {
+  border-color: #009f93;
+  box-shadow: 0 0 0 3px rgba(0, 159, 147, 0.1);
+}
+
+/* BUTTON */
+.primaryBtn {
   margin-top: 1rem;
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #007bff;
+  padding: 1rem;
+  border-radius: 2rem;
+  border: none;
+  background: #009f93;
   color: white;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: 0.3s;
+  font-family: "Montserrat", sans-serif;
+
 }
-.google_button{
-  margin-top: 1rem;
+
+.primaryBtn:hover {
+  background: #007f75;
+}
+
+/* DIVIDER */
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider span {
+  background: #fff;
+  padding: 0 10px;
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
   width: 100%;
-  padding: 0.75rem;
-  color: rgb(50, 50, 50);
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  /* display: flex;
+  height: 1px;
+  background: #eee;
+  top: 50%;
+  left: 0;
+  z-index: -1;
+}
+
+/* GOOGLE */
+.googleWrapper {
+  display: flex;
   justify-content: center;
-  align-items: center; */
+  border-radius: 2rem;
 }
-.google_icon{
-  height: 1rem;
-  margin-right: 1rem;
+
+/* SWITCH TEXT */
+.switchText {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
 }
-.button:hover {
-  background-color: #0056b3;
+
+.switchText span {
+  color: #009f93;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 5px;
 }
-.linktoLoginRegister{
-  width: 60%;
-  text-align: end;
+
+/* RIGHT SIDE */
+.right {
+  flex: 1;
+  background: linear-gradient(135deg, #3c3d3b, #25291C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.linktoLoginRegister a{
-  text-decoration: none;
+
+.overlay {
+  color: #129490;
+  text-align: center;
+}
+
+.overlay h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .right {
+    height: 200px;
+  }
+
+  .left {
+    padding: 2rem;
+  }
+
+  .heading {
+    font-size: 2rem;
+  }
 }
