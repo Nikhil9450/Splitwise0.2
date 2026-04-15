@@ -14,7 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import { Link ,useLocation } from 'react-router-dom';
 import { Menu,MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
@@ -31,10 +31,16 @@ import GroupIcon from '@mui/icons-material/Group';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Stack from '@mui/material/Stack';
+import { motion } from "framer-motion";
 const drawerWidth = 240;
 
-
-
+const MotionBox = motion(Box);
+const MotionAppBar = motion(AppBar);
+const iconAnimation = {
+  whileHover: { scale: 1.15 },
+  whileTap: { scale: 0.9 },
+  transition: { type: "spring", stiffness: 300 }
+};
 function DrawerAppBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -42,7 +48,17 @@ function DrawerAppBar(props) {
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
 
+  const location = useLocation();
 
+  const isActive = (path) => location.pathname === path;
+
+  const navItems = [
+    { path: "/groups", icon: <GroupIcon /> },
+    // { path: "/balances", icon: <AccountBalanceWalletIcon /> },
+    { path: "/friends", icon: <PersonAddIcon /> },
+    { path: "/admin/dashboard", icon: <DashboardIcon /> },
+    { path: "/profile", icon: <PersonIcon /> },
+  ];
   const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
   const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
 
@@ -76,142 +92,86 @@ function DrawerAppBar(props) {
   // const container = window !== undefined ? () => window().document.body : undefined;
   
   // console.log("container--------->", container);
-  return (
-    <Box sx={{ display: 'flex',mb:{xs:0,sm:10} }}>
-      <CssBaseline />
-      <AppBar component="nav"  sx={{     
-                                    mt:{xs:10,sm:0},                       
-                                    top: { xs: 'auto', sm: 0 },
-                                    bottom: { xs: 0, sm: 'auto' },
-                                    bgcolor:'#25291C',
-                                    // borderRadius:'2rem 2rem 0 0',
-                                    pt:{xs:1,sm:0},
-                                  }}>
-        <Toolbar sx={{display:'flex',justifyContent:'space-around',alignItems:'center'}}>
-          <Typography
-            variant="h6"
-            component={Link} to="/"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' },textDecoration:'none',color:'white' }}
-          >
-            Home
-          </Typography>
-          {/* <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}> */}
-            <IconButton aria-label="group" size="small" component={Link} to="/groups">
-              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
-                <GroupIcon fontSize="small" sx={{color:"#25291C"}}/>
-              </Avatar>
-            
-            </IconButton>
+return (
+  <MotionAppBar
+    position="fixed" // ✅ IMPORTANT
+    // initial={{ y: 100, opacity: 0 }}
+    // animate={{ y: 0, opacity: 1 }}
+    // transition={{ type: "spring", stiffness: 120 }}
+    sx={{
+      position: "fixed",
+      top: "auto",
+      bottom: 16, // better spacing
 
-            <IconButton aria-label="balances" size="small" component={Link} to="/balances">
-              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
-                <AccountBalanceWalletIcon fontSize="small" sx={{color:"#25291C"}} />
-              </Avatar>
-            </IconButton> 
+      left: 0,
+      right: 0,
+      margin: "0 auto",   // ✅ center properly
 
-            <IconButton aria-label="friends" size="small" component={Link} to="/friends">
-              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
-                <PersonAddIcon fontSize="small" sx={{color:"#25291C"}}/>
-              </Avatar>
-            </IconButton>
-          {/* </Stack> */}
-          <Box sx={{display: { xs: 'block', sm: 'block' } }}> 
-            <Button
-            id="basic-button"
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}
-            sx={{ color: 'white',display:{xs:'none',sm:'flex'} }}
-            >
-              
-            <Avatar sx={{bgcolor:'white' ,color:'grey'}}><PersonIcon sx={{fontSize:'xx-large'}}/></Avatar>
+      width: "calc(100% - 32px)", // ✅ prevents overflow
+      maxWidth: "420px",          // ✅ keeps it nice on bigger screens
 
-            <Box sx={{flexDirection:'column',justifyContent:'center',alignItems:'start',ml:'10px',display: { xs: 'none', sm: 'flex' },}}>
-              <Typography variant="body2" gutterBottom sx={{ display: 'block' ,marginBottom:'-3px',fontSize:'12px'}}>
-                {user && user.name}
-              </Typography>
-              <Typography variant="caption" gutterBottom sx={{ display: 'block',textTransform:'none',marginBottom:'0px' }}>
-                {user && user.email}
-              </Typography>
-            </Box>
-            </Button>
+      borderRadius: "2rem",
+      bgcolor: "#25291C",
+      boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
+      zIndex: 1300,
 
-            <IconButton aria-label="delete" size="small" onClick={handleClick} sx={{fontSize:'small',display:{xs:'block',sm:'none'}}}>
-              <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#DFE0DC'}}>
-                <PersonIcon fontSize="small" sx={{color:"#25291C"}}/>
-              </Avatar>
-            </IconButton> 
-            <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            slotProps={{
-                list: {
-                'aria-labelledby': 'basic-button',
-                },
-            }}
-            >
-            <Box
-              sx={{
-                display: {xs:'none',sm:'flex'},
-                flexWrap: 'wrap',
-                '& > :not(style)': {
-                  m: 2,
-                  width: 300,
-                  height: 150,
-                  bgcolor:'#e6e6e6',
-                  borderRadius:'20px',
-                },
+      backdropFilter: "blur(10px)", // optional premium look
+    }}
+  >
+    <Toolbar
+  sx={{
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    minHeight: "65px",
+    px: 1,
+  }}
+    >
+      {navItems.map((item) => (
+        <motion.div key={item.path} style={{ position: "relative" }}>
+
+          {/* Active pill */}
+          {isActive(item.path) && (
+            <motion.div
+              layoutId="activeTab"
+              style={{
+                position: "absolute",
+                inset: 0,
+                borderRadius: "50%",
+                background: "#ffffff20",
               }}
-            >
-              <Paper elevation={0} 
-                sx={{
-                  display:'flex',
-                  flexDirection:'column',
-                  justifyContent:'center',
-                  alignItems:'center'
-                }}>
-                <Avatar sx={{bgcolor:'white' ,color:'#eaeaea', width: 56, height: 56,mb:'5px'}}><PersonIcon sx={{fontSize:'xx-large'}}/></Avatar>
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            />
+          )}
 
-                <Typography variant="body2" gutterBottom sx={{ display: 'block' ,marginBottom:'-3px',color:'#5d5d5d'}}>
-                  {user && user.name}
-                </Typography>
-                <Typography variant="caption" gutterBottom sx={{ display: 'block',color:'#5d5d5d' }}>
-                  {user && user.email}
-                </Typography>
-              </Paper>
-            </Box>
-            <Divider sx={{display:{xs:'none',sm:'block'}}}/>
-              {userRole === 'admin' && (
-                <MenuItem key="Admin" sx={{ color:'#767676',fontSize:'14px' }} component={Link} to="/admin/dashboard">
-                 <DashboardIcon sx={{marginRight:'1rem'}}/> Admin Dashboard
-                </MenuItem>
-              )}
-              <MenuItem sx={{color:'#767676',fontSize:'14px'}} component={Link} to="/profile"><AccountCircleIcon sx={{marginRight:'1rem'}}/>Your Account</MenuItem>
-              <MenuItem
-                sx={{ color: '#767676', fontSize: '14px' }}
-                onClick={() => {
-                  console.log("Opening Create Group modal...");
-                  dispatch(openModal({
-                    modalType: 'CREATE_GROUP',
-                    modalProps: {
-                      title: 'Create group',
-                    }
-                  }));
+          <motion.div {...iconAnimation}>
+            <IconButton component={Link} to={item.path}>
+              <Avatar
+                sx={{
+                  height: { xs: "2.6rem", sm: "3rem" },
+                  width: { xs: "2.6rem", sm: "3rem" },
+                  bgcolor: isActive(item.path) ? "#fff" : "#DFE0DC",
+                  transform: isActive(item.path)
+                    ? "scale(1.1)"
+                    : "scale(1)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    boxShadow: "0 0 15px rgba(223,224,220,0.6)",
+                  },
                 }}
               >
-                <GroupAddIcon sx={{ marginRight: '1rem' }} />
-                Create Group
-              </MenuItem>
-              <MenuItem sx={{color:'#767676',fontSize:'14px'}} onClick={handleLogout}><LogoutIcon sx={{marginRight:'1rem'}}/>Logout</MenuItem>
-            </Menu>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
+                {React.cloneElement(item.icon, {
+                  sx: { color: "#25291C" },
+                })}
+              </Avatar>
+            </IconButton>
+          </motion.div>
+
+        </motion.div>
+      ))}
+    </Toolbar>
+  </MotionAppBar>
+);
 }
 
 DrawerAppBar.propTypes = {

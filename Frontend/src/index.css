@@ -11,3 +11,6 @@ body {
 code {
   font-family: 'Montserrat', monospace;
 }
+#root {
+  background: #25291C;
+}

@@ -16,6 +16,7 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { openModal,closeModal } from '../../redux/modal/modalSlice';
 import TextField from '@mui/material/TextField';
 import Loader from '../Loader';
+import { logout } from '../../redux/auth/authSlice';
 const Profile = () => {
     const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
     const dispatch = useDispatch();
@@ -37,7 +38,14 @@ const Profile = () => {
     }
     }));
   };
-
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+      window.location.reload(); 
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
   return (
 <Box
   sx={{
@@ -198,6 +206,26 @@ const Profile = () => {
         }}
       >
         Delete Account
+      </Button>
+      <Button
+        fullWidth
+        variant="outlined"
+        onClick={handleLogout}
+        sx={{
+          borderColor: "#ED474A",
+          color: "#ED474A",
+          textTransform: "none",
+          fontWeight: 600,
+          fontFamily: "Montserrat, sans-serif",
+          borderRadius: 2,
+          py: 1.2,
+          "&:hover": {
+            borderColor: "#c93a3d",
+            backgroundColor: "rgba(237,71,74,0.05)",
+          },
+        }}
+      >
+        Logout
       </Button>
     </Box>
   </Box>

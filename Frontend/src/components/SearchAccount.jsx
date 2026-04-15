@@ -76,7 +76,7 @@ const SearchAccount = () => {
         border: "1px solid #DFE0DC",
         borderRadius: "2rem",
         bgcolor: "#FFFFFF",
-        px: 2,
+        px: 1,
         py: 1,
         border: '2px solid #25291C',
       }}

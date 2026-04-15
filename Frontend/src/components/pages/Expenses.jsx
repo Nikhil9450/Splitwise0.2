@@ -184,8 +184,11 @@ useEffect(() => {
     initial={{ opacity: 0, x: 30 }}
     animate={{ opacity: 1, x: 0 }}
     exit={{ opacity: 0, x: -30 }}
+    style={{
+      height:'100%',
+    }}
   >
-    <Box sx={{  height: '100%' }} style={styles}>
+    <Box sx={{  height: '93%' }} style={styles}>
       <Box sx={{display:'flex',justifyContent:'space-between',height:'7%', bgcolor: '#25291C',border:'none',padding:'2rem'}}>
         <Typography 
             variant="h6" 
@@ -283,8 +286,8 @@ useEffect(() => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{overflowY: 'scroll', marginBottom:'5rem'}}>
-          <List sx={{ width: '100%', height:'100%',padding:'12px' }}>
+        <Box sx={{overflowY: 'scroll', marginBottom:'5rem',height:'100%'}}>
+          <List sx={{ height:'100%',padding:'12px' }}>
             {expense.map((expense) => {
               console.log("expense inside the map function---------->",expense);
               let lent_borrowed_amt = 0;
@@ -374,7 +377,7 @@ useEffect(() => {
         variant="extended"
         sx={{
           position: 'absolute',
-          bottom: {xs:70,sm:20},
+          bottom: {xs:90,sm:20},
           right: 16,
           zIndex: 10,
           width:{xs:'1rem',md:'10rem'},

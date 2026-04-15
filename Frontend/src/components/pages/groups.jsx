@@ -180,11 +180,7 @@ useEffect(() => {
 
     }
 return (
-  <motion.div
-    initial={{ opacity: 0, x: 30 }}
-    animate={{ opacity: 1, x: 0 }}
-    exit={{ opacity: 0, x: -30 }}
-  >
+
     <Box sx={{ height: "100%" }}>
       <Grid
         sx={{
@@ -193,6 +189,11 @@ return (
           fontFamily: "Montserrat, sans-serif",
         }}
       >
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -30 }}
+        >
         {/* HEADER */}
         <Box
           sx={{
@@ -294,9 +295,35 @@ return (
             );
           })}
         </Box>
+        </motion.div>
       </Grid>
+      <Fab
+        onClick={() =>dispatch(openModal({
+                    modalType: 'CREATE_GROUP',
+                    modalProps: {
+                      title: 'Create group',
+                    }
+                  }))}
+        aria-label="Add Expenses"
+        variant="extended"
+        sx={{
+          position: 'absolute',
+          bottom: {xs:90,sm:20},
+          right: 16,
+          zIndex: 10,
+          width:{xs:'10rem',md:'10rem'},
+          bgcolor:'#25291C',
+          border:'none', 
+              '&:hover': {
+          bgcolor: '#129490',
+          color: '#fff',
+
+        }, 
+        }}
+      >
+        <Typography sx={{color:"#129490", fontSize: "0.875rem",fontWeight: 600}} >Create Group</Typography>
+      </Fab>
     </Box>
-  </motion.div>
 );
 }
 
