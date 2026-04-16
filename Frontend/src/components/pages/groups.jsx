@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider,Stack  } from '@mui/material';
+import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider,Stack,TextField ,IconButton,InputAdornment  } from '@mui/material';
 import { openModal } from '../../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
@@ -19,7 +19,6 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,6 +26,8 @@ import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import SearchIcon from "@mui/icons-material/Search";
 const Groups = () => {
   // const [userGroupList,SetUserGroupList]=useState([]);
   const navigate = useNavigate(); 
@@ -44,141 +45,154 @@ const Groups = () => {
   const [viewMembers,setViewMembers]=useState(false);
   // const [viewType,setViewType]=useState("groups");
   const [groupName,setGroupName]=useState("");
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [debouncedSearch, setDebouncedSearch] = React.useState("");
   const dispatch = useDispatch();
   useEffect(()=>{
     // fetchgroupList();
     dispatch(fetchUserGroups());
   },[])
 
-useEffect(() => {
-  console.log("expenses------------>", expense);
-  const balances = {};
+  useEffect(() => {
+    console.log("expenses------------>", expense);
+    const balances = {};
 
-  // Step 1: Build raw balances
-  let totalBalance=0;
-  expense.forEach((expense) => {
-    expense.splitBetweenWithAmt.forEach((split) => {
-      const from = split.user._id;
-      const to = split.owesTo._id;
-      const amount = split.amount;
-      totalBalance = totalBalance + amount;
-      if (from !== to) {
-        if (!balances[from]) balances[from] = {};
-        if (!balances[from][to]) balances[from][to] = 0;
-        balances[from][to] += amount;
-      }
+    // Step 1: Build raw balances
+    let totalBalance=0;
+    expense.forEach((expense) => {
+      expense.splitBetweenWithAmt.forEach((split) => {
+        const from = split.user._id;
+        const to = split.owesTo._id;
+        const amount = split.amount;
+        totalBalance = totalBalance + amount;
+        if (from !== to) {
+          if (!balances[from]) balances[from] = {};
+          if (!balances[from][to]) balances[from][to] = 0;
+          balances[from][to] += amount;
+        }
+      });
     });
-  });
-  setGroupTotalAmt(totalBalance);
-  console.log("balances ----------->", balances);
+    setGroupTotalAmt(totalBalance);
+    console.log("balances ----------->", balances);
 
-  // Step 2: Filter only balances for current user
-  const filteredBalance = balances[user.id];
-  const filteredWithName = [];
+    // Step 2: Filter only balances for current user
+    const filteredBalance = balances[user.id];
+    const filteredWithName = [];
 
-  for (const toId in filteredBalance) {
-    const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
-    const amount = filteredBalance[toId];
-
-    filteredWithName.push({
-      name: toUser,
-      amount: amount
-    });
-  }
-
-  console.log("filteredWithName----------->", filteredWithName);
-
-  // Step 3: Convert all balances to flat array with names
-  let split_balance = [];
-  for (const fromId in balances) {
-    for (const toId in balances[fromId]) {
-      const fromUser = groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+    for (const toId in filteredBalance) {
       const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
-      const amount = balances[fromId][toId];
+      const amount = filteredBalance[toId];
 
-      split_balance.push({
-        from: fromUser,
-        to: toUser,
-        amount: parseFloat(amount.toFixed(2))
+      filteredWithName.push({
+        name: toUser,
+        amount: amount
       });
     }
-  }
 
-  console.log("split balance-------->",split_balance);
+    console.log("filteredWithName----------->", filteredWithName);
 
-  // Step 4: Simplify mutual transactions
-  const netMap = {};
-  split_balance.forEach(({ from, to, amount }) => {
-    const key = `${from}->${to}`;
-    const reverseKey = `${to}->${from}`;
+    // Step 3: Convert all balances to flat array with names
+    let split_balance = [];
+    for (const fromId in balances) {
+      for (const toId in balances[fromId]) {
+        const fromUser = groupMemberList.find((u) => u._id === fromId)?.name || fromId;
+        const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+        const amount = balances[fromId][toId];
 
-    if (netMap[reverseKey]) {
-      if (netMap[reverseKey] > amount) {
-        netMap[reverseKey] -= amount;
-      } else if (netMap[reverseKey] < amount) {
-        netMap[key] = amount - netMap[reverseKey];
-        delete netMap[reverseKey];
-      } else {
-        delete netMap[reverseKey]; // balances out
+        split_balance.push({
+          from: fromUser,
+          to: toUser,
+          amount: parseFloat(amount.toFixed(2))
+        });
       }
-    } else {
-      netMap[key] = (netMap[key] || 0) + amount;
     }
-  });
 
-  const reduced_amt = Object.entries(netMap).map(([key, amount]) => {
-    const [from, to] = key.split("->");
-    return { from, to, amount };
-  });
+    console.log("split balance-------->",split_balance);
 
-  console.log("reduced amt------------->", reduced_amt);
+    // Step 4: Simplify mutual transactions
+    const netMap = {};
+    split_balance.forEach(({ from, to, amount }) => {
+      const key = `${from}->${to}`;
+      const reverseKey = `${to}->${from}`;
 
-  // Step 5: Save reduced result to state
-  setSplitBalance(reduced_amt);
+      if (netMap[reverseKey]) {
+        if (netMap[reverseKey] > amount) {
+          netMap[reverseKey] -= amount;
+        } else if (netMap[reverseKey] < amount) {
+          netMap[key] = amount - netMap[reverseKey];
+          delete netMap[reverseKey];
+        } else {
+          delete netMap[reverseKey]; // balances out
+        }
+      } else {
+        netMap[key] = (netMap[key] || 0) + amount;
+      }
+    });
 
-}, [expense]);
+    const reduced_amt = Object.entries(netMap).map(([key, amount]) => {
+      const [from, to] = key.split("->");
+      return { from, to, amount };
+    });
+
+    console.log("reduced amt------------->", reduced_amt);
+
+    // Step 5: Save reduced result to state
+    setSplitBalance(reduced_amt);
+
+  }, [expense]);
 
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
   },[UserGroupList])
 
-    const addExpenseHandler =()=>{
-         console.log("groupMemberList from group.jsx----->",groupMemberList)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 300);
 
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const addExpenseHandler =()=>{
+        console.log("groupMemberList from group.jsx----->",groupMemberList)
+
+    dispatch(openModal({
+                  modalType: 'ADD_EXPENSE',
+                  modalProps: {
+                    title: 'Add Expense',
+                    groupId:groupId,
+                    groupMemberList:groupMemberList,
+                  }
+    }))
+  }
+  const editExpenseHandler =()=>{
+      console.log("expense_details--------->",expense_details);
       dispatch(openModal({
                     modalType: 'ADD_EXPENSE',
                     modalProps: {
-                      title: 'Add Expense',
+                      title: 'Edit Expense',
                       groupId:groupId,
                       groupMemberList:groupMemberList,
+                      expenseDetail: expense_details,
                     }
       }))
-    }
-    const editExpenseHandler =()=>{
-        console.log("expense_details--------->",expense_details);
-        dispatch(openModal({
-                      modalType: 'ADD_EXPENSE',
-                      modalProps: {
-                        title: 'Edit Expense',
-                        groupId:groupId,
-                        groupMemberList:groupMemberList,
-                        expenseDetail: expense_details,
-                      }
+      setExpense_container(false);
+  }
+  const deleteExpenseHandler=()=>{
+      dispatch(openModal({
+                  modalType: 'DELETE_EXPENSE',
+                  modalProps: {
+                    title: 'Delete Expense',
+                    expenseId: expense_details._id,
+                    groupId:groupId,
+                  }
         }))
-        setExpense_container(false);
-    }
-    const deleteExpenseHandler=()=>{
-        dispatch(openModal({
-                    modalType: 'DELETE_EXPENSE',
-                    modalProps: {
-                      title: 'Delete Expense',
-                      expenseId: expense_details._id,
-                      groupId:groupId,
-                    }
-          }))
-        setExpense_container(false);
+      setExpense_container(false);
 
-    }
+  }
+  const filteredGroups = UserGroupList.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 return (
 
     <Box sx={{ height: "100%" }}>
@@ -195,25 +209,65 @@ return (
           exit={{ opacity: 0, x: -30 }}
         >
         {/* HEADER */}
-        <Box
-          sx={{
-            p: 2,
-            borderBottom: "1px solid #DFE0DC",
-            bgcolor: "#25291C",
-          }}
-        >
-          <Typography
-            variant="h6"
-            color="#009F93"
-            sx={{
-              fontWeight: 500,
-              lineHeight: 1,
-              p: 2,
-            }}
-          >
-            Groups
-          </Typography>
-        </Box>
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 1,
+    px: 2,
+    py: 3,
+    borderBottom: "1px solid #DFE0DC",
+    bgcolor: "#25291C",
+    
+  }}
+>
+  {/* 🔍 Search Box */}
+  <TextField
+    fullWidth
+    size="small"
+    placeholder="Search groups..."
+    variant="outlined"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    sx={{
+      bgcolor: "#fff",
+      borderRadius: "2rem",
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "2rem",
+      },
+      mx: 1,
+    }}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <SearchIcon />
+        </InputAdornment>
+      ),
+    }}
+  />
+
+  {/* Create Group Button */}
+  <IconButton
+    sx={{
+      bgcolor: "#009F93",
+      color: "#fff",
+      "&:hover": {
+        bgcolor: "#007f76",
+      },
+      borderRadius: "2rem",
+      p: 1.2,
+    }}
+    onClick={() =>dispatch(openModal({
+            modalType: 'CREATE_GROUP',
+            modalProps: {
+              title: 'Create group',
+            }
+          }))}
+  >
+    <GroupAddIcon sx={{ fontSize: 20 }}/>
+  </IconButton>
+</Box>
 
         {/* GROUP LIST */}
         <Box
@@ -230,7 +284,7 @@ return (
             },
           }}
         >
-          {UserGroupList.map((item) => {
+          {filteredGroups.map((item) => {
             return (
               <Box
                 key={item.id}
@@ -297,21 +351,21 @@ return (
         </Box>
         </motion.div>
       </Grid>
-      <Fab
+      {/* <Fab
         onClick={() =>dispatch(openModal({
                     modalType: 'CREATE_GROUP',
                     modalProps: {
                       title: 'Create group',
                     }
                   }))}
-        aria-label="Add Expenses"
+        aria-label="Create Group"
         variant="extended"
         sx={{
           position: 'absolute',
           bottom: {xs:90,sm:20},
           right: 16,
           zIndex: 10,
-          width:{xs:'10rem',md:'10rem'},
+          width:{xs:'11rem',md:'10rem'},
           bgcolor:'#25291C',
           border:'none', 
               '&:hover': {
@@ -321,8 +375,11 @@ return (
         }, 
         }}
       >
-        <Typography sx={{color:"#129490", fontSize: "0.875rem",fontWeight: 600}} >Create Group</Typography>
-      </Fab>
+        <Avatar sx={{ bgcolor: "transparent", color: "#129490", }}>
+          <GroupAddIcon />
+        </Avatar>
+        <Typography sx={{color:"#129490", fontSize: "0.7rem",fontWeight: 600,fontFamily: 'Montserrat, sans-serif'}} >Create Group</Typography>
+      </Fab> */}
     </Box>
 );
 }

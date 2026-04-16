@@ -82,9 +82,12 @@ export default function TransitionsModal() {
     const [updatedUserDetails,setUpdatedUserDetails]= useState({
         name:modalProps.name,
         email:modalProps.email,
-        currentPassword:"",
-        newPassword:""
       })
+    const [passwordDetails,setPasswordDetails]=useState({
+      currentPassword: "",
+      newPassword: ""
+    });
+
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [splitByAmount,setSplitByAmount]=useState({});
@@ -196,15 +199,13 @@ export default function TransitionsModal() {
             setUpdatedUserDetails({
               name: modalProps.name || "",
               email: modalProps.email || "",
-              currentPassword: "",
-              newPassword: "",
             });
-          }
-          if (modalProps.title === "Edit Expense" && modalProps.expenseDetail?.splitType) {
-            setSplitType(modalProps.expenseDetail.splitType);
-          }else{
-            setSplitType("Equally");
-          }
+      }else if(modalType === "CHANGE_PASSWORD"){
+            setPasswordDetails({
+              currentPassword: "",
+              newPassword: ""
+            });
+      }
     }, [modalType, modalProps]);
 
     const selectUser=(event)=>{
@@ -261,14 +262,29 @@ export default function TransitionsModal() {
           })
         console.log("api respose------>",response)
         dispatch(closeModal());
-        dispatch(logout());
-        toast.success("Updated successfully login again to reflect changes");
+        toast.success("Updated successfully.");
       }catch(error){
         console.log("error--------->",error);
         toast.error(error.response?.data?.error || "Something went wrong");
       }
       
     }
+
+    const changePassword = async () => {
+      try {
+        const response = await axios.post('http://localhost:5000/editUser/change-password', passwordDetails, {
+          withCredentials: true
+        });
+        console.log("API response------>", response);
+        dispatch(closeModal());
+        dispatch(logout());
+        toast.success("Password changed successfully. Please login again.");
+      } catch (error) {
+        console.log("error--------->", error);
+        toast.error(error.response?.data?.error || "Something went wrong");
+      }
+    };
+
 
     const handleChange = (event) => {
      const {checked,value} = event.target;
@@ -579,6 +595,32 @@ export default function TransitionsModal() {
                   <Button onClick={() => updateProfile()}>Submit</Button>
               </DialogActions>
               </>
+          );
+          case "CHANGE_PASSWORD":
+          return (
+            <>
+              <Typography variant="h6">{modalProps.title}</Typography>
+              <TextField
+                label="Enter Current Password"
+                defaultValue=""
+                fullWidth
+                type='password'
+                sx={{ mt: 2 }}
+                onChange={(event)=>setPasswordDetails({...passwordDetails,'currentPassword':event.target.value})}
+              />
+              <TextField
+                label="Enter New Password"
+                defaultValue=""
+                fullWidth
+                type='password'
+                sx={{ mt: 2 }}
+                onChange={(event)=>setPasswordDetails({...passwordDetails,'newPassword':event.target.value})}
+              />
+              <DialogActions>
+                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
+                <Button onClick={() => changePassword()}>Submit</Button>
+              </DialogActions>
+            </>
           );
           case "CREATE_GROUP":
             return (            

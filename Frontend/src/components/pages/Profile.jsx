@@ -1,236 +1,202 @@
 import React from 'react';
-import { useSelector,useDispatch } from 'react-redux';
-import { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import {Box,Typography} from '@mui/material';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  Box,
+  Typography,
+  Avatar,
+  Button,
+  Divider,
+  Chip,
+} from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { openModal,closeModal } from '../../redux/modal/modalSlice';
-import TextField from '@mui/material/TextField';
-import Loader from '../Loader';
+import { openModal } from '../../redux/modal/modalSlice';
 import { logout } from '../../redux/auth/authSlice';
+import { motion } from 'framer-motion';
+import { fetchUserDetails } from '../../redux/user/userSlice';
 const Profile = () => {
-    const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
-    const dispatch = useDispatch();
-    const paperStyle = {
-                        display:'flex',
-                        flexDirection:'column',
-                        justifyContent:'center',
-                        alignItems:'center',
-                        height:'60vh'
-                        }                    
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    dispatch(fetchUserDetails('6850f55aa9e702c1eef94229'));
+  }, [dispatch]);
 
-  const editProfileDetails = (modalType) => {
-    dispatch(openModal({
-    modalType,
-    modalProps: {
-        title:'Edit Profile',
-        name:user.name,
-        email:user.email,
-    }
-    }));
+  useEffect(()=>{
+    console.log("User in profile page------>",user)
+  },[user])
+  const editProfileDetails = () => {
+    dispatch(
+      openModal({
+        modalType: 'EDIT_PROFILE',
+        modalProps: {
+          title: 'Edit Profile',
+          name: user.name,
+          email: user.email,
+        },
+      })
+    );
+  };
+
+  const changePassword = () => {
+    dispatch(
+      openModal({
+        modalType: 'CHANGE_PASSWORD',
+        modalProps: {
+          title: 'Change Password',
+        },
+      })
+    );
   };
   const handleLogout = async () => {
     try {
       await dispatch(logout()).unwrap();
-      window.location.reload(); 
+      window.location.reload();
     } catch (err) {
-      console.error("Logout failed", err);
+      console.error('Logout failed', err);
     }
   };
+
+  const InfoRow = ({ label, value }) => (
+    <Box display="flex" justifyContent="space-between">
+      <Typography fontSize="0.75rem" color="gray" sx={{fontFamily: 'Montserrat, sans-serif',fontWeight: 600}}>
+        {label}
+      </Typography>
+      <Typography fontSize="0.85rem" fontWeight={500} sx={{fontFamily: 'Montserrat, sans-serif',}}>
+        {value}
+      </Typography>
+    </Box>
+  );
+
   return (
-<Box
-  sx={{
-    minHeight: "100vh",
-    bgcolor: "#DFE0DC",
-    fontFamily: "Montserrat, sans-serif",
-    display: "flex",
-    justifyContent: "center",
-  }}
->
-  <Box
-    sx={{
-      width: "100%",
-      maxWidth: "800px",
+  <motion.div
+    initial={{ opacity: 0, x: 30 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -30 }}
+    style={{
+      height:'100%',
     }}
   >
-    {/* PROFILE HEADER */}
     <Box
       sx={{
-        bgcolor: "#25291C",
-        color: "#DFE0DC",
-        p: { xs: 3, md: 4 },
-        textAlign: "center",
-        mb: 3,
+        minHeight: '100vh',
+        bgcolor: '#f5f5f5',
+        fontFamily: 'Montserrat, sans-serif',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'start',
+        p: 2,
       }}
     >
       <Box
         sx={{
-          height: 100,
-          width: 100,
-          borderRadius: "50%",
-          bgcolor: "#DFE0DC",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          margin: "0 auto",
-          mb: 2,
+          width: '100%',
+          maxWidth: 420,
+          bgcolor: 'transparent',
+          borderRadius: '2rem',
+          p: 3,
+          // border: '1px solid #e0e0e0',
         }}
       >
-        <AccountCircleIcon sx={{ fontSize: 70, color: "#25291C" }} />
-      </Box>
-
-      <Typography
-        sx={{
-          fontSize: "1.2rem",
-          fontWeight: 600,
-          fontFamily: "Montserrat, sans-serif",
-        }}
-      >
-        {user.name}
-      </Typography>
-
-      <Typography
-        sx={{
-          fontSize: "0.85rem",
-          opacity: 0.8,
-          fontFamily: "Montserrat, sans-serif",
-        }}
-      >
-        {user.email}
-      </Typography>
-    </Box>
-
-    {/* DETAILS CARD */}
-    <Box
-      sx={{
-        bgcolor: "#FFFFFF",
-        borderRadius: "2rem",
-        border: "1px solid #DFE0DC",
-        overflow: "hidden",
-        mx: { xs: 2, sm: 4, md: 6 },
-        my: { xs: 3, md: 5 },
-      }}
-    >
-      {[
-        { label: "Name", value: user.name },
-        { label: "Email", value: user.email },
-        { label: "User Type", value: user.role },
-      ].map((item, index) => (
-        <Box
-          key={index}
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            justifyContent: "space-between",
-            px: 2,
-            py: 1.5,
-            borderBottom:
-              index !== 3 ? "1px solid #DFE0DC" : "none",
-          }}
-        >
-          <Typography
+        {/* Header */}
+        <Box textAlign="center" mb={2}>
+          <Avatar
             sx={{
-              fontSize: "0.75rem",
-              color: "#9e9e9e",
-              fontFamily: "Montserrat, sans-serif",
+              width: 80,
+              height: 80,
+              margin: '0 auto',
+              bgcolor: '#25291C',
+              fontSize: '2rem',
             }}
           >
-            {item.label}
+            {user?.name?.charAt(0)?.toUpperCase() || (
+              <AccountCircleIcon />
+            )}
+          </Avatar>
+
+          <Typography sx={{fontFamily: 'Montserrat, sans-serif',}} mt={1} fontWeight={600} fontSize="1.1rem">
+            {user?.name}
           </Typography>
 
-          <Typography
-            sx={{
-              fontSize: "0.9rem",
-              fontWeight: 600,
-              color: "#25291C",
-              fontFamily: "Montserrat, sans-serif",
-              mt: { xs: 0.5, sm: 0 },
-            }}
-          >
-            {item.value}
+          <Typography sx={{fontFamily: 'Montserrat, sans-serif',fontWeight:500}}   fontSize="0.8rem" color="gray">
+            {user?.email}
           </Typography>
+
+          <Chip
+            label={user?.role}
+            size="small"
+            sx={{ mt: 1, bgcolor: '#e0e0e0' }}
+          />
         </Box>
-      ))}
+
+        <Divider sx={{ my: 2 }} />
+
+        {/* Info Section */}
+        <Box display="flex" flexDirection="column" gap={1}>
+          <InfoRow  label="Full Name" value={user?.name} />
+          <InfoRow  label="Email" value={user?.email} />
+          <InfoRow  label="Role" value={user?.role} />
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
+        {/* Actions */}
+        <Box display="flex" flexDirection="column" gap={1} justifyContent="start" alignItems="start">
+          <Button
+            variant="text"
+            onClick={editProfileDetails}
+            sx={{
+              // borderRadius: '2rem',
+              textTransform: 'none',
+              // bgcolor: '#25291C',
+              '&:hover': { bgcolor: '#3298f8' },
+              fontFamily: 'Montserrat, sans-serif',
+              color:'#007f76'
+            }}
+          >
+            Edit Profile
+          </Button>
+          <Button
+            variant="text"
+            onClick={changePassword}
+            sx={{
+              // borderRadius: '2rem',
+              textTransform: 'none',
+              // bgcolor: '#25291C',
+              '&:hover': { bgcolor: '#3298f8' },
+              fontFamily: 'Montserrat, sans-serif',
+              color:'#007f76'
+            }}
+          >
+            Change Password
+          </Button>
+          <Button
+            variant="text"
+            color="error"
+            sx={{ borderRadius: '2rem', textTransform: 'none', fontFamily: 'Montserrat, sans-serif', color:'#007f76' }}
+          >
+            Delete Account
+          </Button>
+
+          <Button
+            variant="text"
+            onClick={handleLogout}
+            sx={{ textTransform: 'none', color: 'gray', fontFamily: 'Montserrat, sans-serif' }}
+          >
+            Logout
+          </Button>
+                    <Button
+            variant="text"
+            onClick={()=>dispatch(fetchUserDetails('6850f55aa9e702c1eef94229'))}
+            sx={{ textTransform: 'none', color: 'gray', fontFamily: 'Montserrat, sans-serif' }}
+          >
+            Fetch User Details
+          </Button>
+        </Box>
+      </Box>
     </Box>
+  </motion.div>
+  );
+};
 
-    {/* ACTIONS */}
-    <Box
-      sx={{
-        mt: 3,
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        gap: 2,
-      }}
-    >
-      <Button
-        fullWidth
-        variant="contained"
-        sx={{
-          bgcolor: "#129490",
-          textTransform: "none",
-          fontWeight: 600,
-          fontFamily: "Montserrat, sans-serif",
-          borderRadius: 2,
-          py: 1.2,
-          "&:hover": { bgcolor: "#0f7f7c" },
-        }}
-        onClick={() => editProfileDetails("EDIT_PROFILE")}
-      >
-        Edit Profile
-      </Button>
-
-      <Button
-        fullWidth
-        variant="outlined"
-        sx={{
-          borderColor: "#ED474A",
-          color: "#ED474A",
-          textTransform: "none",
-          fontWeight: 600,
-          fontFamily: "Montserrat, sans-serif",
-          borderRadius: 2,
-          py: 1.2,
-          "&:hover": {
-            borderColor: "#c93a3d",
-            backgroundColor: "rgba(237,71,74,0.05)",
-          },
-        }}
-      >
-        Delete Account
-      </Button>
-      <Button
-        fullWidth
-        variant="outlined"
-        onClick={handleLogout}
-        sx={{
-          borderColor: "#ED474A",
-          color: "#ED474A",
-          textTransform: "none",
-          fontWeight: 600,
-          fontFamily: "Montserrat, sans-serif",
-          borderRadius: 2,
-          py: 1.2,
-          "&:hover": {
-            borderColor: "#c93a3d",
-            backgroundColor: "rgba(237,71,74,0.05)",
-          },
-        }}
-      >
-        Logout
-      </Button>
-    </Box>
-  </Box>
-</Box>
-  )
-}
-
-export default Profile
+export default Profile;
