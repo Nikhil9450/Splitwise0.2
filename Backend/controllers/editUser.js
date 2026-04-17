@@ -97,18 +97,5 @@ const changePassword = async (req, res) => {
   }
 };
 
-const fetchUserById = async (req, res) => {
-    const userId = req.params.id;
 
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        return res.status(200).json(user);
-    } catch (error) {
-        console.log("error---->",error)
-        return res.status(400).json({ error: "some error occured in fetching user" });
-    }
-};
-module.exports={updateUser, changePassword, fetchUserById}
+module.exports={updateUser, changePassword}

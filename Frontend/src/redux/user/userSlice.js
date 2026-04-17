@@ -1,20 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-const fetchUserDetails = createAsyncThunk('user/fetchUserDetails',async (userId, thunkAPI) => {
+import axios from "axios";
+const fetchUserDetails = createAsyncThunk(
+  'user/fetchUserDetails',
+  async (userId, thunkAPI) => {
     try {
-        const res = await fetch(`http://localhost:5000/user/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const userData = await res.json();
-        return userData;
+      const res = await axios.get(
+        `http://localhost:5000/findUserById`,
+        { withCredentials: true }
+      );
+        console.log("fetchUserDetails response------>", res.data);
+      return res.data;
     } catch (error) {
-        return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
-});
+  }
+);
 
 
 const userSlice=createSlice({

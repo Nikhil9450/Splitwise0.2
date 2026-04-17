@@ -31,6 +31,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Stack from '@mui/material/Stack';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { motion } from "framer-motion";
 const drawerWidth = 240;
 
@@ -58,6 +59,7 @@ function DrawerAppBar(props) {
     { path: "/friends", icon: <PersonAddIcon /> },
     { path: "/admin/dashboard", icon: <DashboardIcon /> },
     { path: "/profile", icon: <PersonIcon /> },
+    { path: "/activity", icon: <NotificationsIcon /> }
   ];
   const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
   const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);

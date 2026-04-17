@@ -57,6 +57,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Slide from '@mui/material/Slide';
+import {fetchUserDetails} from '../redux/user/userSlice';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -261,6 +262,7 @@ export default function TransitionsModal() {
             withCredentials: true
           })
         console.log("api respose------>",response)
+        dispatch(fetchUserDetails());
         dispatch(closeModal());
         toast.success("Updated successfully.");
       }catch(error){
@@ -555,13 +557,59 @@ export default function TransitionsModal() {
           case "EDIT_PROFILE":
           return (
               <>
-              <Typography variant="h6">{modalProps.title}</Typography>
+              <Typography 
+                  sx={{
+                    mb: 3,
+                    fontWeight: 600,
+                    color: '#25291C',
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize:'1.5rem'
+                  }}
+              >{modalProps.title}</Typography>
               <TextField
                   label="Enter Name"
+                  varient="outlined"
                   defaultValue={modalProps.name}
                   fullWidth
-                  sx={{ mt: 2 }}
                   onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'name':event.target.value})}
+                  InputLabelProps={{
+                    sx: {
+                      fontFamily: "Montserrat, sans-serif",
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      color: '#25291C',
+                      '&.Mui-focused': {
+                        color: '#129490',
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    sx: {
+                      fontFamily: "Montserrat, sans-serif",
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      borderRadius: '2rem',
+                      borderWidth: '2px',
+
+                      // Default border
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#25291C',
+                        borderWidth: '2px',
+                      },
+
+                      // Hover
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#25291C',
+                        borderWidth: '2px',
+                      },
+
+                      // Focus
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#129490',
+                        borderWidth: '2px',
+                      },
+                    },
+                  }}
               />
               <TextField
                   label="Enter Email"
@@ -569,56 +617,206 @@ export default function TransitionsModal() {
                   fullWidth
                   sx={{ mt: 2 }}
                   onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'email':event.target.value})}
+                  InputLabelProps={{
+                    sx: {
+                      fontFamily: "Montserrat, sans-serif",
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      color: '#25291C',
+                      '&.Mui-focused': {
+                        color: '#129490',
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    sx: {
+                      fontFamily: "Montserrat, sans-serif",
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      borderRadius: '2rem',
+                      borderWidth: '2px',
 
+                      // Default border
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#25291C',
+                        borderWidth: '2px',
+                      },
+
+                      // Hover
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#25291C',
+                        borderWidth: '2px',
+                      },
+
+                      // Focus
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#129490',
+                        borderWidth: '2px',
+                      },
+                    },
+                  }}
               />
-              <Box>
-                <TextField
-                    label="Enter Current Password"
-                    defaultValue=""
-                    fullWidth
-                    type='password'
-                    sx={{ mt: 2 }}
-                    onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'currentPassword':event.target.value})}
-
-                />
-                <TextField
-                    label="Enter New Password"
-                    defaultValue=""
-                    fullWidth
-                    type='password'
-                    sx={{ mt: 2 }}
-                    onChange={(event)=>setUpdatedUserDetails({...updatedUserDetails,'newPassword':event.target.value})}
-                />            
-              </Box>
               <DialogActions>
-                  <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                  <Button onClick={() => updateProfile()}>Submit</Button>
+                  <Button 
+                    onClick={() => dispatch(closeModal())}
+                    sx={{
+                      bgcolor: '#129490',
+                      fontFamily: "Montserrat, sans-serif",
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      borderRadius: '2rem',
+                      padding:'.6rem 1rem',
+                      '&:hover': { bgcolor: '#0f7f7c' },
+                      color: 'white',
+                    }}            
+                  >
+                  Cancel
+                  </Button>
+                  <Button onClick={() => updateProfile()}
+                    sx={{
+                      bgcolor: '#129490',
+                      fontFamily: "Montserrat, sans-serif",
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      borderRadius: '2rem',
+                      padding:'.6rem 1rem',
+                      '&:hover': { bgcolor: '#0f7f7c' },
+                      color: 'white',
+                    }}                     
+                  >Submit</Button>
               </DialogActions>
               </>
           );
           case "CHANGE_PASSWORD":
           return (
             <>
-              <Typography variant="h6">{modalProps.title}</Typography>
+              <Typography                   
+              sx={{
+                    mb: 3,
+                    fontWeight: 600,
+                    color: '#25291C',
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize:'1.5rem'
+                  }}>{modalProps.title}</Typography>
               <TextField
                 label="Enter Current Password"
+                variant="outlined"
                 defaultValue=""
                 fullWidth
                 type='password'
-                sx={{ mt: 2 }}
                 onChange={(event)=>setPasswordDetails({...passwordDetails,'currentPassword':event.target.value})}
+                InputLabelProps={{
+                  sx: {
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    color: '#25291C',
+                    '&.Mui-focused': {
+                      color: '#129490',
+                    },
+                  },
+                }}
+                InputProps={{
+                  sx: {
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    borderRadius: '2rem',
+                    borderWidth: '2px',
+
+                    // Default border
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#25291C',
+                      borderWidth: '2px',
+                    },
+
+                    // Hover
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#25291C',
+                      borderWidth: '2px',
+                    },
+
+                    // Focus
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#129490',
+                      borderWidth: '2px',
+                    },
+                  },
+                }}
               />
               <TextField
                 label="Enter New Password"
+                variant="outlined"
                 defaultValue=""
                 fullWidth
-                type='password'
                 sx={{ mt: 2 }}
+                type='password'
+                InputLabelProps={{
+                  sx: {
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    color: '#25291C',
+                    '&.Mui-focused': {
+                      color: '#129490',
+                    },
+                  },
+                }}
+                InputProps={{
+                  sx: {
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    borderRadius: '2rem',
+                    borderWidth: '2px',
+
+                    // Default border
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#25291C',
+                      borderWidth: '2px',
+                    },
+
+                    // Hover
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#25291C',
+                      borderWidth: '2px',
+                    },
+
+                    // Focus
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#129490',
+                      borderWidth: '2px',
+                    },
+                  },
+                }}
                 onChange={(event)=>setPasswordDetails({...passwordDetails,'newPassword':event.target.value})}
               />
               <DialogActions>
-                <Button onClick={() => dispatch(closeModal())}>Cancel</Button>
-                <Button onClick={() => changePassword()}>Submit</Button>
+                <Button onClick={() => dispatch(closeModal())}
+                    sx={{
+                      bgcolor: '#129490',
+                      fontFamily: "Montserrat, sans-serif",
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      borderRadius: '2rem',
+                      padding:'.6rem 1rem',
+                      '&:hover': { bgcolor: '#0f7f7c' },
+                      color: 'white',
+                    }}  
+                >Cancel</Button>
+                <Button onClick={() => changePassword()}
+                    sx={{
+                      mt:1,
+                      bgcolor: '#129490',
+                      fontFamily: "Montserrat, sans-serif",
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      borderRadius: '2rem',
+                      padding:'.6rem 1rem',
+                      '&:hover': { bgcolor: '#0f7f7c' },
+                      color: 'white',
+                    }}  
+                >Submit</Button>
               </DialogActions>
             </>
           );

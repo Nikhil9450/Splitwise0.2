@@ -19,7 +19,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   
   useEffect(() => {
-    dispatch(fetchUserDetails('6850f55aa9e702c1eef94229'));
+    dispatch(fetchUserDetails());
   }, [dispatch]);
 
   useEffect(()=>{
@@ -148,8 +148,6 @@ const Profile = () => {
             sx={{
               // borderRadius: '2rem',
               textTransform: 'none',
-              // bgcolor: '#25291C',
-              '&:hover': { bgcolor: '#3298f8' },
               fontFamily: 'Montserrat, sans-serif',
               color:'#007f76'
             }}
@@ -163,7 +161,6 @@ const Profile = () => {
               // borderRadius: '2rem',
               textTransform: 'none',
               // bgcolor: '#25291C',
-              '&:hover': { bgcolor: '#3298f8' },
               fontFamily: 'Montserrat, sans-serif',
               color:'#007f76'
             }}
@@ -181,16 +178,9 @@ const Profile = () => {
           <Button
             variant="text"
             onClick={handleLogout}
-            sx={{ textTransform: 'none', color: 'gray', fontFamily: 'Montserrat, sans-serif' }}
+            sx={{ textTransform: 'none', color: '#ff7c72', fontFamily: 'Montserrat, sans-serif' }}
           >
             Logout
-          </Button>
-                    <Button
-            variant="text"
-            onClick={()=>dispatch(fetchUserDetails('6850f55aa9e702c1eef94229'))}
-            sx={{ textTransform: 'none', color: 'gray', fontFamily: 'Montserrat, sans-serif' }}
-          >
-            Fetch User Details
           </Button>
         </Box>
       </Box>

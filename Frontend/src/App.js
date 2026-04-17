@@ -18,6 +18,7 @@ import Groups from './components/pages/groups';
 import Balances from './components/pages/Balances';
 import Expenses from './components/pages/Expenses';
 import ExpenseDetails from './components/pages/ExpenseDetails';
+import Activity from './components/pages/Activity';
 // import Hero from './components/pages/Hero';
 function App() {
   const dispatch = useDispatch();
@@ -80,7 +81,14 @@ function App() {
 
         }
       />               
+      <Route
+        path="/activity"
+        element={
+          // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
+          isAuthenticated ? <Activity /> : <Navigate to="/signin" replace />
 
+        }
+      />  
       <Route
         path="/expenses/:id"
         element={

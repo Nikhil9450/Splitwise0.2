@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const activitySchema = require("./activity");
 const groupSchema = new mongoose.Schema(
     {
         name: {
@@ -17,6 +18,7 @@ const groupSchema = new mongoose.Schema(
             type:mongoose.Schema.Types.ObjectId,
             ref:"User"
         },
+        activities:[activitySchema]
     },
     {
         timestamps:true
