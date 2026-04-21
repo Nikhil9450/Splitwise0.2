@@ -1,6 +1,8 @@
 const Group = require('../models/group');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); 
+const Expense = require('../models/expenses');
+const { add } = require('../models/activity');
 const secretKey = process.env.JWT_SECRET;
 
 const createGroup = async( req,res)=>{
@@ -29,6 +31,11 @@ const createGroup = async( req,res)=>{
             name:groupName,
             members:groupMembers,
             createdBy:userID,
+            activities: [{
+                user: userID,
+                action: 'GROUP_CREATED',
+                details: { groupName,addedBy: decodedUser.name }
+            }]
         },)
         await User.updateMany(
             {_id:{$in:groupMembers}},
@@ -40,6 +47,46 @@ const createGroup = async( req,res)=>{
         return res.status(500).json({error:"internal server error"});
     }
 }
+const deleteGroup = async (req, res) => {
+    try {
+        const userID = req.user?.id;
+        const { groupId } = req.params;
+
+        if (!userID) {
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+
+        // 1️⃣ Find group
+        const group = await Group.findById(groupId);
+
+        if (!group) {
+            return res.status(404).json({ error: "Group not found" });
+        }
+
+        // 2️⃣ Authorization check (only creator can delete)
+        if (group.createdBy.toString() !== userID) {
+            return res.status(403).json({ error: "Not authorized to delete this group" });
+        }
+
+        // 3️⃣ Remove group from all users
+        await User.updateMany(
+            { _id: { $in: group.members } },
+            { $pull: { groups: groupId } }
+        );
+
+        // 4️⃣ Delete related expenses (optional but recommended)
+        await Expense.deleteMany({ _id: { $in: group.expenses } });
+
+        // 5️⃣ Delete group
+        await Group.findByIdAndDelete(groupId);
+
+        return res.status(200).json({ message: "Group deleted successfully" });
+
+    } catch (error) {
+        console.error("Delete group error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 
 const fetchUserGroups = async( req,res)=>{
     const user = req.user;
@@ -138,4 +185,4 @@ const fetchGroupById = async(req,res)=>{
         return res.status(500).json({error:"internal server error"});
     }    
 }
-module.exports={fetchUserGroups,createGroup, fetchGroupById}
+module.exports={fetchUserGroups,createGroup, fetchGroupById,deleteGroup}

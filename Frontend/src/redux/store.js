@@ -6,6 +6,7 @@ import friendListReducer from './friendList/friendlistSlice';
 import userGroupListReducer from './userGroups/userGroupsSlice';
 import expensesReducer from './expense/expenseSlice';
 import ViewTypeReducer  from './GroupViewType/viewTypeSlice';
+import activityReducer from './Activity/activitySlice';
 const store = configureStore({
     reducer:{
         auth:authReducer,
@@ -14,7 +15,8 @@ const store = configureStore({
         friendList:friendListReducer,
         userGroups:userGroupListReducer,
         expenses:expensesReducer,
-        viewType:ViewTypeReducer
+        viewType:ViewTypeReducer,
+        activity:activityReducer,
     }
 })
 

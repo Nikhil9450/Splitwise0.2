@@ -284,6 +284,21 @@ useEffect(() => {
             >
             Members
             </Button>
+            <Button 
+              component={Link}
+              to={`/activity/${groupId}`}                           
+              sx={{
+                color:'#DFE0DC',
+                borderRadius:'2rem',
+                border:'2px solid #DFE0DC',
+                fontSize:'0.6rem',
+                padding:'0.2rem 1rem',
+                fontFamily: "Montserrat, sans-serif",
+                marginLeft:'0.5rem',
+                }}
+            >
+            Group Activity
+            </Button>            
           </Box>
         </Box>
         <Box sx={{overflowY: 'scroll', marginBottom:'5rem',height:'100%'}}>

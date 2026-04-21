@@ -58,6 +58,8 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Slide from '@mui/material/Slide';
 import {fetchUserDetails} from '../redux/user/userSlice';
+import { addActivity } from '../redux/Activity/activitySlice';
+import { act } from 'react';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -108,6 +110,15 @@ export default function TransitionsModal() {
         },
       },
     };
+
+      
+      useEffect(() => {
+        dispatch(fetchUserDetails());
+      }, [dispatch]);
+    
+      useEffect(()=>{
+        console.log("User in profile page------>",user)
+      },[user])
 
     const resetUnequallyAmt =()=>{
       if(modalProps?.title !== "Edit Expense"){
@@ -499,8 +510,10 @@ export default function TransitionsModal() {
             dispatch(updateExpense(data));
             dispatch(closeModal());
             dispatch(setViewType("expenses"));
+            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_EDIT', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
           }else{
             dispatch(addExpense(data));
+            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
             dispatch(closeModal());
           }
 
@@ -519,6 +532,7 @@ export default function TransitionsModal() {
       }else{
         console.log("expenseId-------->", modalProps.expenseId);
             dispatch(deleteExpense(data));
+            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_DELETE', 'details': { 'description': modalProps.description, 'addedBy': user.name   } }));
             dispatch(closeModal());
             navigate(`/expenses/${modalProps.groupId._id}`);     
       }

@@ -82,7 +82,7 @@ function App() {
         }
       />               
       <Route
-        path="/activity"
+        path="/activity/:groupId"
         element={
           // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
           isAuthenticated ? <Activity /> : <Navigate to="/signin" replace />

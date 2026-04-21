@@ -113,6 +113,7 @@ const ExpenseDetails = () => {
         modalProps: {
           title: 'Delete Expense',
           expenseId: expenseDetails._id,
+          description: expenseDetails.description,
           groupId
         }
       })

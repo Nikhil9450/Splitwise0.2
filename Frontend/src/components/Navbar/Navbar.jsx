@@ -59,7 +59,7 @@ function DrawerAppBar(props) {
     { path: "/friends", icon: <PersonAddIcon /> },
     { path: "/admin/dashboard", icon: <DashboardIcon /> },
     { path: "/profile", icon: <PersonIcon /> },
-    { path: "/activity", icon: <NotificationsIcon /> }
+    // { path: "/activity", icon: <NotificationsIcon /> }
   ];
   const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
   const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
