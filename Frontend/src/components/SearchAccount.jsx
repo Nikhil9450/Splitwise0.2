@@ -1,25 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
 import axios from 'axios';
 import Menu from '@mui/material/Menu';
-// import MenuItem from '@mui/material/MenuItem';
-// import ListItemIcon from '@mui/material/ListItemIcon';
-// import Divider from '@mui/material/Divider';
-// import Typography from '@mui/material/Typography';
-// import Tooltip from '@mui/material/Tooltip';
-// import PersonAdd from '@mui/icons-material/PersonAdd';
-// import Settings from '@mui/icons-material/Settings';
-// import Logout from '@mui/icons-material/Logout';
-// import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+
 import { deleteFriendRequest,removeFriend,acceptFriendRequest,sendFriendRequest } from '../redux/friendList/friendlistSlice';
 import {CircularProgress,Typography} from '@mui/material';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';

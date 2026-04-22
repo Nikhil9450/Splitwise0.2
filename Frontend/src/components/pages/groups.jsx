@@ -1,57 +1,25 @@
 import React from 'react'
-import axios from 'axios';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { useEffect } from 'react';
-import { useState } from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import { Grid,Avatar,ListItemAvatar,ListItemButton,Typography, Paper, Divider,Stack,TextField ,IconButton,InputAdornment  } from '@mui/material';
+import { Grid,Typography,TextField ,IconButton,InputAdornment  } from '@mui/material';
 import { openModal } from '../../redux/modal/modalSlice';
 import { useDispatch,useSelector } from 'react-redux';
 import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
-import { fetchGroupExpenses,deleteExpense,fetchSingleExpense } from '../../redux/expense/expenseSlice';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import dayjs from 'dayjs';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
 import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import SearchIcon from "@mui/icons-material/Search";
 const Groups = () => {
-  // const [userGroupList,SetUserGroupList]=useState([]);
-  const navigate = useNavigate(); 
-  const [groupMemberList,SetGroupMemberList]=useState([]);
-  const [groupId,SetGroupId]=useState(null);
-  const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
-  const {viewType} = useSelector((state)=>state.viewType)
+  const {UserGroupList} = useSelector((state)=>state.userGroups);
   const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
-  const [selectedGroup,setSelectedGroup]= useState("");
-  const [expense_details,setExpense_details]=useState({});
-  const [expense_container,setExpense_container] = useState(false);
-  const [splitBalance,setSplitBalance]= useState([]);
-  const [groupTotalAmt,setGroupTotalAmt]=useState(0);
-  const [viewMembers,setViewMembers]=useState(false);
-  // const [viewType,setViewType]=useState("groups");
-  const [groupName,setGroupName]=useState("");
+
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [debouncedSearch, setDebouncedSearch] = React.useState("");
   const dispatch = useDispatch();
   useEffect(()=>{
-    // fetchgroupList();
     dispatch(fetchUserGroups());
-  },[])
+  },[dispatch])
 
   useEffect(() => {
     console.log("expenses------------>", expense);
@@ -72,7 +40,6 @@ const Groups = () => {
         }
       });
     });
-    setGroupTotalAmt(totalBalance);
     console.log("balances ----------->", balances);
 
     // Step 2: Filter only balances for current user
@@ -80,7 +47,7 @@ const Groups = () => {
     const filteredWithName = [];
 
     for (const toId in filteredBalance) {
-      const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+      const toUser =  toId;
       const amount = filteredBalance[toId];
 
       filteredWithName.push({
@@ -95,8 +62,8 @@ const Groups = () => {
     let split_balance = [];
     for (const fromId in balances) {
       for (const toId in balances[fromId]) {
-        const fromUser = groupMemberList.find((u) => u._id === fromId)?.name || fromId;
-        const toUser = groupMemberList.find((u) => u._id === toId)?.name || toId;
+        const fromUser = fromId;
+        const toUser = toId;
         const amount = balances[fromId][toId];
 
         split_balance.push({
@@ -136,60 +103,12 @@ const Groups = () => {
 
     console.log("reduced amt------------->", reduced_amt);
 
-    // Step 5: Save reduced result to state
-    setSplitBalance(reduced_amt);
-
   }, [expense]);
 
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
   },[UserGroupList])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchTerm);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
-  const addExpenseHandler =()=>{
-        console.log("groupMemberList from group.jsx----->",groupMemberList)
-
-    dispatch(openModal({
-                  modalType: 'ADD_EXPENSE',
-                  modalProps: {
-                    title: 'Add Expense',
-                    groupId:groupId,
-                    groupMemberList:groupMemberList,
-                  }
-    }))
-  }
-  const editExpenseHandler =()=>{
-      console.log("expense_details--------->",expense_details);
-      dispatch(openModal({
-                    modalType: 'ADD_EXPENSE',
-                    modalProps: {
-                      title: 'Edit Expense',
-                      groupId:groupId,
-                      groupMemberList:groupMemberList,
-                      expenseDetail: expense_details,
-                    }
-      }))
-      setExpense_container(false);
-  }
-  const deleteExpenseHandler=()=>{
-      dispatch(openModal({
-                  modalType: 'DELETE_EXPENSE',
-                  modalProps: {
-                    title: 'Delete Expense',
-                    expenseId: expense_details._id,
-                    groupId:groupId,
-                  }
-        }))
-      setExpense_container(false);
-
-  }
   const filteredGroups = UserGroupList.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );

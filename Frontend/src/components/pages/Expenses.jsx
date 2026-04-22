@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../redux/modal/modalSlice';
-import { fetchUserGroups } from '../../redux/userGroups/userGroupsSlice';
-import { fetchGroupExpenses, deleteExpense, fetchSingleExpense } from '../../redux/expense/expenseSlice';
-import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
+import { fetchGroupExpenses  } from '../../redux/expense/expenseSlice';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -17,7 +14,6 @@ import {
   Avatar,
   Box,
   Button,
-  Divider,
   Fab,
   IconButton,
   List,
@@ -31,26 +27,17 @@ import {
 
 // MUI Icons
 import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useParams } from 'react-router-dom';
-import arrorBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchGroupById } from '../../redux/userGroups/userGroupsSlice';
 const Expenses = () => {
   const {user} =useSelector((state)=>state.auth);
-  const {expense,expenseDetail}=useSelector((state)=>state.expenses);
+  const {expense}=useSelector((state)=>state.expenses);
   const [groupMemberList,SetGroupMemberList]=useState([]);
-  // const [groupId,SetGroupId]=useState(null);
-  const {GroupDetails,UserGroupList} = useSelector((state)=>state.userGroups);
-  const [selectedGroup,setSelectedGroup]= useState("");
-  const [expense_details,setExpense_details]=useState({});
-  const [expense_container,setExpense_container] = useState(false);
+  const {GroupDetails} = useSelector((state)=>state.userGroups);
   const [splitBalance,setSplitBalance]= useState([]);
-  const [groupTotalAmt,setGroupTotalAmt]=useState(0);
-  const [viewMembers,setViewMembers]=useState(false);
-  // const [viewType,setViewType]=useState("groups");
   const [groupName,setGroupName]=useState("");
   const [balances,setBalances]=useState([]);
   
@@ -119,7 +106,6 @@ useEffect(() => {
   });
 
 
-  setGroupTotalAmt(Number(totalBalance.toFixed(2)));
   console.log("balances ----------->", balances);
   setBalances(balances);
   // Step 2: Build flat list with names

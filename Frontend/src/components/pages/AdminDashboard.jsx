@@ -10,7 +10,7 @@ import {
   IconButton,
   Avatar,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { motion } from "framer-motion";
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const AdminDashboard = () => {
@@ -56,9 +56,6 @@ const AdminDashboard = () => {
     setSelectedUser(null);
   };
 
-  const handleSave = () => {
-    setOpen(false);
-  };
 
     return (
     <Box

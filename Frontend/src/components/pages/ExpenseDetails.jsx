@@ -9,12 +9,9 @@ import { motion } from "framer-motion";
 
 import {
   Typography,
-  Paper,
-  Divider,
   Button,
   Box,
   IconButton,
-  Avatar,
 } from '@mui/material';
 
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';

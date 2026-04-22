@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSelector,useDispatch } from 'react-redux';
 import { deleteFriendRequest,removeFriend,acceptFriendRequest } from '../../redux/friendList/friendlistSlice';
-import {List,ListItem,ListItemText,IconButton,Grid,Box,Button,ListSubheader,Divider,Typography} from '@mui/material';
+import {Box,Button,Typography} from '@mui/material';
 import SearchAccount from '../SearchAccount';
-const FriendListContainer = (props) => {
-        const [loading,setLoading]=useState(false);
+const FriendListContainer = () => {
         const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
         const dispatch= useDispatch();
         const [activeTab, setActiveTab] = useState("friends");

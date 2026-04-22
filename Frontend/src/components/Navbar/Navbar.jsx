@@ -1,53 +1,25 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import { Link ,useLocation } from 'react-router-dom';
-import { Menu,MenuItem } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
-import { logout } from '../../redux/auth/authSlice';
-import Paper from '@mui/material/Paper';
-import LogoutIcon from '@mui/icons-material/Logout';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import { useEffect } from 'react';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { closeModal ,openModal} from '../../redux/modal/modalSlice';
 import GroupIcon from '@mui/icons-material/Group';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import Stack from '@mui/material/Stack';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { motion } from "framer-motion";
-const drawerWidth = 240;
 
-const MotionBox = motion(Box);
 const MotionAppBar = motion(AppBar);
 const iconAnimation = {
   whileHover: { scale: 1.15 },
   whileTap: { scale: 0.9 },
   transition: { type: "spring", stiffness: 300 }
 };
-function DrawerAppBar(props) {
-  const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const dispatch = useDispatch();
-  const open = Boolean(anchorEl);
+function DrawerAppBar() {
 
   const location = useLocation();
 
@@ -62,7 +34,6 @@ function DrawerAppBar(props) {
     // { path: "/activity", icon: <NotificationsIcon /> }
   ];
   const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
-  const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
 
   useEffect(()=>{
    console.log("isAuthenticated,status---->",  isAuthenticated,status)
@@ -70,36 +41,9 @@ function DrawerAppBar(props) {
    console.log("userRole------->",userRole);
   },[isAuthenticated,status,user])
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await dispatch(logout()).unwrap();
-      window.location.reload(); 
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
-
-  // const container = window !== undefined ? () => window().document.body : undefined;
-  
-  // console.log("container--------->", container);
 return (
   <MotionAppBar
-    position="fixed" // ✅ IMPORTANT
-    // initial={{ y: 100, opacity: 0 }}
-    // animate={{ y: 0, opacity: 1 }}
-    // transition={{ type: "spring", stiffness: 120 }}
+    position="fixed" 
     sx={{
       position: "fixed",
       top: "auto",
@@ -175,7 +119,6 @@ return (
   </MotionAppBar>
 );
 }
-
 DrawerAppBar.propTypes = {
   /**
    * Injected by the documentation to work in an iframe.

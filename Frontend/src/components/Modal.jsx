@@ -1,18 +1,14 @@
 import * as React from 'react';
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  Backdrop,
   Box,
-  Modal,
-  Fade,
   Button,
   Typography,
   DialogActions,
   TextField,
   InputLabel,
   InputAdornment,
-  OutlinedInput,
   MenuItem,
   FormControl,
   Select,
@@ -24,22 +20,15 @@ import {
   Checkbox,
   Avatar,
   Collapse ,
-  ListItemIcon,
-  ListSubheader ,
   Dialog,
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import GroupsIcon from '@mui/icons-material/Groups';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import Loader from './Loader';
 import { closeModal } from '../redux/modal/modalSlice';
-import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -53,7 +42,6 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { logout } from '../redux/auth/authSlice';
 import { setViewType } from '../redux/GroupViewType/viewTypeSlice';
 import { useNavigate } from 'react-router-dom';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Slide from '@mui/material/Slide';
@@ -72,10 +60,8 @@ const style = {
 
 export default function TransitionsModal() {
     const { isOpen, modalType, modalProps } = useSelector((state) => state.modal);
-    const {friends,sentRequests,recievedRequests} = useSelector((state)=>state.friendList)
-    const {UserGroupList,GroupDetails} = useSelector((state)=>state.friendList)
-    const {status,user} = useSelector((state)=>state.auth)
-    const {viewType}=useSelector((state)=>state.viewType)
+    const {friends} = useSelector((state)=>state.friendList)
+    const {user} = useSelector((state)=>state.auth)
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState("")
     const [selectedGroupMember,setSelectedGroupMember]=useState([])
@@ -95,7 +81,6 @@ export default function TransitionsModal() {
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [splitByAmount,setSplitByAmount]=useState({});
-    const [splitBetweenUsers,setSplitBetweenUsers]=useState({});
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const navigate = useNavigate();
     const [openMap, setOpenMap] = useState({});
@@ -125,7 +110,6 @@ export default function TransitionsModal() {
       if(modalProps?.title !== "Edit Expense"){
         if (modalProps?.groupMemberList?.length) {
         const initialSplit = modalProps.groupMemberList.reduce((acc, user) => {
-          // acc[user._id] = "";
           acc[user._id] = {
             userId: user._id,
             owesTo: "",
@@ -485,8 +469,7 @@ export default function TransitionsModal() {
         split = splitByAmount;
       }
       
-      // optionally update the state
-      setSplitBetweenUsers(split);
+
 
       const data = {
         description,
