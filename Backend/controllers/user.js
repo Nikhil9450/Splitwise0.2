@@ -68,11 +68,16 @@ const handleUserSignIn = async (req,res)=>{
           };
           const token = jwt.sign(payload,secretKey);
           console.log("token --------->",token);
-          res.cookie("token",token,{
-            httpOnly:false,
-            sameSite:'Lax',
-            secure:false
-          })
+          // res.cookie("token",token,{
+          //   httpOnly:false,
+          //   sameSite:'Lax',
+          //   secure:false
+          // })
+          res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "None",
+            secure: true
+          });
           return res.status(200).json({
             message:'Logged In Successfully.',
             loggedIn:true,
