@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 
 export const addExpense = createAsyncThunk("expense/addExpense",async(data,thunkAPI)=>{
     console.log('data inside the addExpense thunk---------->',data);
     console.log('groupid inside the addExpense thunk---------->',data.group);
     try {
-        const response=  await axios.post("http://localhost:5000/expense/addExpense",{data},{withCredentials:true})
+        const response=  await axios.post(`${API_URL}expense/addExpense`,{data},{withCredentials:true})
         console.log("response---------->",response.data) 
         await thunkAPI.dispatch(fetchGroupExpenses(data.group));
         return response.data;       
@@ -21,7 +22,7 @@ export const updateExpense = createAsyncThunk("expense/updateExpense",async(data
     console.log('data inside the addExpense thunk---------->',data);
     console.log('groupid inside the addExpense thunk---------->',data.group);
     try {
-        const response=  await axios.post("http://localhost:5000/expense/updateExpense",{data},{withCredentials:true})
+        const response=  await axios.post(`${API_URL}expense/updateExpense`,{data},{withCredentials:true})
         console.log("response---------->",response.data) 
         await thunkAPI.dispatch(fetchGroupExpenses(data.group));
         await thunkAPI.dispatch(fetchSingleExpense(data.expenseId));
@@ -37,7 +38,7 @@ export const deleteExpense = createAsyncThunk("expense/deleteExpense",async(data
     console.log('data inside the addExpense thunk---------->',data);
     console.log('groupid inside the addExpense thunk---------->',data.group);
     try {
-        const response=  await axios.post("http://localhost:5000/expense/deleteExpense",{data},{withCredentials:true})
+        const response=  await axios.post(`${API_URL}expense/deleteExpense`,{data},{withCredentials:true})
         console.log("response---------->",response.data) 
         await thunkAPI.dispatch(fetchGroupExpenses(data.group));
         await thunkAPI.dispatch(fetchSingleExpense(data.expenseId));
@@ -52,7 +53,7 @@ export const deleteExpense = createAsyncThunk("expense/deleteExpense",async(data
 export const fetchGroupExpenses = createAsyncThunk('expenses/fetchGroupExpenses',async(GroupId,thunkAPI)=>{
     console.log('GroupId inside the fetchGroupExpenses thunk---------->',GroupId);
     try {
-        const response = await axios.get('http://localhost:5000/expense/fetchGroupExpenses',{
+        const response = await axios.get(`${API_URL}expense/fetchGroupExpenses`,{
             params:{'groupId':GroupId},
             withCredentials:true
         })
@@ -69,7 +70,7 @@ export const fetchGroupExpenses = createAsyncThunk('expenses/fetchGroupExpenses'
 export const fetchSingleExpense = createAsyncThunk('expense/fetchExpenseDetails',async(expenseId,thunkAPI)=>{
     console.log("expense Id insde fetchSingleExpense",expenseId);
     try {
-        const response = await axios.get('http://localhost:5000/expense/fetchExpenseDetails',{
+        const response = await axios.get(`${API_URL}expense/fetchExpenseDetails`,{
             params:{'expenseId':expenseId},
             withCredentials:true
         })

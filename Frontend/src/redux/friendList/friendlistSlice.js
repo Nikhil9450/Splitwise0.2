@@ -1,9 +1,10 @@
 import { createSlice ,createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 
 export const fetchFriendLists = createAsyncThunk('friend/fetchFriendList',async(_,thunkAPI)=>{
     try{
-        const res = await axios.get("http://localhost:5000/friendLists",{withCredentials:true})
+        const res = await axios.get(`${API_URL}friendLists`,{withCredentials:true})
         console.log("res------------------>",res.data.result);
         return res.data.result;
     }catch(error){
@@ -16,7 +17,7 @@ export const fetchFriendLists = createAsyncThunk('friend/fetchFriendList',async(
 
 export const sendFriendRequest = createAsyncThunk('friend/sendFriendRequest',async(userID,thunkAPI)=>{
     try{
-        const response = await axios.post('http://localhost:5000/sendFriendRequest',{toUserId:userID},{ withCredentials:true})
+        const response = await axios.post(`${API_URL}sendFriendRequest`,{toUserId:userID},{ withCredentials:true})
         console.log("response---------->",response.data)
         await thunkAPI.dispatch(fetchFriendLists());
     }catch(error){
@@ -27,7 +28,7 @@ export const sendFriendRequest = createAsyncThunk('friend/sendFriendRequest',asy
 })
 export const deleteFriendRequest = createAsyncThunk('friend/deleteFriendRequest',async(userID,thunkAPI)=>{
     try{
-        const response = await axios.post('http://localhost:5000/deleteFriendRequest',{toUserId:userID},{ withCredentials:true})
+        const response = await axios.post(`${API_URL}deleteFriendRequest`,{toUserId:userID},{ withCredentials:true})
         console.log("response---------->",response.data)
         await thunkAPI.dispatch(fetchFriendLists());
     }catch(error){
@@ -39,7 +40,7 @@ export const deleteFriendRequest = createAsyncThunk('friend/deleteFriendRequest'
 export const removeFriend = createAsyncThunk('friend/removeFriend',async(userID,thunkAPI)=>{
     console.log("removeFriend",userID)
     try{
-        const response = await axios.post('http://localhost:5000/removeFriend',{toUserId:userID},{ withCredentials:true})
+        const response = await axios.post(`${API_URL}removeFriend`,{toUserId:userID},{ withCredentials:true})
         console.log("response---------->",response.data)
         await thunkAPI.dispatch(fetchFriendLists());
     }catch(error){
@@ -51,7 +52,7 @@ export const removeFriend = createAsyncThunk('friend/removeFriend',async(userID,
 export const acceptFriendRequest = createAsyncThunk('friend/acceptFriendRequest',async(userID,thunkAPI)=>{
     console.log("accept friend request")
     try{
-        const response = await axios.post('http://localhost:5000/acceptFriendRequest',{toUserId:userID},{ withCredentials:true})
+        const response = await axios.post(`${API_URL}acceptFriendRequest`,{toUserId:userID},{ withCredentials:true})
         console.log("response---------->",response.data)
         await thunkAPI.dispatch(fetchFriendLists());
     }catch(error){

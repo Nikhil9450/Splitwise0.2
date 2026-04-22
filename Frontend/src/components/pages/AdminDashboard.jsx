@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { motion } from "framer-motion";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -23,7 +24,7 @@ const AdminDashboard = () => {
 
   const fetchAllUsers = async () => {
     try {
-      const res = await fetch("http://localhost:5000/admin/fetchAllUsers", {
+      const res = await fetch(`${API_URL}admin/fetchAllUsers`, {
         credentials: "include",
       });
       const data = await res.json();

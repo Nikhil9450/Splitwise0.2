@@ -22,6 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { deleteFriendRequest,removeFriend,acceptFriendRequest,sendFriendRequest } from '../redux/friendList/friendlistSlice';
 import {CircularProgress,Typography} from '@mui/material';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const SearchAccount = () => {
     const [emailToSearch,setEmailToSearch] =useState(null)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -37,7 +38,7 @@ const SearchAccount = () => {
         console.log("emailToSearch----------->",emailToSearch);
         setLoading(true);
         try{
-            const user= await axios.get('http://localhost:5000/findUser',{
+            const user= await axios.get(`${API_URL}findUser`,{
                 params:{email:emailToSearch},
                 withCredentials:true
             })

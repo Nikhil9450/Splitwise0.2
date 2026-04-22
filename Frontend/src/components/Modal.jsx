@@ -60,6 +60,7 @@ import Slide from '@mui/material/Slide';
 import {fetchUserDetails} from '../redux/user/userSlice';
 import { addActivity } from '../redux/Activity/activitySlice';
 import { act } from 'react';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -234,7 +235,7 @@ export default function TransitionsModal() {
 
     const fetchGroupDetails=async(groupId)=>{
       try {
-        const groupData=await axios.post("http://localhost:5000/group/fetchGroupData",{groupId},{withCredentials:true});
+        const groupData=await axios.post(`${API_URL}group/fetchGroupData`,{groupId},{withCredentials:true});
         console.log("groupData----------->",groupData)
       } catch (error) {
         console.log("error------------>",error)        
@@ -253,7 +254,7 @@ export default function TransitionsModal() {
           groupMembers:selectedUser,
         }
         try {
-          const groupData=await axios.post("http://localhost:5000/group/createGroup",{data},{withCredentials:true});
+          const groupData=await axios.post(`${API_URL}group/createGroup`,{data},{withCredentials:true});
           console.log("groupData----------->",groupData)
           toast.success("Group created successfully.");
           setSelectedUser([user.id]);
@@ -267,7 +268,7 @@ export default function TransitionsModal() {
     const updateProfile= async() =>{
       console.log("updatedUserDetails-------------->",updatedUserDetails)
       try{
-        const response =await axios.post('http://localhost:5000/editUser/update',
+        const response =await axios.post(`${API_URL}editUser/update`,
           updatedUserDetails
         ,{
             withCredentials: true
@@ -285,7 +286,7 @@ export default function TransitionsModal() {
 
     const changePassword = async () => {
       try {
-        const response = await axios.post('http://localhost:5000/editUser/change-password', passwordDetails, {
+        const response = await axios.post(`${API_URL}editUser/change-password`, passwordDetails, {
           withCredentials: true
         });
         console.log("API response------>", response);

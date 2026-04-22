@@ -1,12 +1,13 @@
 import { createSlice ,createAsyncThunk, isRejected} from "@reduxjs/toolkit";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 
 // import jwtDecode from 'jwt-decode';
 import { fetchFriendLists } from "../friendList/friendlistSlice";
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
     try {
-        const res = await axios.get('http://localhost:5000/checkAuth', { withCredentials: true });
+        const res = await axios.get(`${API_URL}checkAuth`, { withCredentials: true });
         console.log("checkAuth response---->", res);
         const decodedUser = jwtDecode(res.data.user);
         thunkAPI.dispatch(fetchFriendLists());
@@ -17,7 +18,7 @@ export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) 
 });
 
 export const logout = createAsyncThunk('auth/logoutUser',async()=>{
-    const res = await axios.post('http://localhost:5000/user/logout',{},{withCredentials:true});
+    const res = await axios.post(`${API_URL}user/logout`,{},{withCredentials:true});
     return res.data.loggedIn;
 })
 const authSlice = createSlice({

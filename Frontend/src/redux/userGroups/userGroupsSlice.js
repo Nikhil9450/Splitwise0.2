@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 
  export const fetchUserGroups = createAsyncThunk('userGroup/fetchUserGroups',async(_,thunkAPI)=>{
         try{
-           const response = await axios.post("http://localhost:5000/group/fetchUserGroups",{},{withCredentials:true});
+           const response = await axios.post(`${API_URL}group/fetchUserGroups`,{},{withCredentials:true});
            console.log("groupList----------------->",response.data)
            return response.data
         } catch(error) {
@@ -17,7 +18,7 @@ import axios from "axios";
 
  export const fetchGroupById = createAsyncThunk('userGroup/fetchGroupById',async(groupId,thunkAPI)=>{
         try{
-           const response =await axios.get("http://localhost:5000/group/fetchGroupById", {
+           const response =await axios.get(`${API_URL}group/fetchGroupById`, {
                                 params: { groupId },
                                 withCredentials: true,
                             });
