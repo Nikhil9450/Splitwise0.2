@@ -17,7 +17,7 @@ connectDB();
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000', // frontend origin
+  origin: process.env.CLIENT_URL,
   credentials: true
 }));
 app.use(express.json());
@@ -32,4 +32,6 @@ app.use("/editUser",restrictToLoggedinUserOnly,editUserRoutes);
 app.use("/group",groupRoutes);
 app.use("/expense",expenseRoutes);
 app.use("/activity",activityRoutes);
-app.listen(process.env.PORT,()=> console.log(`Server Started at PORT ${process.env.PORT}`)) 
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT,()=> console.log(`Server Started at PORT ${PORT}`)) 
