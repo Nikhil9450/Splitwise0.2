@@ -1,10 +1,9 @@
 import { createSlice ,createAsyncThunk, isRejected} from "@reduxjs/toolkit";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
-
 // import jwtDecode from 'jwt-decode';
 import { fetchFriendLists } from "../friendList/friendlistSlice";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
     try {
         const res = await axios.get(`${API_URL}checkAuth`, { withCredentials: true });
