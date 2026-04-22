@@ -510,10 +510,10 @@ export default function TransitionsModal() {
             dispatch(updateExpense(data));
             dispatch(closeModal());
             dispatch(setViewType("expenses"));
-            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_EDIT', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
+            dispatch(addActivity({ 'groupId': modalProps.groupId._id, 'action': 'EXPENSE_EDIT', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
           }else{
             dispatch(addExpense(data));
-            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
+            dispatch(addActivity({ 'groupId': modalProps.groupId._id, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
             dispatch(closeModal());
           }
 
@@ -532,7 +532,7 @@ export default function TransitionsModal() {
       }else{
         console.log("expenseId-------->", modalProps.expenseId);
             dispatch(deleteExpense(data));
-            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_DELETE', 'details': { 'description': modalProps.description, 'addedBy': user.name   } }));
+            dispatch(addActivity({ 'groupId': modalProps.groupId._id, 'action': 'EXPENSE_DELETE', 'details': { 'description': modalProps.description, 'addedBy': user.name   } }));
             dispatch(closeModal());
             navigate(`/expenses/${modalProps.groupId._id}`);     
       }

@@ -10,6 +10,7 @@ import { fetchGroupExpenses, deleteExpense, fetchSingleExpense } from '../../red
 import { setViewType } from '../../redux/GroupViewType/viewTypeSlice';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 // MUI Core
 import {
@@ -24,7 +25,6 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-
   Stack,
   Typography,
 } from '@mui/material';
@@ -188,8 +188,14 @@ useEffect(() => {
       height:'100%',
     }}
   >
-    <Box sx={{  height: '93%' }} style={styles}>
-      <Box sx={{display:'flex',justifyContent:'space-between',height:'7%', bgcolor: '#25291C',border:'none',padding:'2rem'}}>
+    <Box sx={{  height: '94%' }} style={styles}>
+      <Box sx={{display:'flex',flexDirection:'column',justifyContent:'space-between', bgcolor: '#25291C',border:'none',padding:'1rem'}}>
+      <Box sx={{display:'flex',alignItems:'center',justifyContent:'start'}}>
+        <IconButton aria-label="close" size="small" onClick={()=>navigate(-1)} >
+          <ArrowBackIcon size="small" sx={{color:'#DFE0DC'}}/>
+        </IconButton>
+      </Box>
+      <Box sx={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'1.5rem 1rem'}}>
         <Typography 
             variant="h6" 
             color="#009F93" 
@@ -199,9 +205,23 @@ useEffect(() => {
           {groupName}
           {/* Total Group Balance: ₹{groupTotalAmt.toFixed(2)} */}
         </Typography>
-        <IconButton aria-label="close" size="small" onClick={()=>navigate(-1)} >
-          <ArrowBackIcon size="small" sx={{color:'#DFE0DC'}}/>
-        </IconButton>
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={{
+            color: '#FCFAF9',
+            border: 'none',
+            height:'2rem',
+            minWidth:'1rem',
+            width:'2rem',
+          }}
+          onClick={""}
+        >
+          <EditOutlinedIcon sx={{height:'1.5rem',width:'1.5rem', }} />
+        </Button>
+
+      </Box>
+
       </Box>
       <Box sx={{display:'flex',flexDirection:'column',height:'93%',bgcolor:'#DFE0DC',border:'none'}}>
         <Box 
