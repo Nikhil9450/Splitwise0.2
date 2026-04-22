@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import SignIn from './Auth/SignIn';
 import axios from 'axios';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 
 const PrivetRoute = ({ children }) => {
     const [isAuthenticated,setIsAuthenticated] = useState(null);
   useEffect(()=>{
-    axios.get(" http://localhost:3000/check-auth",{withCredentials: true})
+    axios.get(`${API_URL}check-auth`,{withCredentials: true})
     .then((res)=>{
         console.log(res.data)
         setIsAuthenticated(res.data.authenticated)
