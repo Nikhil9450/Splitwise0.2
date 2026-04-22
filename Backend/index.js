@@ -15,9 +15,20 @@ const app = express();
 
 connectDB();
 const cookieParser = require('cookie-parser');
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://splitwise0-2.vercel.app",
+  "https://splitwise0-2-9m9hombb8-nikhilk9450-3121s-projects.vercel.app"
+];
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
