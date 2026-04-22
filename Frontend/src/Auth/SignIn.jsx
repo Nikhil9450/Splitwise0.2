@@ -7,6 +7,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
 import { checkAuth } from '../redux/auth/authSlice';
 import { motion, AnimatePresence } from "framer-motion";
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 
 const SignIn = () => {
   const emailRef = useRef(null);
@@ -46,7 +47,7 @@ const SignIn = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/user", {
+      await axios.post(`${API_URL}user`, {
         email,
         name,
         password
@@ -64,7 +65,7 @@ const SignIn = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/UserSignIn",
+        `${API_URL}user/UserSignIn`,
         { email, password },
         { withCredentials: true }
       );
@@ -156,7 +157,7 @@ const SignIn = () => {
                   onSuccess={async (credentialResponse) => {
                     try {
                       const response = await axios.post(
-                        "http://localhost:5000/user/googleAuth",
+                        `${API_URL}user/googleAuth`,
                         { token: credentialResponse.credential },
                         { withCredentials: true }
                       );
