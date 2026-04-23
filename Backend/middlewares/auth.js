@@ -20,14 +20,22 @@ async function restrictToLoggedinUserOnly(req,res,next){
     }
 }
 
-async function checkAuth(req,res,next){
-    console.log("inside check auth")
-    //  const token = req.cookies?.token;
-    // const decodeduser = jwt.verify(token, secretKey);
-    const user = req.cookies?.token;
-    console.log("user---->",user);
-    req.user = user;
+async function checkAuth(req, res, next) {
+  const token = req.cookies?.token;
+
+  if (!token) {
+    console.log("No token found in cookies");
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded token in checkAuth middleware:", decoded);
+    req.user = decoded;
     next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
 }
 
 module.exports={
