@@ -32,6 +32,7 @@ const createGroup = async( req,res)=>{
             members:groupMembers,
             createdBy:userID,
             activities: [{
+                user: userID, 
                 action: 'GROUP_CREATED',
                 details: { groupName,addedBy: decodedUser.name }
             }]
