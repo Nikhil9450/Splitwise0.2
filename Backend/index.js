@@ -37,12 +37,12 @@ app.use(express.json());
 
 app.use("/user",userRoute);
 
-app.use("/",checkAuth,staticRoute);
+app.use("/home",checkAuth,staticRoute);
 app.use("/admin",checkRole,adminRoutes);
 app.use("/editUser",restrictToLoggedinUserOnly,editUserRoutes);
-app.use("/group",groupRoutes);
-app.use("/expense",expenseRoutes);
-app.use("/activity",activityRoutes);
+app.use("/group",checkAuth,groupRoutes);
+app.use("/expense",checkAuth,expenseRoutes);
+app.use("/activity",checkAuth,activityRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,()=> console.log(`Server Started at PORT ${PORT}`)) 

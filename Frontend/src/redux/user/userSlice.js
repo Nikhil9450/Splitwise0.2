@@ -7,7 +7,7 @@ const fetchUserDetails = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const res = await axios.get(
-        `${API_URL}findUserById`,
+        `${API_URL}home/findUserById`,
         { withCredentials: true }
       );
         console.log("fetchUserDetails response------>", res.data);

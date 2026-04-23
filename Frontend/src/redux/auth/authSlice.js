@@ -6,8 +6,8 @@ import { fetchFriendLists } from "../friendList/friendlistSlice";
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
     try {
-        const res = await axios.get(`${API_URL}checkAuth`, { withCredentials: true });
-        console.log("checkAuth response---->", res);
+        const res = await axios.get(`${API_URL}home/checkAuth`, { withCredentials: true });
+        console.log("checkAuth response---->", res.data);
         const decodedUser = jwtDecode(res.data.user);
         thunkAPI.dispatch(fetchFriendLists());
         return { isAuthenticated: res.data.isAuthenticated, role: decodedUser.role ,user:decodedUser};

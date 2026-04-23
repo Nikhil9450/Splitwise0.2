@@ -25,7 +25,7 @@ const SearchAccount = () => {
         console.log("emailToSearch----------->",emailToSearch);
         setLoading(true);
         try{
-            const user= await axios.get(`${API_URL}findUser`,{
+            const user= await axios.get(`${API_URL}home/findUser`,{
                 params:{email:emailToSearch},
                 withCredentials:true
             })
