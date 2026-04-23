@@ -7,7 +7,7 @@ export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) 
         const res = await axios.get(`${API_URL}home/checkAuth`, { withCredentials: true });
         console.log("checkAuth response---->", res.data);
         const user = res.data.user;
-        thunkAPI.dispatch(fetchFriendLists());
+        // thunkAPI.dispatch(fetchFriendLists());
         return {
             isAuthenticated: res.data.isAuthenticated,
             role: res.data.user?.role,

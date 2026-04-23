@@ -1,281 +1,298 @@
-import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import { Box } from '@mui/material';
-import axios from 'axios';
-import Menu from '@mui/material/Menu';
-import Button from '@mui/material/Button';
+import { useEffect, useState, useRef } from "react";
+import { useDispatch } from "react-redux";
+import axios from "axios";
 
-import { deleteFriendRequest,removeFriend,acceptFriendRequest,sendFriendRequest } from '../redux/friendList/friendlistSlice';
-import {CircularProgress,Typography} from '@mui/material';
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
+import { Box, Typography, IconButton, Button, CircularProgress, ClickAwayListener, Popper } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+
+import {
+  deleteFriendRequest,
+  removeFriend,
+  acceptFriendRequest,
+  sendFriendRequest,
+} from "../redux/friendList/friendlistSlice";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/";
+
 const SearchAccount = () => {
-    const [emailToSearch,setEmailToSearch] =useState(null)
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [User,setUser]= useState(null);
-    const [loading,setLoading]=useState(false)
-    const dispatch = useDispatch()
-    const open = Boolean(anchorEl);
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    const searchUser =async(event)=>{
-        const anchor = event.currentTarget; 
-        console.log("emailToSearch----------->",emailToSearch);
-        setLoading(true);
-        try{
-            const user= await axios.get(`${API_URL}home/findUser`,{
-                params:{email:emailToSearch},
-                withCredentials:true
-            })
-            setLoading(false);
-            setUser(user.data);
-            setAnchorEl(anchor);
+  const [emailToSearch, setEmailToSearch] = useState("");
+  const [User, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-            console.log("searched user---------->", user.data); 
-        }catch(error){
-            setLoading(false);
-            setUser(null);
-            console.log("error in finding user--->",error)
-        }
+  const dispatch = useDispatch();
+  const searchRef = useRef(null);
+
+  const open = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const searchUser = async () => {
+    if (!emailToSearch) return;
+
+    setAnchorEl(searchRef.current); // anchor to whole search bar
+    setLoading(true);
+
+    try {
+      const user = await axios.get(`${API_URL}home/findUser`, {
+        params: { email: emailToSearch },
+        withCredentials: true,
+      });
+
+      setUser(user.data);
+    } catch (error) {
+      setUser(null);
+      console.log("error in finding user --->", error);
+    } finally {
+      setLoading(false);
     }
-    useEffect(()=>{
-        console.log("User----------->",User)
-    },[User])
+  };
+
+  useEffect(() => {
+    console.log("User ----------->", User);
+  }, [User]);
 
   return (
-<>
-  {/* SEARCH BAR */}
-  <Box
-    sx={{
-      display: "flex",
-      justifyContent: "center",
-      mb:2,
-      fontFamily: "Montserrat, sans-serif",
-    }}
-  >
-    <Box
-      sx={{
-        width: "100%",
-        maxWidth: "24rem",
-        display: "flex",
-        alignItems: "center",
-        border: "1px solid #DFE0DC",
-        borderRadius: "2rem",
-        bgcolor: "#FFFFFF",
-        px: 1,
-        py: 1,
-        border: '2px solid #25291C',
-      }}
-    >
-      <input
-        type="email"
-        placeholder="Find user by email"
-        style={{
-          border: "none",
-          outline: "none",
-          background: "none",
-          flex: 1,
-          fontSize: "0.9rem",
-          fontFamily: "Montserrat, sans-serif",
-          color: "#25291C",
-        }}
-        onChange={(e) => setEmailToSearch(e.target.value)}
-      />
-
-      <IconButton
-        onClick={searchUser}
-        sx={{
-          bgcolor: "#129490",
-          borderRadius: "50%",
-          width: 36,
-          height: 36,
-          "&:hover": { bgcolor: "#0f7f7c" },
-        }}
-      >
-        {loading ? (
-          <CircularProgress size={18} sx={{ color: "#FFFFFF" }} />
-        ) : (
-          <SearchIcon sx={{ color: "#FFFFFF", fontSize: 18 }} />
-        )}
-      </IconButton>
-    </Box>
-  </Box>
-
-  {/* RESULT PANEL */}
-  <Menu
-    anchorEl={anchorEl}
-    open={open}
-    onClose={handleClose}
-    PaperProps={{
-      elevation: 0,
-      sx: {
-        width: "24rem",
-        mt: 1,
-        borderRadius: "2rem",
-        border: "1px solid #DFE0DC",
-        bgcolor: "#FFFFFF",
-        p: 1,
-        fontFamily: "Montserrat, sans-serif",
-      },
-    }}
-    transformOrigin={{ horizontal: "center", vertical: "top" }}
-    anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-  >
-    {User ? (
+    <>
+      {/* SEARCH BAR */}
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          p: 1.5,
+          justifyContent: "end",
+          mb: 2,
+          fontFamily: "Montserrat, sans-serif",
         }}
       >
-        {/* USER INFO */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <Box
-            sx={{
-              height: 40,
-              width: 40,
-              borderRadius: "50%",
-              bgcolor: "#DFE0DC",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 600,
-              color: "#25291C",
+        <Box
+          ref={searchRef}
+          sx={{
+            width: "100%",
+            maxWidth: "20rem",
+            display: "flex",
+            alignItems: "center",
+            borderRadius: "2rem",
+            bgcolor: "#FFFFFF",
+            px: .5,
+            py: .5,
+            border: "2px solid #129490",
+            // boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          }}
+        >
+          <input
+            type="email"
+            placeholder="Find user by email"
+            style={{
+              border: "none",
+              outline: "none",
+              background: "none",
+              flex: 1,
+              marginLeft: 8,
+              fontSize: "0.9rem",
               fontFamily: "Montserrat, sans-serif",
+              color: "#25291C",
+            }}
+            onChange={(e) => setEmailToSearch(e.target.value)}
+          />
+
+          <IconButton
+            onClick={searchUser}
+            sx={{
+              bgcolor: "#129490",
+              borderRadius: "50%",
+              width: 30,
+              height: 30,
+              "&:hover": { bgcolor: "#0f7f7c" },
             }}
           >
-            {User.name?.charAt(0).toUpperCase()}
-          </Box>
-
-          <Box>
-            <Typography
-              sx={{
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                color: "#25291C",
-              }}
-            >
-              {User.name}
-            </Typography>
-
-            <Typography
-              sx={{
-                fontSize: "0.75rem",
-                color: "#9e9e9e",
-              }}
-            >
-              {User.email}
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* ACTION BUTTON */}
-        <Box>
-          {User.requestStatus === "incoming" && (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                size="small"
-                variant="contained"
-                sx={{
-                  bgcolor: "#129490",
-                  borderRadius: "2rem",
-                  textTransform: "none",
-                  fontSize: "0.7rem",
-                  fontWeight: 600,
-                  "&:hover": { bgcolor: "#0f7f7c" },
-                }}
-                onClick={() => dispatch(acceptFriendRequest(User.id))}
-              >
-                Accept
-              </Button>
-
-              <Button
-                size="small"
-                variant="outlined"
-                sx={{
-                  borderColor: "#ED474A",
-                  color: "#ED474A",
-                  borderRadius: "2rem",
-                  textTransform: "none",
-                  fontSize: "0.7rem",
-                  fontWeight: 600,
-                }}
-                onClick={() => dispatch(deleteFriendRequest(User.id))}
-              >
-                Delete
-              </Button>
-            </Box>
-          )}
-
-          {User.requestStatus === "outgoing" && (
-            <Button
-              size="small"
-              variant="outlined"
-              sx={{
-                borderColor: "#ED474A",
-                color: "#ED474A",
-                borderRadius: "2rem",
-                textTransform: "none",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-              }}
-              onClick={() => dispatch(deleteFriendRequest(User.id))}
-            >
-              Cancel
-            </Button>
-          )}
-
-          {User.requestStatus === "alreadyFriends" && (
-            <Button
-              size="small"
-              variant="outlined"
-              sx={{
-                borderColor: "#ED474A",
-                color: "#ED474A",
-                borderRadius: "2rem",
-                textTransform: "none",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-              }}
-              onClick={() => dispatch(removeFriend(User.id))}
-            >
-              Remove
-            </Button>
-          )}
-
-          {User.requestStatus === "none" && (
-            <Button
-              size="small"
-              variant="contained"
-              sx={{
-                bgcolor: "#129490",
-                borderRadius: "2rem",
-                textTransform: "none",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-                "&:hover": { bgcolor: "#0f7f7c" },
-              }}
-              onClick={() => dispatch(sendFriendRequest(User.id))}
-            >
-              Add
-            </Button>
-          )}
+            {loading ? (
+              <CircularProgress size={18} sx={{ color: "#FFFFFF" }} />
+            ) : (
+              <SearchIcon sx={{ color: "#FFFFFF", fontSize: 18 }} />
+            )}
+          </IconButton>
         </Box>
       </Box>
-    ) : (
-      <Box sx={{ p: 2, textAlign: "center" }}>
-        <Typography sx={{ fontSize: "0.85rem", color: "#9e9e9e" }}>
-          User not found
-        </Typography>
-      </Box>
-    )}
-  </Menu>
-</>
-  )
-}
 
-export default SearchAccount
+      {/* RESULT PANEL */}
+      <Popper
+        open={open}
+        anchorEl={anchorEl}
+        placement="bottom-start"
+        style={{ zIndex: 1300 }}
+      >
+        <ClickAwayListener onClickAway={handleClose}>
+          <Box
+            sx={{
+              width: "20rem",
+              mt: 1,
+              borderRadius: "2rem",
+              border: "1px solid #2b2b2a",
+              bgcolor: "#FFFFFF",
+              padding: "0.5rem",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+            }}
+          >
+            {User ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 1.5,
+                }}
+              >
+                {/* USER INFO */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Box
+                    sx={{
+                      height: 40,
+                      width: 40,
+                      borderRadius: "50%",
+                      bgcolor: "#DFE0DC",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: 600,
+                      color: "#25291C",
+                    }}
+                  >
+                    {User.name?.charAt(0).toUpperCase()}
+                  </Box>
+
+                  <Box>
+                    <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
+                      {User.name}
+                    </Typography>
+
+                    <Typography sx={{ fontSize: "0.75rem", color: "#9e9e9e" }}>
+                      {User.email}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* ACTION BUTTON */}
+                <Box>
+                  {User.requestStatus === "incoming" && (
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        sx={{
+                          bgcolor: "#129490",
+                          borderRadius: "2rem",
+                          fontSize: "0.7rem",
+                        }}
+                        onClick={(e) =>
+                          {
+                            e.stopPropagation();
+                            dispatch(acceptFriendRequest(User.id))
+                            setAnchorEl(null);
+                          }
+                        }
+                      >
+                        Accept
+                      </Button>
+
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                          borderColor: "#ED474A",
+                          color: "#ED474A",
+                          borderRadius: "2rem",
+                          fontSize: "0.7rem",
+                        }}
+                        onClick={(e) =>
+                          {
+                            e.stopPropagation();
+                            dispatch(deleteFriendRequest(User.id))
+                            setAnchorEl(null);
+                          }
+                        }
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  )}
+
+                  {User.requestStatus === "outgoing" && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        borderColor: "#ED474A",
+                        color: "#ED474A",
+                        borderRadius: "2rem",
+                        fontSize: "0.7rem",
+                      }}
+                      onClick={(e) =>
+                        {
+                          e.stopPropagation();
+                          dispatch(deleteFriendRequest(User.id))
+                          setAnchorEl(null);
+                        }
+                      }
+                    >
+                      Cancel
+                    </Button>
+                  )}
+
+                  {User.requestStatus === "alreadyFriends" && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        borderColor: "#ED474A",
+                        color: "#ED474A",
+                        borderRadius: "2rem",
+                        fontSize: "0.7rem",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(removeFriend(User.id));
+                        setAnchorEl(null);
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  )}
+
+                  {User.requestStatus === "none" && (
+                    <Button
+                      size="small"
+                      variant="contained"
+                      sx={{
+                        bgcolor: "#129490",
+                        borderRadius: "2rem",
+                        fontSize: "0.7rem",
+                      }}
+                      onClick={(e) =>
+                       { 
+                        e.stopPropagation();
+                        dispatch(sendFriendRequest(User.id))
+                        setAnchorEl(null)
+                        }
+                      }
+                    >
+                      Add
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            ) : (
+              <Box sx={{ p: 2, textAlign: "center" }}>
+                <Typography sx={{ fontSize: "0.85rem", color: "#9e9e9e" }}>
+                  User not found
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </ClickAwayListener>
+      </Popper>
+    </>
+  );
+};
+
+export default SearchAccount;

@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import SearchIcon from "@mui/icons-material/Search";
+import { fetchFriendLists } from '../../redux/friendList/friendlistSlice';
 const Groups = () => {
   const {UserGroupList} = useSelector((state)=>state.userGroups);
   const {user} =useSelector((state)=>state.auth);
@@ -19,6 +20,7 @@ const Groups = () => {
   const dispatch = useDispatch();
   useEffect(()=>{
     dispatch(fetchUserGroups());
+    dispatch(fetchFriendLists());
   },[dispatch])
 
   useEffect(() => {

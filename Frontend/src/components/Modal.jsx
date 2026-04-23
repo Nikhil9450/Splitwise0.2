@@ -48,6 +48,7 @@ import Slide from '@mui/material/Slide';
 import {fetchUserDetails} from '../redux/user/userSlice';
 import { addActivity } from '../redux/Activity/activitySlice';
 import { act } from 'react';
+import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -56,6 +57,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const style = {
   p: 4,
   bgcolor:"#DFE0DC",
+  height:'100%',
 };
 
 export default function TransitionsModal() {
@@ -243,6 +245,7 @@ export default function TransitionsModal() {
           toast.success("Group created successfully.");
           setSelectedUser([user.id]);
           dispatch(closeModal());
+          dispatch(fetchUserGroups());
         } catch (error) {
           console.log("error------------>",error)        
         }
@@ -821,63 +824,143 @@ export default function TransitionsModal() {
           case "CREATE_GROUP":
             return (            
               <>
-                <Box >
-                  <Typography variant="h6" sx={{marginBottom: '1rem',fontSize:'1.2rem'}}>{modalProps.title}</Typography>
+                <Box
+                  sx={{
+                    p: 3,
+                    borderRadius: "2rem",
+                    background: "#fff",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                    maxWidth: 420,
+                    mx: "auto",
+                    height:'90%'
+                  }}
+                >
+                  {/* Title */}
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mb: 4,
+                      fontSize: "1.4rem",
+                      fontFamily: "Montserrat, sans-serif",
+                      fontWeight: 600,
+                      textAlign: "start",
+                      color:"#129490"
+                    }}
+                  >
+                    {modalProps.title}
+                  </Typography>
+
+                  {/* Input */}
                   <TextField
-                    id="filled-basic" 
-                    label="Group name" 
-                    variant="filled" 
+                    label="Group name"
+                    variant="outlined"
                     fullWidth
-                    onChange={(event)=>setGroupName(event.target.value)}
                     value={groupName}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <GroupsIcon/>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}  
-                    />
-                  <Box>
-                    <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    onChange={(e) => setGroupName(e.target.value)}
+                    sx={{
+                      mb: 2,
+                      fontFamily: "Montserrat, sans-serif",
+                      borderRadius: "2rem",
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "2rem",
+                        background: "#f9fafb"
+                      }
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <GroupsIcon sx={{ color: "#888" }} />
+                        </InputAdornment>
+                      )
+                    }}
+                  />
+
+                  {/* Friends List */}
+                  <Box
+                    sx={{
+                      maxHeight: 260,
+                      overflowY: "auto",
+                      borderRadius: "1.5rem",
+                      background: "#f9fafb",
+                      p: 1
+                    }}
+                  >
+                    <List dense>
                       {friends.map((user) => {
                         const labelId = `checkbox-list-secondary-label-${user._id}`;
+
                         return (
                           <ListItem
                             key={user._id}
+                            disablePadding
+                            sx={{
+                              mb: 1,
+                              borderRadius: "1rem",
+                              transition: "0.2s",
+                              "&:hover": {
+                                background: "#eef2ff"
+                              }
+                            }}
                             secondaryAction={
                               <Checkbox
                                 edge="end"
                                 onChange={selectUser}
                                 value={user._id}
                                 checked={selectedUser.includes(user._id)}
-                                inputProps={{ 'aria-labelledby': labelId }}
                               />
                             }
-                            disablePadding
                           >
-                            <ListItemButton>
-                              <ListItemAvatar >
-                                <Avatar
-                                  // alt={`Avatar n°${user + 1}`}
-                                  // src={`/static/images/avatar/${user + 1}.jpg`}
-                                />
+                            <ListItemButton sx={{ borderRadius: "1rem" }}>
+                              <ListItemAvatar>
+                                <Avatar sx={{ bgcolor: "#25291C",fontFamily:"Montserrat, sans-serif" }}>
+                                  {user.name?.[0]}
+                                </Avatar>
                               </ListItemAvatar>
-                              <ListItemText id={labelId}                 
-                                  primary={user.name} 
-                                  secondary={user.email} 
+
+                              <ListItemText
+                                id={labelId}
+                                primary={
+                                  <Typography sx={{ fontWeight: 500, fontFamily: "Montserrat, sans-serif" }}>
+                                    {user.name}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <Typography
+                                    sx={{ fontSize: "0.75rem", color: "#666",fontFamily:"Montserrat, sans-serif" }}
+                                  >
+                                    {user.email}
+                                  </Typography>
+                                }
                               />
                             </ListItemButton>
                           </ListItem>
                         );
                       })}
                     </List>
-                  </Box>  
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                    <Button onClick={()=>createGroup()} variant="contained"sx={{fontSize:'12px'}} endIcon={<GroupAddIcon />}>
-                      Create
+                  </Box>
+
+                  {/* Button */}
+                  <Box sx={{ display: "flex", justifyContent: "end", mt: 3 }}>
+                    <Button
+                      onClick={createGroup}
+                      variant="contained"
+                      endIcon={<GroupAddIcon />}
+                      sx={{
+                        px: 4,
+                        py: 1,
+                        borderRadius: "2rem",
+                        textTransform: "none",
+                        fontSize: "0.9rem",
+                        fontWeight: 500,
+                        fontFamily: "Montserrat, sans-serif",
+                        background: "linear-gradient(135deg, #26b8b3, #129490)",
+                        boxShadow: "0 8px 20px rgba(99,102,241,0.3)",
+                        "&:hover": {
+                          background: "linear-gradient(135deg, #1f9793, #0b615e)"
+                        }
+                      }}
+                    >
+                      Create Group
                     </Button>
                   </Box>
                 </Box>
