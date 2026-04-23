@@ -8,10 +8,14 @@ export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) 
     try {
         const res = await axios.get(`${API_URL}home/checkAuth`, { withCredentials: true });
         console.log("checkAuth response---->", res.data);
-        const decodedUser = jwtDecode(res.data.user);
+        const user = res.data.user;
         thunkAPI.dispatch(fetchFriendLists());
-        return { isAuthenticated: res.data.isAuthenticated, role: decodedUser.role ,user:decodedUser};
-    } catch (error) {
+        return {
+            isAuthenticated: res.data.isAuthenticated,
+            role: res.data.user?.role,
+            user: res.data.user
+        };
+        } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to check auth");
     }
 });
