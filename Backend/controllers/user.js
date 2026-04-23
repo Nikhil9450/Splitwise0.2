@@ -76,7 +76,8 @@ const handleUserSignIn = async (req,res)=>{
           res.cookie("token", token, {
             httpOnly: true,
             sameSite: "None",
-            secure: true
+            secure: true,
+            path: "/"
           });
           return res.status(200).json({
             message:'Logged In Successfully.',
