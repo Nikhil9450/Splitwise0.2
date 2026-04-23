@@ -141,17 +141,20 @@ const googleSignIn = async (req, res) => {
   }
 };
 
-const handleUserSignout =(req,res)=>{
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax", // or "strict"
-    });
-    res.status(200).json({             
-      message:'Logged Out Successfully.',
-      loggedIn:false
-    });
-}
+const handleUserSignout = (req, res) => {
+  console.log("Signing out user with token:", req.cookies?.token);
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+    path: "/"
+  });
+
+  return res.status(200).json({
+    message: "Logged Out Successfully.",
+    loggedIn: false
+  });
+};
 
 // use react-google-login in frontend
 

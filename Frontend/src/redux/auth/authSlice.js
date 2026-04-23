@@ -1,7 +1,5 @@
 import { createSlice ,createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-// import jwtDecode from 'jwt-decode';
 import { fetchFriendLists } from "../friendList/friendlistSlice";
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
