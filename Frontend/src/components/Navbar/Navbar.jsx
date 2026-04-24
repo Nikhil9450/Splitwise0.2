@@ -13,7 +13,6 @@ import GroupIcon from '@mui/icons-material/Group';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { motion } from "framer-motion";
 
-const MotionAppBar = motion(AppBar);
 const iconAnimation = {
   whileHover: { scale: 1.15 },
   whileTap: { scale: 0.9 },
@@ -40,38 +39,36 @@ function DrawerAppBar() {
    console.log("user------>",user)
    console.log("userRole------->",userRole);
   },[isAuthenticated,status,user])
+  useEffect(() => {
+    console.log("AppBar mounted");
+  }, []);
 
 return (
-  <MotionAppBar
-    position="fixed" 
-    sx={{
-      position: "fixed",
-      top: "auto",
-      bottom: 16, // better spacing
-
-      left: 0,
-      right: 0,
-      margin: "0 auto",   // ✅ center properly
-
-      width: "calc(100% - 32px)", // ✅ prevents overflow
-      maxWidth: "420px",          // ✅ keeps it nice on bigger screens
-
-      borderRadius: "2rem",
-      bgcolor: "#25291C",
-      boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
-      zIndex: 1300,
-
-      backdropFilter: "blur(10px)", // optional premium look
-    }}
-  >
-    <Toolbar
+<AppBar
+  position="fixed"
   sx={{
-    display: "flex",
-    justifyContent: "space-around",
-    alignItems: "center",
-    minHeight: "65px",
-    px: 1,
+    top: "auto",
+    bottom: 16,
+    left: 0,
+    right: 0,
+    margin: "0 auto",
+    width: "calc(100% - 32px)",
+    maxWidth: "420px",
+    borderRadius: "2rem",
+    bgcolor: "#25291C",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
+    zIndex: 1300,
+    backdropFilter: "blur(10px)",
   }}
+>
+    <Toolbar
+      sx={{
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        minHeight: "65px",
+        px: 1,
+      }}
     >
       {navItems.map((item) => (
         <motion.div key={item.path} style={{ position: "relative" }}>
@@ -116,7 +113,7 @@ return (
         </motion.div>
       ))}
     </Toolbar>
-  </MotionAppBar>
+  </AppBar>
 );
 }
 DrawerAppBar.propTypes = {

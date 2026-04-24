@@ -55,7 +55,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const style = {
-  p: 4,
+  p: 2,
   bgcolor:"#DFE0DC",
   height:'100%',
 };
@@ -308,140 +308,348 @@ export default function TransitionsModal() {
       if(splitType==='Equally'){
         return(
           <>
-            <Typography variant="h6">Split equally</Typography>
-            <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-              {modalProps.groupMemberList.map((user) => {
-                const labelId = `checkbox-list-secondary-label-${user._id}`;
-                return (
-                  <ListItem
-                      key={user._id}
-                      secondaryAction={
-                        <Checkbox
-                          edge="end"
-                          onChange={handleChange}
-                          value={user._id}
-                          checked={selectedGroupMember.includes(user._id)}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      }
-                      disablePadding
-                    >
-                      <ListItemText id={labelId}                 
-                        primary={user.name} 
-                        secondary={user.email}
-                        sx={{
-                          '& .MuiListItemText-secondary': {
-                            fontSize: '11px',
-                            color: 'gray',
-                          },                      
-                        }}                            
-                        />
-                    </ListItem>
-                );
-              })}
-            </List>
-            <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}}>
+            <Box
+              sx={{
+                p: 3,
+                borderRadius: "2rem",
+                background: "#fff",
+                maxWidth: 450,
+                mx: "auto",
+                height: "70%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-evenly",
+              }}
+            >
+              {/* Title */}
+              <Typography
+                sx={{
+                  fontSize: "1.3rem",
+                  fontWeight: 600,
+                  mb: 2,
+                  textAlign: "start",
+                  fontFamily: "Montserrat, sans-serif",
+                  color: "#129490",
+                }}
+              >
+                Split equally
+              </Typography>
 
-              <Button variant='outlined'  startIcon={<SaveIcon />} 
-                  onClick={()=>save("Equally")}
-              > 
-                Save
-              </Button>
-            </Box>  
+              {/* List Container */}
+              <Box
+                sx={{
+                  maxHeight: 300,
+                  overflowY: "auto",
+                  background: "#f9fafb",
+                  borderRadius: "1.5rem",
+                  p: 1,
+                }}
+              >
+                <List dense>
+                  {modalProps.groupMemberList.map((user) => {
+                    const labelId = `checkbox-list-secondary-label-${user._id}`;
+
+                    return (
+                      <ListItem
+                        key={user._id}
+                        sx={{
+                          mb: 1,
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: "1rem",
+                          background: "#fff",
+                          transition: "0.2s",
+                          "&:hover": {
+                            background: "#eef2ff",
+                          },
+                        }}
+                        secondaryAction={
+                          <Checkbox
+                            size="small"
+                            edge="end"
+                            onChange={handleChange}
+                            value={user._id}
+                            checked={selectedGroupMember.includes(user._id)}
+                            inputProps={{ "aria-labelledby": labelId }}
+                            sx={{
+                              p: 0.5,
+                            }}
+                          />
+                        }
+                      >
+                        <ListItemText
+                          primary={
+                            <Typography
+                              sx={{
+                                fontWeight: 500,
+                                fontFamily: "Montserrat, sans-serif",
+                                fontSize: ".85rem",
+                              }}
+                            >
+                              {user.name}
+                            </Typography>
+                          }
+                          secondary={
+                            <Typography
+                              sx={{
+                                fontSize: "0.7rem",
+                                color: "#666",
+                                fontFamily: "Montserrat, sans-serif",
+                              }}
+                            >
+                              {user.email}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </Box>
+
+              {/* Info Box (optional improvement) */}
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 1.5,
+                  borderRadius: "1rem",
+                  background: "#ffffff",
+                  textAlign: "end",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "0.9rem",
+                    color: "#129490",
+                    fontWeight: 500,
+                  }}
+                >
+                  Selected: {selectedGroupMember.length}
+                </Typography>
+              </Box>
+
+              {/* Buttons */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mt: 5,
+                  alignItems: "end",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    setSplitContainer(false);
+                    setSplitType("");
+                  }}
+                  sx={{
+                    borderRadius: "2rem",
+                    px: 3,
+                    textTransform: "none",
+                  }}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  variant="contained"
+                  startIcon={<SaveIcon />}
+                  onClick={() => save("Equally")}
+                  sx={{
+                    borderRadius: "2rem",
+                    px: 3,
+                    textTransform: "none",
+                    background: "linear-gradient(135deg, #129490, #0f726f)",
+                    boxShadow: "0 8px 20px rgba(99,102,241,0.3)",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #0c6663, #0f726f)",
+                    },
+                  }}
+                >
+                  Save
+                </Button>
+              </Box>
+            </Box>
           </>
         )
       }else if(splitType==='Unequally'){
         //  resetUnequallyAmt();
         return (
-          <>
-            <Typography variant="h6">Split by exact amount</Typography>
-            <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-              {modalProps.groupMemberList.map((user) => {
-                const userId=user._id;
-                const labelId = `checkbox-list-secondary-label-${user._id}`;
-                let filteredUser;
-                if(modalProps.title==="Edit Expense"){
-                  filteredUser = modalProps['expenseDetail']['splitBetweenWithAmt'].filter((user)=>user.user._id === userId);
-                  console.log(filteredUser[0].user.name,"filteredUser amount--------------->",filteredUser[0].amount);  
-                  console.log("splitByAmount[userId].amount-------->",splitByAmount[userId].amount) ;
-                }
+            <>
+              <Box
+                sx={{
+                  p: 3,
+                  borderRadius: "2rem",
+                  background: "#fff",
+                  // boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                  maxWidth: 450,
+                  mx: "auto",
+                  height:'70%',
+                  display:"flex",
+                  flexDirection:'column',
+                  justifyContent:'space-evenly'
+                }}
+              >
+                {/* Title */}
+                <Typography
+                  sx={{
+                    fontSize: "1.3rem",
+                    fontWeight: 600,
+                    mb: 2,
+                    textAlign: "start",
+                    fontFamily: "Montserrat, sans-serif",
+                    color:'#129490'
+                  }}
+                >
+                  Split by exact amount
+                </Typography>
 
-                return (
-                  <ListItem
-                    key={user._id}
-                    secondaryAction={
-                      <TextField 
-                            id="standard-basic" 
-                            label="₹" 
-                            variant="standard" 
-                            size="small" 
-                            sx={{width:'2rem'}} 
-                            onChange={
-                              (e)=>{
-                                  setSplitByAmount((prev) => ({
-                                    ...prev,
-                                    [user._id]: {
-                                      userId: user._id,
-                                      owesTo: paidBy,
-                                      amount: e.target.value,
-                                    }
-                                  }));
-                              }
-                            } 
-                            // value={ (modalProps.title==="Edit Expense")?filteredUser[0].amount : splitByAmount[userId].amount} 
-                            value={splitByAmount[userId]?.amount || ""}  
+                {/* List Container */}
+                <Box
+                  sx={{
+                    maxHeight: 300,
+                    overflowY: "auto",
+                    background: "#f9fafb",
+                    borderRadius: "1.5rem",
+                    p: 1
+                  }}
+                >
+                  <List dense>
+                    {modalProps.groupMemberList.map((user) => {
+                      const userId = user._id;
+
+                      return (
+                        <ListItem
+                          key={user._id}
+                          sx={{
+                            mb: 1,
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: "1rem",
+                            background: "#fff",
+                            transition: "0.2s",
+                            "&:hover": {
+                              background: "#eef2ff"
+                            }
+                          }}
+                          secondaryAction={
+                            <TextField
+                              variant="outlined"
+                              size="small"
+                              placeholder="₹0"
+                              value={splitByAmount[userId]?.amount || ""}
+                              onChange={(e) => {
+                                setSplitByAmount((prev) => ({
+                                  ...prev,
+                                  [user._id]: {
+                                    userId: user._id,
+                                    owesTo: paidBy,
+                                    amount: e.target.value,
+                                  },
+                                }));
+                              }}
+                              sx={{
+                                width: 80,
+                                "& .MuiOutlinedInput-root": {
+                                  borderRadius: "1rem",
+                                  background: "#f3f4f6",
+                                },
+                                "& input": {
+                                  textAlign: "center",
+                                  fontWeight: 500,
+                                  fontSize:'1rem'
+                                }
+                              }}
                             />
                           }
-                        disablePadding
-                      >
+                        >
+                          <ListItemText
+                            primary={
+                              <Typography sx={{ fontWeight: 500 ,fontFamily: "Montserrat, sans-serif",fontSize:'.8rem'}}>
+                                {user.name}
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography sx={{ fontSize: "0.7rem", color: "#666" ,fontFamily: "Montserrat, sans-serif",}}>
+                                {user.email}
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </Box>
 
-                      <ListItemText id={labelId}                 
-                          primary={user.name} 
-                          secondary={user.email} 
-                              sx={{
-                                '& .MuiListItemText-secondary': {
-                                  fontSize: '11px',
-                                  color: 'gray',
-                                },                      
-                              }}                       
-                      />
-                  </ListItem>
-                );
-              })}
-              <ListItem
-                    disablePadding
-                  >
-                      <ListItemText                 
-                          secondary={`Remaining amount: ${remainingAmt}`}
-                              sx={{
-                                '& .MuiListItemText-secondary': {
-                                  fontSize: '14px',
-                                  color: '#1976d2',
-                                },                      
-                              }}                       
-                      />
-                  </ListItem>
-            </List>
-            <Box sx={{display:'flex',justifyContent:'end',marginTop:'2rem'}}>
-              <Button variant='outlined' color="error"
-                  onClick={()=>{
-                    setSplitContainer(false);
-                    setSplitType("Equally");
-                    resetUnequallyAmt();
-                    // setDescription("");
-                    // setAmount("");
+                {/* Remaining Amount */}
+                <Box
+                  sx={{
+                    mt: 2,
+                    p: 1.5,
+                    borderRadius: "1rem",
+                    background: "#ffffff",
+                    textAlign: "end"
                   }}
-                  sx={{mr:1}}
-              > 
-                Cancel
-              </Button>
-              <Button variant='outlined'  startIcon={<SaveIcon />} 
-                  onClick={()=>save("Unequally")}
-              > 
-                Save
-              </Button>
-            </Box>              
-          </>
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "0.9rem",
+                      color: "#129490",
+                      fontWeight: 500
+                    }}
+                  >
+                    Remaining: ₹{remainingAmt}
+                  </Typography>
+                </Box>
+
+                {/* Buttons */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 5,
+                    alignItems:"end",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => {
+                      setSplitContainer(false);
+                      setSplitType("Equally");
+                      resetUnequallyAmt();
+                    }}
+                    sx={{
+                      borderRadius: "2rem",
+                      px: 3,
+                      textTransform: "none"
+                    }}
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    startIcon={<SaveIcon />}
+                    onClick={() => save("Unequally")}
+                    sx={{
+                      borderRadius: "2rem",
+                      px: 3,
+                      textTransform: "none",
+                      background: "linear-gradient(135deg, #129490, #0f726f)",
+                      boxShadow: "0 8px 20px rgba(99,102,241,0.3)",
+                      "&:hover": {
+                        background: "linear-gradient(135deg, #0c6663, #0f726f)"
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Box>
+              </Box>
+            </>
         )
       }
     }
@@ -500,7 +708,7 @@ export default function TransitionsModal() {
             dispatch(addActivity({ 'groupId': modalProps.groupId._id, 'action': 'EXPENSE_EDIT', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
           }else{
             dispatch(addExpense(data));
-            dispatch(addActivity({ 'groupId': modalProps.groupId._id, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
+            dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
             dispatch(closeModal());
           }
 
@@ -830,7 +1038,7 @@ export default function TransitionsModal() {
                     borderRadius: "2rem",
                     background: "#fff",
                     boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                    maxWidth: 420,
+                    maxWidth: 450,
                     mx: "auto",
                     height:'90%'
                   }}
@@ -861,8 +1069,10 @@ export default function TransitionsModal() {
                       mb: 2,
                       fontFamily: "Montserrat, sans-serif",
                       borderRadius: "2rem",
+                      // height:'1rem',
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "2rem",
+                        height:"3rem",
                         background: "#f9fafb"
                       }
                     }}
@@ -903,30 +1113,53 @@ export default function TransitionsModal() {
                             }}
                             secondaryAction={
                               <Checkbox
+                                size="small"
                                 edge="end"
                                 onChange={selectUser}
                                 value={user._id}
                                 checked={selectedUser.includes(user._id)}
+                                icon={
+                                    <Box
+                                      sx={{
+                                        width: 16,
+                                        height: 16,
+                                        border: "2px solid #555",
+                                        borderRadius: "10px",
+                                      }}
+                                    />
+                                  }
+                                  checkedIcon={
+                                    <Box
+                                      sx={{
+                                        width: 16,
+                                        height: 16,
+                                        backgroundColor: "#129490",
+                                        borderRadius: "8px",
+                                      }}
+                                    />
+                                  }
                               />
                             }
                           >
                             <ListItemButton sx={{ borderRadius: "1rem" }}>
-                              <ListItemAvatar>
-                                <Avatar sx={{ bgcolor: "#25291C",fontFamily:"Montserrat, sans-serif" }}>
-                                  {user.name?.[0]}
+                              <ListItemAvatar sx={{minWidth:'40px'}}>
+                                <Avatar sx={{ bgcolor: "#25291C",fontFamily:"Montserrat, sans-serif",height:'2rem',width:"2rem" }}>
+                                  <Typography sx={{ fontWeight: 500, fontFamily: "Montserrat, sans-serif",fontSize:".8rem" }}>
+                                    {user.name?.[0]}
+                                  </Typography>
                                 </Avatar>
                               </ListItemAvatar>
 
                               <ListItemText
                                 id={labelId}
                                 primary={
-                                  <Typography sx={{ fontWeight: 500, fontFamily: "Montserrat, sans-serif" }}>
+                                  <Typography sx={{ fontWeight: 500, fontFamily: "Montserrat, sans-serif",fontSize:".8rem" }}>
                                     {user.name}
                                   </Typography>
                                 }
                                 secondary={
                                   <Typography
-                                    sx={{ fontSize: "0.75rem", color: "#666",fontFamily:"Montserrat, sans-serif" }}
+                                    sx={{ fontSize: "0.7rem", color: "#666",fontFamily:"Montserrat, sans-serif" }}
                                   >
                                     {user.email}
                                   </Typography>
@@ -974,6 +1207,19 @@ export default function TransitionsModal() {
                 {renderSplitType()}
               </>
               :<>
+                <Box
+                  sx={{
+                    borderRadius: "2rem",
+                    background: "#dfe0dc",
+                    padding:'3rem',
+                    // boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                    maxWidth: 450,
+                    mx: "auto",
+                    height:'80%',
+                    display:"flex",
+                    flexDirection:'column',
+                  }}
+                >
                     {/* Title */}
                     <Typography
                       sx={{
@@ -1322,6 +1568,7 @@ export default function TransitionsModal() {
                         {modalProps.title === "Edit Expense" ? "Update" : "Add"}
                       </Button>
                     </Box>
+                </Box>
               </>
               }
 
