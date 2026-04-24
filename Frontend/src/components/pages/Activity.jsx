@@ -94,7 +94,7 @@ const Activity = () => {
         }}
       >
         <List>
-          {activities.data.map((item) => (
+          {(activities?.data || []).map((item) => (
             <ListItem
               key={item._id}
               sx={{
