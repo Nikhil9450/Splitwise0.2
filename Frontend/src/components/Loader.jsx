@@ -1,12 +1,12 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 const LoaderOverlay = ({
-//   message = "Loading...",
+  message = "Loading...",
   size = 40,
   thickness = 4,
-  color = "primary",
+  color = "#009F93",
   zIndex = 1300, // higher than MUI modals (default zIndex of modal is 1300)
-  background = 'rgba(255, 255, 255, 0.7)', // translucent white background
+  background = 'rgba(0, 0, 0, 0.82)', // translucent white background
 }) => {
   return (
     <Box
@@ -24,9 +24,9 @@ const LoaderOverlay = ({
         zIndex,
       }}
     >
-      <CircularProgress size={size} thickness={thickness} color={color} />
-      <Typography variant="body2" mt={2} color="textSecondary">
-        {/* {message} */}
+      <CircularProgress size={size} thickness={thickness} sx={{ color: color }}/>
+      <Typography variant="body2" mt={2} sx={{color:'white',fontFamily:'Montserrat, sans-serif',fontWeight:500}}>
+        {message}
       </Typography>
     </Box>
   );

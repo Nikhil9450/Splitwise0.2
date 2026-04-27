@@ -91,55 +91,61 @@ const expenseSlice = createSlice({
         addResponse:"",
         status: 'idle',
         error: null,
+        mutationStatus: "idle", // loading | succeeded | failed
+        mutationType: null, // "add" | "update" | "delete"
+        mutationError: null,
 
         fetchExpenseStatus: 'idle',
         fetchExpenseError: null,
-
-        updateExpenseStatus: 'idle',
-        updateExpenseError: null,
-
-        deleteExpenseStatus: 'idle',
-        deleteExpenseError: null,
-
         fetchSingleExpenseStatus: 'idle',
         fetchSingleExpenseError: null,
     },
+    reducers: {
+            resetMutationState: (state) => {
+                state.mutationStatus = "idle";
+                state.mutationType = null;
+                state.mutationError = null;
+            }
+        },
     extraReducers: (builder)=>{
         builder 
-            .addCase(addExpense.pending,(state)=>{
-                state.status="loading"
+            .addCase(addExpense.pending, (state) => {
+                state.mutationStatus = "loading";
+                state.mutationType = "add";
             })
-            .addCase(addExpense.fulfilled,(state,action)=>{
-                state.addResponse=action.payload;
-                state.status='succeeded';
+            .addCase(addExpense.fulfilled, (state, action) => {
+                state.addResponse = action.payload;
+                state.mutationStatus = "succeeded";
             })
-            .addCase(addExpense.rejected,(state,action)=>{
-                state.error= action.payload || "Fetching list failed";
-                state.status='failed';
-            })
-
-            .addCase(deleteExpense.pending,(state)=>{
-                state.deleteExpenseStatus="loading"
-            })
-            .addCase(deleteExpense.fulfilled,(state,action)=>{
-                state.addResponse=action.payload;
-                state.deleteExpenseStatus='succeeded';
-            })
-            .addCase(deleteExpense.rejected,(state,action)=>{
-                state.deleteExpenseError= action.payload || "Deletion failed";
-                state.deleteExpenseStatus='failed';
+            .addCase(addExpense.rejected, (state, action) => {
+                state.mutationError = action.payload;
+                state.mutationStatus = "failed";
             })
 
-            .addCase(updateExpense.pending,(state)=>{
-                state.updateExpenseStatus="loading"
+            .addCase(deleteExpense.pending, (state) => {
+                state.mutationStatus = "loading";
+                state.mutationType = "delete";
             })
-            .addCase(updateExpense.fulfilled,(state,action)=>{
-                state.addResponse=action.payload;
-                state.updateExpenseStatus='succeeded';
+            .addCase(deleteExpense.fulfilled, (state, action) => {
+                state.addResponse = action.payload;
+                state.mutationStatus = "succeeded";
             })
-            .addCase(updateExpense.rejected,(state,action)=>{
-                state.updateExpenseError= action.payload || "Updating failed";
-                state.updateExpenseStatus='failed';
+            .addCase(deleteExpense.rejected, (state, action) => {
+                state.mutationError = action.payload;
+                state.mutationStatus = "failed";
+            })
+
+            .addCase(updateExpense.pending, (state) => {
+                state.mutationStatus = "loading";
+                state.mutationType = "update";
+            })
+            .addCase(updateExpense.fulfilled, (state, action) => {
+                state.addResponse = action.payload;
+                state.mutationStatus = "succeeded";
+            })
+            .addCase(updateExpense.rejected, (state, action) => {
+                state.mutationError = action.payload;
+                state.mutationStatus = "failed";
             })
 
             .addCase(fetchGroupExpenses.pending,(state)=>{
@@ -170,5 +176,5 @@ const expenseSlice = createSlice({
 
     }
 })
-
+export const { resetMutationState } = expenseSlice.actions;
 export default expenseSlice.reducer;

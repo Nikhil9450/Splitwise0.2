@@ -19,6 +19,7 @@ import Balances from './components/pages/Balances';
 import Expenses from './components/pages/Expenses';
 import ExpenseDetails from './components/pages/ExpenseDetails';
 import Activity from './components/pages/Activity';
+import LoaderOverlay from './components/Loader';
 // import Hero from './components/pages/Hero';
 function App() {
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ function App() {
   }, [dispatch]);
 
   if (status === 'loading' || isAuthenticated === null) {
-    return <div>Checking authentication...</div>;
+    return <LoaderOverlay message='' />;
   }
 
   return (

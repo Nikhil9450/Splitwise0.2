@@ -11,8 +11,9 @@ import { motion } from "framer-motion";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import SearchIcon from "@mui/icons-material/Search";
 import { fetchFriendLists } from '../../redux/friendList/friendlistSlice';
+import LoaderOverlay from '../Loader';
 const Groups = () => {
-  const {UserGroupList} = useSelector((state)=>state.userGroups);
+  const {UserGroupList,status} = useSelector((state)=>state.userGroups);
   const {user} =useSelector((state)=>state.auth);
   const {expense}=useSelector((state)=>state.expenses);
 
@@ -110,14 +111,20 @@ const Groups = () => {
   useEffect(()=>{
     console.log("UserGroupList from use selector-------->",UserGroupList)
   },[UserGroupList])
-
+  useEffect(()=>{
+    console.log("status----------->",status);
+  },[status])
   const filteredGroups = UserGroupList.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  
 return (
 
     <Box sx={{ height: "100%" }}>
-      <Grid
+      {(status=="loading")
+      ?<LoaderOverlay message='Fetching Groups...'/>
+      :<Grid
         sx={{
           height: "100vh",
           bgcolor: "#FCFAF9",
@@ -130,65 +137,65 @@ return (
           transition={{ duration: 0.25 }}
         >
         {/* HEADER */}
-<Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 1,
-    px: 2,
-    py: 3,
-    borderBottom: "1px solid #DFE0DC",
-    bgcolor: "#25291C",
-    
-  }}
->
-  {/* 🔍 Search Box */}
-  <TextField
-    fullWidth
-    size="small"
-    placeholder="Search groups..."
-    variant="outlined"
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    sx={{
-      bgcolor: "#fff",
-      borderRadius: "2rem",
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "2rem",
-      },
-      mx: 1,
-    }}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon />
-        </InputAdornment>
-      ),
-    }}
-  />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1,
+            px: 2,
+            py: 3,
+            borderBottom: "1px solid #DFE0DC",
+            bgcolor: "#25291C",
+            
+          }}
+          >
+            {/* 🔍 Search Box */}
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search groups..."
+              variant="outlined"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{
+                bgcolor: "#fff",
+                borderRadius: "2rem",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "2rem",
+                },
+                mx: 1,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-  {/* Create Group Button */}
-  <IconButton
-    sx={{
-      bgcolor: "#009F93",
-      color: "#fff",
-      "&:hover": {
-        bgcolor: "#007f76",
-      },
-      borderRadius: "2rem",
-      p: 1.2,
-    }}
-    onClick={() =>dispatch(openModal({
-            modalType: 'CREATE_GROUP',
-            modalProps: {
-              title: 'Create group',
-            }
-          }))}
-  >
-    <GroupAddIcon sx={{ fontSize: 20 }}/>
-  </IconButton>
-</Box>
+            {/* Create Group Button */}
+            <IconButton
+              sx={{
+                bgcolor: "#009F93",
+                color: "#fff",
+                "&:hover": {
+                  bgcolor: "#007f76",
+                },
+                borderRadius: "2rem",
+                p: 1.2,
+              }}
+              onClick={() =>dispatch(openModal({
+                      modalType: 'CREATE_GROUP',
+                      modalProps: {
+                        title: 'Create group',
+                      }
+                    }))}
+            >
+              <GroupAddIcon sx={{ fontSize: 20 }}/>
+            </IconButton>
+        </Box>
 
         {/* GROUP LIST */}
         <Box
@@ -272,35 +279,7 @@ return (
         </Box>
         </motion.div>
       </Grid>
-      {/* <Fab
-        onClick={() =>dispatch(openModal({
-                    modalType: 'CREATE_GROUP',
-                    modalProps: {
-                      title: 'Create group',
-                    }
-                  }))}
-        aria-label="Create Group"
-        variant="extended"
-        sx={{
-          position: 'absolute',
-          bottom: {xs:90,sm:20},
-          right: 16,
-          zIndex: 10,
-          width:{xs:'11rem',md:'10rem'},
-          bgcolor:'#25291C',
-          border:'none', 
-              '&:hover': {
-          bgcolor: '#129490',
-          color: '#fff',
-
-        }, 
-        }}
-      >
-        <Avatar sx={{ bgcolor: "transparent", color: "#129490", }}>
-          <GroupAddIcon />
-        </Avatar>
-        <Typography sx={{color:"#129490", fontSize: "0.7rem",fontWeight: 600,fontFamily: 'Montserrat, sans-serif'}} >Create Group</Typography>
-      </Fab> */}
+      }
     </Box>
 );
 }

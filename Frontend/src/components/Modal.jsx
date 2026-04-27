@@ -49,6 +49,8 @@ import {fetchUserDetails} from '../redux/user/userSlice';
 import { addActivity } from '../redux/Activity/activitySlice';
 import { act } from 'react';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
+import CircularProgress from '@mui/material/CircularProgress';
+import { resetMutationState } from '../redux/expense/expenseSlice';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -79,7 +81,7 @@ export default function TransitionsModal() {
       currentPassword: "",
       newPassword: ""
     });
-
+    const {mutationStatus,mutationType,mutationError}=useSelector((state)=>state.expenses)
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [splitByAmount,setSplitByAmount]=useState({});
@@ -98,8 +100,29 @@ export default function TransitionsModal() {
         },
       },
     };
+        
+    useEffect(() => {
+    if (mutationStatus === "succeeded") {
+        if (mutationType === "add") {
+            toast.success("Expense added successfully.");
+        }
+        if (mutationType === "update") {
+            toast.success("Expense updated successfully.");
+        }
+        if (mutationType === "delete") {
+            toast.success("Expense deleted successfully.");
+        }
 
-      
+        dispatch(resetMutationState());
+    }
+
+    if (mutationStatus === "failed") {
+        toast.error(mutationError || "Something went wrong");
+        dispatch(resetMutationState());
+    }
+}, [mutationStatus, mutationType, mutationError, dispatch]);
+
+
       useEffect(() => {
         dispatch(fetchUserDetails());
       }, [dispatch]);
@@ -1553,7 +1576,7 @@ export default function TransitionsModal() {
 
                       <Button
                         variant="contained"
-                        startIcon={<AddIcon />}
+                        startIcon={(mutationStatus === "loading" && (mutationType==="add" || mutationType==="update"))?<CircularProgress enableTrackSlot size="20px" sx={{ color: 'white' }} aria-label="Loading…" />:<AddIcon />}
                         onClick={add_Expense}
                         sx={{
                           bgcolor: '#129490',
@@ -1564,6 +1587,7 @@ export default function TransitionsModal() {
                           padding:'.6rem 1rem',
                           '&:hover': { bgcolor: '#0f7f7c' },
                         }}
+                        disabled={mutationStatus === "loading"}
                       >
                         {modalProps.title === "Edit Expense" ? "Update" : "Add"}
                       </Button>

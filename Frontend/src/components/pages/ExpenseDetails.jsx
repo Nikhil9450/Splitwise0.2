@@ -17,6 +17,7 @@ import {
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import dayjs from 'dayjs';
+import LoaderOverlay from '../Loader';
 
 const fontStyle = {
   fontFamily: "Montserrat, sans-serif",
@@ -26,9 +27,7 @@ const ExpenseDetails = () => {
   const { id: expenseId } = useParams();
   const dispatch = useDispatch();
 
-  const expenseDetails = useSelector(
-    (state) => state.expenses.expenseDetail
-  );
+  const {expenseDetail,fetchSingleExpenseStatus} = useSelector((state) => state.expenses);
 
   const { UserGroupList } = useSelector(
     (state) => state.userGroups
@@ -49,11 +48,12 @@ const ExpenseDetails = () => {
      Extract Group ID
   =============================== */
   useEffect(() => {
-    if (!expenseDetails?.group) return;
-    setGroupId(expenseDetails.group);
-    setGroupMembers(expenseDetails.group.members|| []);
+    if (!expenseDetail?.group) return;
+    setGroupId(expenseDetail.group);
+    setGroupMembers(expenseDetail.group.members|| []);
 
-  }, [expenseDetails]);
+  }, [expenseDetail]);
+  useEffect(()=>{console.log("fetchSingleExpenseStatus------->",fetchSingleExpenseStatus)},[fetchSingleExpenseStatus])
 
   /* ===============================
      Fetch Group Members (LOCAL)
@@ -76,7 +76,7 @@ const ExpenseDetails = () => {
   /* ===============================
      Guards (VERY IMPORTANT)
   =============================== */
-  if (!expenseDetails || !expenseDetails._id) {
+  if (!expenseDetail || !expenseDetail._id) {
     return (
       <Typography sx={{ p: 2 }}>
         Loading expense details...
@@ -89,7 +89,7 @@ const ExpenseDetails = () => {
   =============================== */
   const editExpenseHandler = () => {
     console.log("groupMembers-------->",groupMembers);
-    console.log("expenseDetails-------->",expenseDetails);
+    console.log("expenseDetail-------->",expenseDetail);
     dispatch(
       openModal({
         modalType: 'ADD_EXPENSE',
@@ -97,7 +97,7 @@ const ExpenseDetails = () => {
           title: 'Edit Expense',
           groupId,
           groupMemberList: groupMembers,
-          expenseDetail: expenseDetails
+          expenseDetail: expenseDetail
         }
       })
     );
@@ -109,8 +109,8 @@ const ExpenseDetails = () => {
         modalType: 'DELETE_EXPENSE',
         modalProps: {
           title: 'Delete Expense',
-          expenseId: expenseDetails._id,
-          description: expenseDetails.description,
+          expenseId: expenseDetail._id,
+          description: expenseDetail.description,
           groupId
         }
       })
@@ -121,195 +121,197 @@ const ExpenseDetails = () => {
      UI
   =============================== */
   return (
-  <motion.div
+    (fetchSingleExpenseStatus==="loading")
+    ?<LoaderOverlay message='Fetching Expense Details...'/>
+    :<motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-    style={{
-      height:'100%',
-    }}
-  > 
-    <Box
-      sx={{
-        minHeight: '100%',
-        bgcolor: '#DFE0DC',
-        fontFamily: "Montserrat, sans-serif",
+      style={{
+        height:'100%',
       }}
-    >
-      {/* Header */}
+    > 
       <Box
         sx={{
-          bgcolor: '#25291C',
-          color: '#DFE0DC',
-          // borderRadius: 2,
-          p: 3,
-          mb: 3,
+          minHeight: '100%',
+          bgcolor: '#DFE0DC',
           fontFamily: "Montserrat, sans-serif",
         }}
       >
-        {/* Back Button */}
-        <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-          <IconButton onClick={() => navigate(-1)}>
-            <ArrowBackIcon sx={{ color: '#DFE0DC' }} />
-          </IconButton>
-        </Box>
-
-        {/* Title */}
-        <Typography
+        {/* Header */}
+        <Box
           sx={{
-            color: '#129490',
-            letterSpacing: 1,
-            fontWeight: 600,
+            bgcolor: '#25291C',
+            color: '#DFE0DC',
+            // borderRadius: 2,
+            p: 3,
+            mb: 3,
             fontFamily: "Montserrat, sans-serif",
           }}
         >
-          {expenseDetails.description?.toUpperCase()}
-        </Typography>
+          {/* Back Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+            <IconButton onClick={() => navigate(-1)}>
+              <ArrowBackIcon sx={{ color: '#DFE0DC' }} />
+            </IconButton>
+          </Box>
 
-        {/* Amount */}
-        <Typography
-          sx={{
-            fontSize: '2rem',
-            fontWeight: 700,
-            mt: 1,
-            color: '#FCFAF9',
-            fontFamily: "Montserrat, sans-serif",
-          }}
-        >
-          ₹{expenseDetails.amount}
-        </Typography>
-      </Box>
-
-      {/* Info Section */}
-      <Box
-        sx={{
-          bgcolor: '#FFFFFF',
-          borderRadius: '2rem',
-          p: 3,
-          m: 2,
-          border: '2px solid #25291C',
-          fontFamily: "Montserrat, sans-serif",
-        }}
-      >
-        <Typography sx={{ mb: 1, fontSize: '0.85rem',fontFamily: "Montserrat, sans-serif", fontWeight: 500, }}>
-          Added by <strong>{expenseDetails.addedBy?.name}</strong>
-        </Typography>
-
-        <Typography sx={{ mb: 1, fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif", fontWeight: 500,}}>
-          Date:{" "}
-          <strong>
-            {dayjs(expenseDetails.date).format('DD MMM YYYY')}
-          </strong>
-        </Typography>
-
-        <Typography sx={{ fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif",fontWeight: 500, }}>
-          <strong>{expenseDetails.paidBy?.name}</strong> paid ₹
-          {expenseDetails.amount}
-        </Typography>
-      </Box>
-
-      {/* Split Details */}
-      <Box
-        sx={{
-          bgcolor: '#FFFFFF',
-          borderRadius: '2rem',
-          p: 3,
-          m: 2,
-          border: '2px solid #25291C',
-          fontFamily: "Montserrat, sans-serif",
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: 600,
-            mb: 2,
-            color: '#129490',
-            fontFamily: "Montserrat, sans-serif",
-          }}
-        >
-          Split Details
-        </Typography>
-
-        {expenseDetails.splitBetweenWithAmt?.map((member, idx) => (
-          <Box
-            key={idx}
+          {/* Title */}
+          <Typography
             sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              py: 1,
-              borderBottom:
-                idx !== expenseDetails.splitBetweenWithAmt.length - 1
-                  ? '1px solid #DFE0DC'
-                  : 'none',
+              color: '#129490',
+              letterSpacing: 1,
+              fontWeight: 600,
+              fontFamily: "Montserrat, sans-serif",
             }}
           >
-            <Typography sx={{ fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif",fontWeight: 500}}>
-              {member.user?.name}
-            </Typography>
+            {expenseDetail.description?.toUpperCase()}
+          </Typography>
 
-            <Typography
+          {/* Amount */}
+          <Typography
+            sx={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              mt: 1,
+              color: '#FCFAF9',
+              fontFamily: "Montserrat, sans-serif",
+            }}
+          >
+            ₹{expenseDetail.amount}
+          </Typography>
+        </Box>
+
+        {/* Info Section */}
+        <Box
+          sx={{
+            bgcolor: '#FFFFFF',
+            borderRadius: '2rem',
+            p: 3,
+            m: 2,
+            border: '2px solid #25291C',
+            fontFamily: "Montserrat, sans-serif",
+          }}
+        >
+          <Typography sx={{ mb: 1, fontSize: '0.85rem',fontFamily: "Montserrat, sans-serif", fontWeight: 500, }}>
+            Added by <strong>{expenseDetail.addedBy?.name}</strong>
+          </Typography>
+
+          <Typography sx={{ mb: 1, fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif", fontWeight: 500,}}>
+            Date:{" "}
+            <strong>
+              {dayjs(expenseDetail.date).format('DD MMM YYYY')}
+            </strong>
+          </Typography>
+
+          <Typography sx={{ fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif",fontWeight: 500, }}>
+            <strong>{expenseDetail.paidBy?.name}</strong> paid ₹
+            {expenseDetail.amount}
+          </Typography>
+        </Box>
+
+        {/* Split Details */}
+        <Box
+          sx={{
+            bgcolor: '#FFFFFF',
+            borderRadius: '2rem',
+            p: 3,
+            m: 2,
+            border: '2px solid #25291C',
+            fontFamily: "Montserrat, sans-serif",
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 600,
+              mb: 2,
+              color: '#129490',
+              fontFamily: "Montserrat, sans-serif",
+            }}
+          >
+            Split Details
+          </Typography>
+
+          {expenseDetail.splitBetweenWithAmt?.map((member, idx) => (
+            <Box
+              key={idx}
               sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 600,
-                fontSize: '0.85rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                py: 1,
+                borderBottom:
+                  idx !== expenseDetail.splitBetweenWithAmt.length - 1
+                    ? '1px solid #DFE0DC'
+                    : 'none',
               }}
             >
-              ₹{Number(member.amount).toFixed(2)}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
+              <Typography sx={{ fontSize: '0.85rem' ,fontFamily: "Montserrat, sans-serif",fontWeight: 500}}>
+                {member.user?.name}
+              </Typography>
 
-      {/* Actions */}
-      <Box
-        sx={{
-          display: 'flex',
-          gap: 2,
-          mt: 3,
-          fontFamily: "Montserrat, sans-serif",
-          justifyContent: 'end',
-          p:2
-        }}
-      >
-        <Button
-          fullWidth
-          variant="outlined"
-          sx={{
-            bgcolor: '#DFE0DC',
-            color: '#25291C',
-            borderRadius: '2rem',
-            // fontWeight: 600,
-            border: '2px solid #25291C',
-            '&:hover': { bgcolor: '#FCFAF9' },
-            height:'3rem',
-            minWidth:'1rem',
-            width:'3rem',
-          }}
-          onClick={deleteExpenseHandler}
-        >
-          <DeleteOutlineOutlinedIcon />
-        </Button>
+              <Typography
+                sx={{
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                }}
+              >
+                ₹{Number(member.amount).toFixed(2)}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
 
-        <Button
-          fullWidth
-          variant="outlined"
+        {/* Actions */}
+        <Box
           sx={{
-            bgcolor: '#DFE0DC',
-            color: '#25291C',
-            borderRadius: '2rem',
-            border: '2px solid #25291C',
-            '&:hover': { bgcolor: '#FCFAF9' },
-            height:'3rem',
-            minWidth:'1rem',
-            width:'3rem',
+            display: 'flex',
+            gap: 2,
+            mt: 3,
+            fontFamily: "Montserrat, sans-serif",
+            justifyContent: 'end',
+            p:2
           }}
-          onClick={editExpenseHandler}
         >
-          <EditOutlinedIcon sx={{height:'1.5rem',width:'1.5rem', }} />
-        </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{
+              bgcolor: '#DFE0DC',
+              color: '#25291C',
+              borderRadius: '2rem',
+              // fontWeight: 600,
+              border: '2px solid #25291C',
+              '&:hover': { bgcolor: '#FCFAF9' },
+              height:'3rem',
+              minWidth:'1rem',
+              width:'3rem',
+            }}
+            onClick={deleteExpenseHandler}
+          >
+            <DeleteOutlineOutlinedIcon />
+          </Button>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{
+              bgcolor: '#DFE0DC',
+              color: '#25291C',
+              borderRadius: '2rem',
+              border: '2px solid #25291C',
+              '&:hover': { bgcolor: '#FCFAF9' },
+              height:'3rem',
+              minWidth:'1rem',
+              width:'3rem',
+            }}
+            onClick={editExpenseHandler}
+          >
+            <EditOutlinedIcon sx={{height:'1.5rem',width:'1.5rem', }} />
+          </Button>
+        </Box>
       </Box>
-    </Box>
-  </motion.div>
+    </motion.div>
   );
 };
 
