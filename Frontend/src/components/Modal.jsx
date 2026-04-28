@@ -69,7 +69,10 @@ export default function TransitionsModal() {
     const [selectedUser,setSelectedUser]=useState([]);
     const [groupName,setGroupName]=useState("")
     const [selectedGroupMember,setSelectedGroupMember]=useState([])
-    const [paidBy, setPaidBy] = useState("");
+    const [paidBy, setPaidBy] = useState({
+      "_id":"",
+      "name":"",
+    });
     const [splitType, setSplitType] = useState("Equally");
     const [splitContainer,setSplitContainer]=useState(false)
     const [remainingAmt,setRemainingAmt]=useState(0)
@@ -163,7 +166,7 @@ export default function TransitionsModal() {
         setAmount(modalProps.expenseDetail.amount);
         setSelectedDate(dayjs(modalProps.expenseDetail.date));
         setDescription(modalProps.expenseDetail.description);
-        setPaidBy(modalProps["expenseDetail"].paidBy._id);
+        setPaidBy(modalProps["expenseDetail"].paidBy);
       }else{
         setDescription("");
         setAmount("");
@@ -568,7 +571,7 @@ export default function TransitionsModal() {
                                   ...prev,
                                   [user._id]: {
                                     userId: user._id,
-                                    owesTo: paidBy,
+                                    owesTo: paidBy._id,
                                     amount: e.target.value,
                                   },
                                 }));
@@ -687,13 +690,13 @@ export default function TransitionsModal() {
           if (selectedGroupMember.includes(user._id)) {
             acc[user._id] = {
               userId: user._id,
-              owesTo: paidBy,
+              owesTo: paidBy._id,
               amount: perPersonPrice
             };
           } else {
             acc[user._id] = {
               userId: user._id,
-              owesTo: paidBy,
+              owesTo: paidBy._id,
               amount: 0
             };
           }
@@ -720,15 +723,57 @@ export default function TransitionsModal() {
         toast.error("Please fill the details.")
       }else{
         console.log("modalProps.expenseDetail-------->", modalProps.expenseDetail);
+
           if(modalProps.title==="Edit Expense"){
-            const previousDetails = modalProps.expenseDetail;
-            console.log("previousDetails------------>",previousDetails)
+            const prev = modalProps.expenseDetail;
+            const curr = data;
+            const changes = {};
+
+          if (prev.description !== curr.description) {
+            changes.description = {
+              from: prev.description,
+              to: curr.description,
+            };
+          }
+
+          if (prev.amount !== curr.amount) {
+            changes.amount = {
+              from: prev.amount,
+              to: curr.amount,
+            };
+          }
+
+          const prevPaidBy = prev.paidBy?._id ;
+          const currPaidBy = curr.paidBy._id ;
+
+          if (prevPaidBy !== currPaidBy) {
+            changes.paidBy = {
+              from: prev.paidBy?.name || prevPaidBy,
+              to: curr.paidBy?.name || currPaidBy // pass name from UI if needed
+            };
+          }
+
+          // optional: splitType
+          if (prev.splitType !== curr.splitType) {
+            changes.splitType = {
+              from: prev.splitType,
+              to: curr.splitType,
+            };
+          }
             data['expenseId'] = modalProps.expenseDetail._id;
             console.log("currentDetails------------>",data)
             dispatch(updateExpense(data));
             dispatch(closeModal());
             dispatch(setViewType("expenses"));
-            dispatch(addActivity({ 'groupId': modalProps.groupId._id, 'action': 'EXPENSE_EDIT', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
+            dispatch(addActivity(
+              { 'groupId': modalProps.groupId._id, 
+                'action': 'EXPENSE_EDIT', 
+                'details': { 
+                  'addedBy': user.name ,
+                  changes
+                } 
+              }
+            ));
           }else{
             dispatch(addExpense(data));
             dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
@@ -1413,9 +1458,18 @@ export default function TransitionsModal() {
                         </InputLabel>
 
                         <Select
-                          value={paidBy}
+                          value={paidBy._id}
                           label="Paid By"
-                          onChange={(e) => setPaidBy(e.target.value)}
+                          onChange={(e) => {
+                            const selectedUser = modalProps.groupMemberList.find(
+                              (user) => user._id === e.target.value
+                            );
+
+                            setPaidBy({
+                              _id: selectedUser._id,
+                              name: selectedUser.name,
+                            });
+                          }}
                           sx={{
                             fontFamily: "Montserrat, sans-serif",
                             fontSize: '1rem',
