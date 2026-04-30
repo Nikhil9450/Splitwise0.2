@@ -31,37 +31,40 @@ const getMessage = (item) => {
       return `${details.addedBy} added ₹${details.amount} for "${details.description}"`;
     case "EXPENSE_DELETE":
       return `${details.addedBy} deleted expense "${details.description}"`;
-case "EXPENSE_EDIT": {
-  const changes = details.changes || {};
+    case "EXPENSE_EDIT": {
+      const changes = details.changes || {};
 
-  const formatted = Object.entries(changes).map(([key, value]) => {
-    if (!value) return null;
+      const formatted = Object.entries(changes).map(([key, value]) => {
+        if (!value) return null;
 
-    switch (key) {
-      case "amount":
-        return `Amount: ₹${value.from ?? "-"} → ₹${value.to ?? "-"}`;
+        switch (key) {
+          case "amount":
+            return `Amount: ₹${value.from ?? "-"} → ₹${value.to ?? "-"}`;
 
-      case "description":
-        return `Description: "${value.from ?? "-"}" → "${value.to ?? "-"}"`;
+          case "description":
+            return `Description: "${value.from ?? "-"}" → "${value.to ?? "-"}"`;
 
-      case "paidBy":
-        return `Paid by: ${value.from ?? "-"} → ${value.to ?? "-"}`;
+          case "paidBy":
+            return `Paid by: ${value.from ?? "-"} → ${value.to ?? "-"}`;
 
-      case "splitType":
-        return `Split: ${value.from ?? "-"} → ${value.to ?? "-"}`;
+          case "date":
+            return `Date: ${value.from ?? "-"} → ${value.to ?? "-"}`;
+            
+          case "splitType":
+            return `Split: ${value.from ?? "-"} → ${value.to ?? "-"}`;
 
-      default:
-        return `${key}: ${value.from ?? "-"} → ${value.to ?? "-"}`;
+          default:
+            return `${key}: ${value.from ?? "-"} → ${value.to ?? "-"}`;
+        }
+      }).filter(Boolean); // remove nulls
+
+      // fallback if nothing changed
+      if (formatted.length === 0) {
+        return `${details.addedBy} updated the expense`;
+      }
+
+      return `${details.addedBy} updated expense:\n• ${formatted.join("\n• ")}`;
     }
-  }).filter(Boolean); // remove nulls
-
-  // fallback if nothing changed
-  if (formatted.length === 0) {
-    return `${details.addedBy} updated the expense`;
-  }
-
-  return `${details.addedBy} updated expense:\n• ${formatted.join("\n• ")}`;
-}
     case "GROUP_CREATED":
       return `${details.addedBy} created group "${details.groupName}"`;
     default:

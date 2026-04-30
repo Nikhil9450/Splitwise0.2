@@ -196,9 +196,14 @@ return (
               <GroupAddIcon sx={{ fontSize: 20 }}/>
             </IconButton>
         </Box>
-
-        {/* GROUP LIST */}
-        <Box
+        {
+          (filteredGroups.length === 0)
+          ?<Box sx={{ p: 2, overflowY: "auto", mb: 6 ,display:"flex",alignItems:"center",justifyContent:"center",height:"80%"}}>
+              <Typography sx={{ color: "#636262", textAlign: "center",fontFamily: "Montserrat, sans-serif" }}>
+                No groups found.
+              </Typography>
+            </Box>
+          :<Box
           sx={{ p: 2, overflowY: "auto", mb: 6 }}
           component={motion.div}
           initial="hidden"
@@ -212,71 +217,75 @@ return (
             },
           }}
         >
-          {filteredGroups.map((item) => {
-            return (
-              <Box
-                key={item.id}
-                component={motion.div}
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                whileHover={{ scale: 1.03 }} // 🔥 hover effect
-                transition={{ duration: 0.25 }}
-                sx={{
-                  mb: 1.5,
-                }}
-              >
+          {
+
+            filteredGroups.map((item) => {
+              return (
                 <Box
-                  component={Link}
-                  to={`/expenses/${item.id}`}
+                  key={item.id}
+                  component={motion.div}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  whileHover={{ scale: 1.03 }} // 🔥 hover effect
+                  transition={{ duration: 0.25 }}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    p: 0.8,
-                    borderRadius: "2rem",
-                    textDecoration: "none",
-                    border: "2px solid #25291C",
-                    bgcolor: "#FFFFFF",
-                    color: "#25291C",
+                    mb: 1.5,
                   }}
                 >
-                  {/* ICON */}
                   <Box
+                    component={Link}
+                    to={`/expenses/${item.id}`}
                     sx={{
-                      height: 45,
-                      width: 45,
-                      borderRadius: "50%",
-                      bgcolor: "#25291C",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
+                      p: 0.8,
+                      borderRadius: "2rem",
+                      textDecoration: "none",
                       border: "2px solid #25291C",
-                      mr: 2,
+                      bgcolor: "#FFFFFF",
+                      color: "#25291C",
                     }}
                   >
-                    <GroupsIcon sx={{ color: "#DFE0DC", fontSize: 20 }} />
-                  </Box>
-
-                  {/* TEXT */}
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                      {item.name}
-                    </Typography>
-
-                    <Typography
+                    {/* ICON */}
+                    <Box
                       sx={{
-                        fontSize: "0.75rem",
-                        fontWeight: 500,
-                        color: "#636262",
+                        height: 45,
+                        width: 45,
+                        borderRadius: "50%",
+                        bgcolor: "#25291C",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "2px solid #25291C",
+                        mr: 2,
                       }}
                     >
-                      {item.members?.length || 0} members
-                    </Typography>
+                      <GroupsIcon sx={{ color: "#DFE0DC", fontSize: 20 }} />
+                    </Box>
+
+                    {/* TEXT */}
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
+                        {item.name}
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          fontSize: "0.75rem",
+                          fontWeight: 500,
+                          color: "#636262",
+                        }}
+                      >
+                        {item.members?.length || 0} members
+                      </Typography>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            );
-          })}
-        </Box>
+              );
+            })
+          }
+          </Box>
+        }
         </motion.div>
       </Grid>
       }

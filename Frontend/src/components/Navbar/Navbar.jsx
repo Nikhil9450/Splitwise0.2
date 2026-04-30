@@ -12,6 +12,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { motion } from "framer-motion";
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 
 const iconAnimation = {
   whileHover: { scale: 1.15 },
@@ -25,11 +26,12 @@ function DrawerAppBar() {
   const isActive = (path) => location.pathname === path;
 
   const navItems = [
-    { path: "/groups", icon: <GroupIcon /> },
+    { path: "/groups", icon: <GroupIcon />,label:"Groups" },
+    { path: "/track-your-expenses", icon: <ShowChartIcon />,label:"Track Your" },
     // { path: "/balances", icon: <AccountBalanceWalletIcon /> },
-    { path: "/friends", icon: <PersonAddIcon /> },
-    { path: "/admin/dashboard", icon: <DashboardIcon /> },
-    { path: "/profile", icon: <PersonIcon /> },
+    { path: "/friends", icon: <PersonAddIcon />,label:"Friends" },
+    { path: "/admin/dashboard", icon: <DashboardIcon />,label:"Dashboard" },
+    { path: "/profile", icon: <PersonIcon />,label:"Profile" },
     // { path: "/activity", icon: <NotificationsIcon /> }
   ];
   const {isAuthenticated,status,user,userRole} = useSelector((state)=>state.auth)
@@ -71,6 +73,7 @@ return (
       }}
     >
       {navItems.map((item) => (
+        (item.path === "/admin/dashboard" && userRole !== "admin") ? null : // Only show dashboard to admins
         <motion.div key={item.path} style={{ position: "relative" }}>
 
           {/* Active pill */}
@@ -80,7 +83,7 @@ return (
               style={{
                 position: "absolute",
                 inset: 0,
-                borderRadius: "50%",
+                // borderRadius: "20%",
                 background: "#ffffff20",
               }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
@@ -88,26 +91,39 @@ return (
           )}
 
           <motion.div {...iconAnimation}>
-            <IconButton component={Link} to={item.path}>
-              <Avatar
-                sx={{
-                  height: { xs: "2.6rem", sm: "3rem" },
-                  width: { xs: "2.6rem", sm: "3rem" },
-                  bgcolor: isActive(item.path) ? "#fff" : "#DFE0DC",
-                  transform: isActive(item.path)
-                    ? "scale(1.1)"
-                    : "scale(1)",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    boxShadow: "0 0 15px rgba(223,224,220,0.6)",
-                  },
-                }}
-              >
-                {React.cloneElement(item.icon, {
-                  sx: { color: "#25291C" },
-                })}
-              </Avatar>
-            </IconButton>
+<IconButton
+  component={Link}
+  to={item.path}
+  sx={{ display: "flex", flexDirection: "column",justifyContent:"center",alignItems:"center",gap:0.1 }}
+>
+  <Avatar
+    sx={{
+      height: { xs: "2rem", sm: "3rem" },
+      width: { xs: "2rem", sm: "3rem" },
+      bgcolor: isActive(item.path) ? "#fff" : "#DFE0DC",
+      transform: isActive(item.path) ? "scale(1.1)" : "scale(1)",
+      transition: "all 0.3s ease",
+      "&:hover": {
+        boxShadow: "0 0 15px rgba(223,224,220,0.6)",
+      },
+    }}
+  >
+    {React.cloneElement(item.icon, {
+      sx: { color: "#25291C", fontSize: { xs: 18, sm: 24 } },
+    })}
+  </Avatar>
+
+  <span
+    style={{
+      fontSize: "0.6rem",
+      marginTop: 4,
+      color: isActive(item.path) ? "#fff" : "#DFE0DC",
+      fontFamily: "Montserrat, sans-serif",
+    }}
+  >
+    {item.label}
+  </span>
+</IconButton>
           </motion.div>
 
         </motion.div>

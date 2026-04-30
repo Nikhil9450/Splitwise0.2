@@ -760,20 +760,29 @@ export default function TransitionsModal() {
               to: curr.splitType,
             };
           }
+
+          if (!dayjs(prev.date).isSame(dayjs(curr.date), "day")) {
+            changes.date = {
+              from: prev.date,
+              to: curr.date,
+            };
+          }
             data['expenseId'] = modalProps.expenseDetail._id;
             console.log("currentDetails------------>",data)
             dispatch(updateExpense(data));
             dispatch(closeModal());
             dispatch(setViewType("expenses"));
-            dispatch(addActivity(
-              { 'groupId': modalProps.groupId._id, 
-                'action': 'EXPENSE_EDIT', 
-                'details': { 
-                  'addedBy': user.name ,
-                  changes
-                } 
-              }
-            ));
+            if(Object.keys(changes).length > 0){
+              dispatch(addActivity(
+                { 'groupId': modalProps.groupId._id, 
+                  'action': 'EXPENSE_EDIT', 
+                  'details': { 
+                    'addedBy': user.name ,
+                    changes
+                  } 
+                }
+              ));
+            }
           }else{
             dispatch(addExpense(data));
             dispatch(addActivity({ 'groupId': modalProps.groupId, 'action': 'EXPENSE_ADD', 'details': { 'description': data.description, 'amount': data.amount , 'addedBy': user.name   } }));
@@ -1279,7 +1288,7 @@ export default function TransitionsModal() {
                   sx={{
                     borderRadius: "2rem",
                     background: "#dfe0dc",
-                    padding:'3rem',
+                    padding:'3rem 1rem',
                     // boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
                     maxWidth: 450,
                     mx: "auto",
