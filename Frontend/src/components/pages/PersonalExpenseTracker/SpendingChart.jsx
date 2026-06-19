@@ -16,7 +16,7 @@ export default function SpendingChart() {
       curve: "smooth",
       width: 3,
     },
-
+    colors: ["#3b3b3b"],
     fill: {
       type: "gradient",
       gradient: {
@@ -87,6 +87,7 @@ export default function SpendingChart() {
         borderRadius: "2rem",
         p: 3,
         boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
+        border: "2px solid #313131",
       }}
     >
       <Typography
