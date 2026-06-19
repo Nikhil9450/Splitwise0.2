@@ -19,6 +19,7 @@ import Balances from './components/pages/Balances';
 import Expenses from './components/pages/Expenses';
 import ExpenseDetails from './components/pages/ExpenseDetails';
 import Activity from './components/pages/Activity';
+import PersonalExpenseTracking from './components/pages/PersonalExpenseTracker/PersonalExpenseTracking';
 import LoaderOverlay from './components/Loader';
 // import Hero from './components/pages/Hero';
 function App() {
@@ -108,15 +109,12 @@ function App() {
         }
       /> 
 
-
       <Route
-        path="/groups"
+        path="/track-your-expenses"
         element={
-          // isAuthenticated ? <Navigate to="/groups" replace /> : <Groups />
-          isAuthenticated ? <Groups /> : <Navigate to="/signin" replace />
-
+          isAuthenticated ? <PersonalExpenseTracking /> : <Navigate to="/signin" replace />
         }
-      /> 
+      />
 
       {/* <Route
         path="/hero"

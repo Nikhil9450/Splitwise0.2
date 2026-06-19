@@ -1868,51 +1868,6 @@ export default function TransitionsModal() {
                             </Typography>
                           </Box>
                         ))}
-
-                        {/* ACTION BUTTONS */}
-                        {/* {isOwing && (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: 2,
-                              mt: 2,
-                            }}
-                          >
-                            <Button
-                              fullWidth
-                              variant="outlined"
-                              sx={{
-                                borderColor: "#ED474A",
-                                color: "#ED474A",
-                                textTransform: "none",
-                                fontWeight: 600,
-                                fontFamily: "Montserrat, sans-serif",
-                                "&:hover": {
-                                  borderColor: "#c93a3d",
-                                  backgroundColor: "rgba(237,71,74,0.05)",
-                                },
-                              }}
-                            >
-                              Remind
-                            </Button>
-
-                            <Button
-                              fullWidth
-                              variant="contained"
-                              sx={{
-                                bgcolor: "#129490",
-                                textTransform: "none",
-                                fontWeight: 600,
-                                fontFamily: "Montserrat, sans-serif",
-                                "&:hover": {
-                                  bgcolor: "#0f7f7c",
-                                },
-                              }}
-                            >
-                              Settle Up
-                            </Button>
-                          </Box>
-                        )} */}
                       </Box>
                     </Collapse>
                   </Box>
@@ -1921,7 +1876,259 @@ export default function TransitionsModal() {
             </List>
             );
           }
+          case "ADD_PERSONAL_EXPENSE":{
+            return (
+              <>
+                <Box
+                  sx={{
+                    borderRadius: "2rem",
+                    background: "#dfe0dc",
+                    padding:'3rem 1rem',
+                    // boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                    maxWidth: 450,
+                    mx: "auto",
+                    height:'80%',
+                    display:"flex",
+                    flexDirection:'column',
+                  }}
+                >
+                    {/* Title */}
+                    <Typography
+                      sx={{
+                        mb: 3,
+                        fontWeight: 600,
+                        color: '#25291C',
+                        fontFamily: "Montserrat, sans-serif",
+                        fontSize:'1.5rem'
+                      }}
+                    >
+                      {modalProps.title}
+                    </Typography>
 
+                    {/* Input Section */}
+                    <Box>
+                      {/* Description */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: 1.4,
+                            border: '2px solid #25291C',
+                            borderRadius:'2rem',
+                            bgcolor: '#DFE0DC',
+                            mr: 1,
+                          }}
+                        >
+                          <DescriptionIcon sx={{ color: '#25291C' , height: '1rem' }} />
+                        </Box>
+
+                      <TextField
+                        label="Description"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        InputLabelProps={{
+                          sx: {
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            color: '#25291C',
+                            '&.Mui-focused': {
+                              color: '#129490',
+                            },
+                          },
+                        }}
+                        InputProps={{
+                          sx: {
+                            fontFamily: "Montserrat, sans-serif",
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            borderRadius: '2rem',
+                            borderWidth: '2px',
+
+                            // Default border
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#25291C',
+                              borderWidth: '2px',
+                            },
+
+                            // Hover
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#25291C',
+                              borderWidth: '2px',
+                            },
+
+                            // Focus
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#129490',
+                              borderWidth: '2px',
+                            },
+                          },
+                        }}
+                      />
+                      </Box>
+
+                      {/* Amount */}
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: 1.4,
+                            border: '2px solid #25291C',
+                            borderRadius:'2rem',
+                            bgcolor: '#DFE0DC',
+                            mr: 1,
+                          }}
+                        >
+                          <CurrencyRupeeIcon sx={{ color: '#25291C', height: '1rem' }} />
+                        </Box>
+
+                        <TextField
+                          type="number"
+                          label="Amount"
+                          variant="outlined"
+                          fullWidth
+                          size="small"
+                          value={amount}
+                          onChange={(e) => setAmount(Number(e.target.value))}
+                          InputLabelProps={{
+                            sx: {
+                              fontFamily: "Montserrat, sans-serif",
+                              fontSize: '1rem',
+                              fontWeight: 500,
+                              color: '#25291C',
+                              '&.Mui-focused': {
+                                color: '#129490',
+                              },
+                            },
+                          }}
+                          InputProps={{
+                            sx: {
+                              fontFamily: "Montserrat, sans-serif",
+                              fontSize: '1rem',
+                              fontWeight: 500,
+                              borderRadius: '2rem',
+                              borderWidth: '2px',
+
+                              // Default border
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#25291C',
+                                borderWidth: '2px',
+                              },
+
+                              // Hover
+                              '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#25291C',
+                                borderWidth: '2px',
+                              },
+
+                              // Focus
+                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#129490',
+                                borderWidth: '2px',
+                              },
+                            },
+                          }}
+                        />
+                      </Box>
+                    </Box>
+
+                    {/*Date + Split Buttons */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MobileDatePicker
+                          value={selectedDate}
+                          onChange={(newValue) => setSelectedDate(newValue)}
+                          format="YYYY-MM-DD"
+                          enableAccessibleFieldDOMStructure={false} // 👈 FIX
+                          maxDate={dayjs()}
+                          minDate={dayjs('2020-01-01')}
+                          slots={{
+                            textField: (params) => (
+                              <TextField
+                                {...params}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                  width: 180,
+
+                                  // Label
+                                  '& .MuiInputLabel-root': {
+                                    fontFamily: "Montserrat, sans-serif",
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    color: '#25291C',
+                                  },
+                                  '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#129490',
+                                  },
+
+                                  // Input root
+                                  '& .MuiOutlinedInput-root': {
+                                    fontFamily: "Montserrat, sans-serif",
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    borderRadius: '2rem',
+
+                                    '& fieldset': {
+                                      borderColor: '#25291C',
+                                      borderWidth: '2px',
+                                    },
+
+                                    '&:hover fieldset': {
+                                      borderColor: '#25291C',
+                                    },
+
+                                    '&.Mui-focused fieldset': {
+                                      borderColor: '#129490',
+                                      borderWidth: '2px',
+                                    },
+                                  },
+                                }}
+                              />
+                            ),
+                          }}
+                        />
+                      </LocalizationProvider>
+                    </Box>
+                    {/* Date + Action */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'end',
+                        mt: 8,
+                        alignItems: 'center',
+                      }}
+                    >
+
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        // onClick={add_personal_Expense}
+                        sx={{
+                          bgcolor: '#129490',
+                          fontFamily: "Montserrat, sans-serif",
+                          textTransform: 'none',
+                          fontWeight: 500,
+                          borderRadius: '2rem',
+                          padding:'.6rem 1rem',
+                          '&:hover': { bgcolor: '#0f7f7c' },
+                        }}
+                        // disabled={mutationStatus === "loading"}
+                      >
+                        {modalProps.title === "Edit Expense" ? "Update" : "Add"}
+                      </Button>
+                    </Box>
+                </Box>
+              </>
+            );
+          }
           default:
           return null;
       }

@@ -80,12 +80,17 @@ const Expenses = () => {
     console.log("groupId inside useEffect---------->",groupId);
     dispatch(fetchGroupExpenses(groupId));
     dispatch(fetchGroupById(groupId));
-  },[])
+    setSplitBalance([]);
+    console.log("splitBalance after setting to empty array---------->",splitBalance)
+  },[groupId, dispatch])
 
 
 useEffect(() => {
   console.log("expense or groupMemberList changed, recalculating balances...")
-  if (!expense || expense.length === 0) return;
+  if (!expense || expense.length === 0) {
+    setSplitBalance([]);
+    return;
+  }
 
   const balances = {};
   let totalBalance = 0;
@@ -162,7 +167,7 @@ useEffect(() => {
 
   setSplitBalance(reducedBalances);
 
-}, [expense, groupMemberList, user.id]);
+}, [expense, groupMemberList, user.id, groupId]);
 
 
   console.log("expense in expenses",expense)
