@@ -51,6 +51,8 @@ import { act } from 'react';
 import { fetchUserGroups } from '../redux/userGroups/userGroupsSlice';
 import CircularProgress from '@mui/material/CircularProgress';
 import { resetMutationState } from '../redux/expense/expenseSlice';
+import {resetPersonalExpenseMutationState} from '../redux/personalExpense/PersonalExpenseSlice';
+import {addPersonalExpense, updatePersonalExpense, deletePersonalExpense } from '../redux/personalExpense/PersonalExpenseSlice';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -85,6 +87,7 @@ export default function TransitionsModal() {
       newPassword: ""
     });
     const {mutationStatus,mutationType,mutationError}=useSelector((state)=>state.expenses)
+    const {personalMutationStatus,personalMutationType,personalMutationError}=useSelector((state)=>state.personalExpense)
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [splitByAmount,setSplitByAmount]=useState({});
@@ -94,6 +97,9 @@ export default function TransitionsModal() {
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const dispatch = useDispatch()
+    const [personalExpenseAmount,setPersonalExpenseAmount]=useState("");
+    const [personalExpenseDescription,setPersonalExpenseDescription]=useState("");
+    const [personalExpenseDate,setPersonalExpenseDate]=useState(dayjs());
     const MenuProps = {
       PaperProps: {
         style: {
@@ -125,6 +131,25 @@ export default function TransitionsModal() {
     }
 }, [mutationStatus, mutationType, mutationError, dispatch]);
 
+useEffect(() => {
+    if (personalMutationStatus === "succeeded") {
+        if (personalMutationType === "add") {
+            toast.success("Expense added successfully.");
+        }
+        if (personalMutationType === "update") {
+            toast.success("Expense updated successfully.");
+        }
+        if (personalMutationType === "delete") {
+            toast.success("Expense deleted successfully.");
+        }
+
+        dispatch(resetPersonalExpenseMutationState());
+    }
+    if(personalMutationStatus === "failed") {
+      toast.error(personalMutationError || "Something went wrong");
+      dispatch(resetPersonalExpenseMutationState());
+    }
+}, [personalMutationStatus,personalMutationType,personalMutationError, dispatch]);
 
       useEffect(() => {
         dispatch(fetchUserDetails());
@@ -196,9 +221,7 @@ export default function TransitionsModal() {
     useEffect(()=>{
       setSelectedUser (user?.id ? [user.id] : [])
     },[user])
-    useEffect(()=>{
-      console.log('splitType------------------------>',splitType) ;
-    })
+
     useEffect(() => {
       if (modalProps.title === 'Edit Expense' && modalProps['expenseDetail']['splitType']==="Equally"){
         const selectedMember = modalProps.expenseDetail.splitBetweenWithAmt
@@ -808,6 +831,29 @@ export default function TransitionsModal() {
             dispatch(closeModal());
             navigate(`/expenses/${modalProps.groupId._id}`);     
       }
+    }
+
+    const add_personal_Expense =()=>{
+      const data = {
+        description: personalExpenseDescription,
+        amount: personalExpenseAmount,
+        date: personalExpenseDate,
+      };
+      console.log("data before comparision------->",data);
+      dispatch(addPersonalExpense(data));
+      dispatch(closeModal());
+    }
+
+    const update_personal_Expense =()=>{
+      const data = {
+        description: personalExpenseDescription,
+        amount: personalExpenseAmount,
+        date: personalExpenseDate,
+        expenseId: modalProps.expenseId,
+      };
+      console.log("data before comparision------->",data);
+      dispatch(updatePersonalExpense(data));
+      dispatch(closeModal());
     }
 
     const save=(type)=>{
@@ -1929,8 +1975,8 @@ export default function TransitionsModal() {
                         variant="outlined"
                         fullWidth
                         size="small"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        value={personalExpenseDescription}
+                        onChange={(e) => setPersonalExpenseDescription(e.target.value)}
                         InputLabelProps={{
                           sx: {
                             fontFamily: "Montserrat, sans-serif",
@@ -1995,8 +2041,8 @@ export default function TransitionsModal() {
                           variant="outlined"
                           fullWidth
                           size="small"
-                          value={amount}
-                          onChange={(e) => setAmount(Number(e.target.value))}
+                          value={personalExpenseAmount}
+                          onChange={(e) => setPersonalExpenseAmount(Number(e.target.value))}
                           InputLabelProps={{
                             sx: {
                               fontFamily: "Montserrat, sans-serif",
@@ -2043,8 +2089,8 @@ export default function TransitionsModal() {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
-                          value={selectedDate}
-                          onChange={(newValue) => setSelectedDate(newValue)}
+                          value={personalExpenseDate}
+                          onChange={(newValue) => setPersonalExpenseDate(newValue)}
                           format="YYYY-MM-DD"
                           enableAccessibleFieldDOMStructure={false} // 👈 FIX
                           maxDate={dayjs()}
@@ -2110,7 +2156,7 @@ export default function TransitionsModal() {
                       <Button
                         variant="contained"
                         startIcon={<AddIcon />}
-                        // onClick={add_personal_Expense}
+                        onClick={add_personal_Expense}
                         sx={{
                           bgcolor: '#129490',
                           fontFamily: "Montserrat, sans-serif",

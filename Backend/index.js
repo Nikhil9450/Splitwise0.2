@@ -9,6 +9,7 @@ const editUserRoutes = require("./routes/editUserRoutes")
 const groupRoutes = require("./routes/groupRoutes")
 const expenseRoutes = require("./routes/expenseRoutes")
 const activityRoutes = require("./routes/activityRoutes")
+const personalExpenseRoutes = require("./routes/personalExpenseRoutes")
 const {checkAuth, restrictToLoggedinUserOnly} = require("./middlewares/auth")
 const {checkRole}= require("./middlewares/role")
 const app = express();
@@ -43,6 +44,6 @@ app.use("/editUser",restrictToLoggedinUserOnly,editUserRoutes);
 app.use("/group",checkAuth,groupRoutes);
 app.use("/expense",checkAuth,expenseRoutes);
 app.use("/activity",checkAuth,activityRoutes);
-
+app.use("/personalExpense",checkAuth,personalExpenseRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,()=> console.log(`Server Started at PORT ${PORT}`)) 

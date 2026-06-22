@@ -1,0 +1,130 @@
+const PersonalExpense = require ("../models/personalExpense");
+const User = require("../models/user");
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.JWT_SECRET || 'your-secret-key';
+
+
+const addPersonalExpense =async(req,res)=>{
+    const user = req.user;
+    if(!user){
+        return res.status(400).json({error:"User is not authenticated"});  
+    }
+    const token = req.cookies?.token;
+    let decodedUser;
+    try {
+        decodedUser = jwt.verify(token, secretKey);
+        console.log("user id -------------->",decodedUser);
+
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token." });
+    }
+    let {description,amount,date}=req.body.data;
+    console.log( "req.body.data-------->",req.body.data)
+
+    try{
+       await PersonalExpense.create({
+            user: decodedUser.id,
+            description,
+            amount,
+            date,
+        })
+        return res.status(200).json("Expense added successfully.")
+    } catch(error){
+        console.log("error in handleExpense------->",error)
+        res.status(400).json({ error: 'Expense addition failed.' })
+    }
+
+}
+
+const updatePersonalExpenses = async(req,res)=>{
+    const user = req.user;
+    if(!user){
+        return res.status(400).json({error:"User is not authenticated"});  
+    }
+    const token = req.cookies?.token;
+    let decodedUser;
+    try {
+        decodedUser = jwt.verify(token, secretKey);
+        console.log("user id -------------->",decodedUser);
+
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token." });
+    }
+    let {description,amount,date,expenseId}=req.body.data;
+    console.log( "req.body.data-------->",req.body.data)
+    const updatedData = {
+            description,
+            amount,
+            date,
+        };
+
+    try{
+        await PersonalExpense.findByIdAndUpdate(
+            expenseId,
+            updatedData,
+            // { new: true, runValidators: true }
+            );
+        return res.status(200).json("Expense updated successfully.")    
+    }catch(err){
+        console.log("error in EditExpense------->",err)
+        res.status(400).json({ error: 'Expense addition failed.' })
+    }
+}
+
+const deletePersonalExpense = async (req, res) => {
+    const user = req.user;
+    if (!user) {
+        return res.status(401).json({ error: "User is not authenticated." });
+    }
+
+    const { expenseId } = req.body.data;
+
+    if (!expenseId) {
+        return res.status(400).json({ error: "Expense ID is required." });
+    }
+
+    try {
+        const deletedExpense = await PersonalExpense.findByIdAndDelete(expenseId);
+
+        if (!deletedExpense) {
+            return res.status(404).json({ error: "Expense not found." });
+        }
+
+        return res.status(200).json({ message: "Expense deleted successfully." });
+    } catch (err) {
+        console.error("Error in deletePersonalExpense ----->", err);
+        return res.status(500).json({ error: "Internal server error during expense deletion." });
+    }
+};
+
+const fetchAllPersonalExpense=async(req,res)=>{
+    const user = req.user;
+    if(!user){
+        return res.status(400).json({error: "User is not authenticated"});
+    }
+    const token = req.cookies?.token;
+    let decodedUser;
+    try{
+        decodedUser = jwt.verify(token,secretKey);
+    } catch (err){
+        return res.status(401).json({error:"Invalid or expired token." })
+    }
+
+    try{
+        const ExpenseDetails = await PersonalExpense.find({ user: decodedUser.id });
+        console.log(
+            JSON.stringify(ExpenseDetails, null, 2)
+        );
+        return res.status(200).json(ExpenseDetails);
+    }catch(error){
+        console.log("error----------->", error);
+        return res.status(500).json({"error":error})
+    }
+}
+
+module.exports = {
+    addPersonalExpense,
+    updatePersonalExpenses,
+    deletePersonalExpense,
+    fetchAllPersonalExpense
+}

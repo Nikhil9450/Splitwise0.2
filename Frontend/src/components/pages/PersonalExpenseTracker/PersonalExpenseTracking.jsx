@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,7 +13,10 @@ import MonthYearPicker from "./MonthYearPicker";
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../redux/modal/modalSlice';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
+import { fetchAllPersonalExpenses } from "../../../redux/personalExpense/PersonalExpenseSlice";
 import {
   Avatar,
   Box,
@@ -58,7 +61,22 @@ const expenses = [
 
 export default function PersonalExpenses() {
   const [open, setOpen] = useState(false);
+  const [personalExpenseDetails, setPersonalExpenseDetails] = useState([]);
   const dispatch = useDispatch();
+  const {apiResponse,personalMutationStatus,personalMutationError} = useSelector((state)=>state.personalExpense)
+
+  useEffect(() => {
+      dispatch(fetchAllPersonalExpenses());
+    }, []);
+  useEffect(() => {
+    console.log("personal expenses api data------->", apiResponse);
+    console.log("personalMutationStatus------->", personalMutationStatus);
+    console.log("personalMutationError------->", personalMutationError);
+    if(personalMutationStatus === "succeeded"){
+      setPersonalExpenseDetails(apiResponse);
+    }
+  }, [apiResponse, personalMutationStatus, personalMutationError]);
+
   const addPersonalExpenseHandler =()=>{
     dispatch(openModal({
                   modalType: 'ADD_PERSONAL_EXPENSE',
@@ -67,6 +85,8 @@ export default function PersonalExpenses() {
                   }
     }))
   }
+  const handleEdit=(expense)=>{}
+  const handleDelete=(expenseId)=>{}
   return (
     <Box
       sx={{
@@ -150,11 +170,11 @@ export default function PersonalExpenses() {
       </Typography>
 
       <Stack spacing={2}>
-        {expenses.map((expense) => (
+        {personalExpenseDetails.map((expense) => (
                   <ListItem key={expense.id} sx={{padding:'2px', bgcolor: "#DFE0DC",border:'1.8px solid #5f5f5f', borderRadius:'2rem', marginBottom:'0.5rem'}}>
                     <ListItemButton sx={{ padding: '0px' }} 
-                      component={Link}
-                      to={`/expenseDetails/${expense.id}`}
+                      // component={Link}
+                      // to={`/expenseDetails/${expense.id}`}
                       >
                       <Box sx={{ m: '0rem .5rem', textAlign: 'right' }}>
                         <p  
@@ -176,7 +196,7 @@ export default function PersonalExpenses() {
                       </ListItemAvatar>
                       <ListItemText
                         primary={expense.description}
-                        secondary={"you can add more details here"}
+                        secondary={`₹${expense.amount}`}
                         primaryTypographyProps={{
                           sx: {
                             fontFamily: "Montserrat, sans-serif",
@@ -194,23 +214,40 @@ export default function PersonalExpenses() {
                       />
                       <ListItemText
                         sx={{ textAlign: 'right', pr: 2 }}
-                        primary={'Extra details if needed'}
-                        secondary={`₹${expense.amount}`}
+                         primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEdit(expense)}
+                            >
+                              <EditIcon fontSize="medium" />
+                            </IconButton>
+
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleDelete(expense.id)}
+                            >
+                              <DeleteIcon fontSize="medium" />
+                            </IconButton>
+                          </Box>
+                        }
+                        // secondary={`₹${expense.amount}`}
                         primaryTypographyProps={{
                           sx: {
-                            fontSize: '0.7rem',
+                            fontSize: '1rem',
                             color: '#ED6A5A',
                             fontWeight: 600,
                             fontFamily: "Montserrat, sans-serif",
                           }
                         }}
-                        secondaryTypographyProps={{
-                          sx: {
-                            fontSize: '0.9rem',
-                            color: '#25291C',
-                            fontWeight: 600
-                          }
-                        }}
+                        // secondaryTypographyProps={{
+                        //   sx: {
+                        //     fontSize: '0.9rem',
+                        //     color: '#25291C',
+                        //     fontWeight: 600
+                        //   }
+                        // }}
                       />
                     </ListItemButton>
                   </ListItem>
