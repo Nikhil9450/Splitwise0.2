@@ -27,22 +27,22 @@ export const updatePersonalExpense = createAsyncThunk("personalExpense/updatePer
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(
-            error.response?.data?.error || "failed to add expense"
+            error.response?.data?.error || "failed to update expense"
         );
     }
 })
 
 export const deletePersonalExpense = createAsyncThunk("personalExpense/deletePersonalExpense",async(data,thunkAPI)=>{
     console.log('data inside the deletePersonalExpense thunk---------->',data);
-    console.log('groupid inside the deletePersonalExpense thunk---------->',data.group);
+    const payload = {expenseId: data};
     try {
-        const response=  await axios.post(`${API_URL}personalExpense/deletePersonalExpense`,{data},{withCredentials:true})
+        const response=  await axios.post(`${API_URL}personalExpense/deletePersonalExpense`,{payload},{withCredentials:true})
         console.log("response---------->",response.data) 
         await thunkAPI.dispatch(fetchAllPersonalExpenses());
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(
-            error.response?.data?.error || "failed to add expense"
+            error.response?.data?.error || "failed to delete expense"
         );
     }
 })

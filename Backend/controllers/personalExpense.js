@@ -67,7 +67,7 @@ const updatePersonalExpenses = async(req,res)=>{
         return res.status(200).json("Expense updated successfully.")    
     }catch(err){
         console.log("error in EditExpense------->",err)
-        res.status(400).json({ error: 'Expense addition failed.' })
+        res.status(400).json({ error: 'Expense update failed.' })
     }
 }
 
@@ -77,8 +77,8 @@ const deletePersonalExpense = async (req, res) => {
         return res.status(401).json({ error: "User is not authenticated." });
     }
 
-    const { expenseId } = req.body.data;
-
+    console.log("expenseId in deletePersonalExpense------->", req.body);
+    const { expenseId } = req.body.payload;
     if (!expenseId) {
         return res.status(400).json({ error: "Expense ID is required." });
     }

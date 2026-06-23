@@ -72,7 +72,7 @@ export default function PersonalExpenses() {
     console.log("personal expenses api data------->", apiResponse);
     console.log("personalMutationStatus------->", personalMutationStatus);
     console.log("personalMutationError------->", personalMutationError);
-    if(personalMutationStatus === "succeeded"){
+    if(personalMutationStatus === "succeeded" && Array.isArray(apiResponse)){
       setPersonalExpenseDetails(apiResponse);
     }
   }, [apiResponse, personalMutationStatus, personalMutationError]);
@@ -85,8 +85,6 @@ export default function PersonalExpenses() {
                   }
     }))
   }
-  const handleEdit=(expense)=>{}
-  const handleDelete=(expenseId)=>{}
   return (
     <Box
       sx={{
@@ -170,7 +168,7 @@ export default function PersonalExpenses() {
       </Typography>
 
       <Stack spacing={2}>
-        {personalExpenseDetails.map((expense) => (
+        {personalExpenseDetails?.map((expense) => (
                   <ListItem key={expense.id} sx={{padding:'2px', bgcolor: "#DFE0DC",border:'1.8px solid #5f5f5f', borderRadius:'2rem', marginBottom:'0.5rem'}}>
                     <ListItemButton sx={{ padding: '0px' }} 
                       // component={Link}
@@ -216,20 +214,42 @@ export default function PersonalExpenses() {
                         sx={{ textAlign: 'right', pr: 2 }}
                          primary={
                           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                          <Avatar sx={{ borderRadius: '2rem' ,height:'2rem',width:'2rem', bgcolor:'#ffffff'}}>
                             <IconButton
                               size="small"
-                              onClick={() => handleEdit(expense)}
+                              onClick={() =>dispatch(
+                                        openModal({
+                                          modalType: 'ADD_PERSONAL_EXPENSE',
+                                          modalProps: {
+                                            title: 'Edit Your Expense',
+                                            description: expense.description,
+                                            amount: expense.amount,
+                                            date: expense.date,
+                                            expenseId: expense._id,
+                                          }
+                                        })
+                                      )}
                             >
-                              <EditIcon fontSize="medium" />
+                              <EditIcon fontSize="small" />
                             </IconButton>
-
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => handleDelete(expense.id)}
-                            >
-                              <DeleteIcon fontSize="medium" />
-                            </IconButton>
+                          </Avatar>
+                          <Avatar sx={{ borderRadius: '2rem' ,height:'2rem',width:'2rem', bgcolor:'#ffffff'}}>
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => dispatch(
+                                          openModal({
+                                            modalType: 'DELETE_PERSONAL_EXPENSE',
+                                            modalProps: {
+                                              title: 'Delete Expense',
+                                              expenseId: expense._id,
+                                            }
+                                          })
+                                        )}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                          </Avatar>
                           </Box>
                         }
                         // secondary={`₹${expense.amount}`}
@@ -254,22 +274,6 @@ export default function PersonalExpenses() {
         ))}
       </Stack>
 
-      {/* <Fab
-        color="primary"
-        onClick={() => setOpen(true)}
-        sx={{
-          position: "fixed",
-          bottom: 90,
-          right: 20,
-        }}
-      >
-        <AddIcon />
-      </Fab> */}
-
-      {/* <AddExpenseModal
-        open={open}
-        handleClose={() => setOpen(false)}
-      /> */}
       <Fab
           onClick={() => addPersonalExpenseHandler()}
           aria-label="Add Expenses"

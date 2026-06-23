@@ -192,10 +192,18 @@ useEffect(() => {
         setSelectedDate(dayjs(modalProps.expenseDetail.date));
         setDescription(modalProps.expenseDetail.description);
         setPaidBy(modalProps["expenseDetail"].paidBy);
+      }else if(modalProps.title === "Edit Your Expense" ){
+        setPersonalExpenseAmount(modalProps.amount);
+        setPersonalExpenseDescription(modalProps.description);
+        setPersonalExpenseDate(dayjs(modalProps.date));
+
       }else{
         setDescription("");
         setAmount("");
         setSelectedDate(dayjs())
+        setPersonalExpenseAmount("");
+        setPersonalExpenseDescription("");
+        setPersonalExpenseDate(dayjs());
         // setPaidBy(user.id)
       }
     }, [modalProps]);
@@ -839,23 +847,26 @@ useEffect(() => {
         amount: personalExpenseAmount,
         date: personalExpenseDate,
       };
-      console.log("data before comparision------->",data);
-      dispatch(addPersonalExpense(data));
-      dispatch(closeModal());
+      if(data.description===""||data.amount===0 || data.date===""){
+        toast.error("Please fill the details.")
+      }else{
+        if(modalProps.title==="Edit Your Expense"){
+          dispatch(updatePersonalExpense({expenseId:modalProps.expenseId, ...data}));
+        }else{
+          console.log("data before comparision------->",data);
+          dispatch(addPersonalExpense(data));
+        }
+        dispatch(closeModal());
+      }
     }
 
-    const update_personal_Expense =()=>{
-      const data = {
-        description: personalExpenseDescription,
-        amount: personalExpenseAmount,
-        date: personalExpenseDate,
-        expenseId: modalProps.expenseId,
-      };
-      console.log("data before comparision------->",data);
-      dispatch(updatePersonalExpense(data));
+
+
+    const delete_personal_Expense =(expenseId)=>{
+      console.log("expenseId------->",expenseId);
+      dispatch(deletePersonalExpense(expenseId));
       dispatch(closeModal());
     }
-
     const save=(type)=>{
       if(type==="Equally"){
         if(selectedGroupMember.length===0){
@@ -1709,15 +1720,15 @@ useEffect(() => {
             );
           case "DELETE_EXPENSE":
             console.log("inside delete expense",modalProps)
-          return (
-            <>
-                <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} ?</Typography>
-                <Typography variant="body2"  >Are you sure you want to delete this expense? This will remove this expense for all people involved not just you.</Typography>
-                <Box sx={{display:'flex',justifyContent:'end'}}>
-                  <Button variant="text" onClick={()=>dispatch(closeModal())}>Cancel</Button>
-                  <Button variant="text" onClick={()=>delete_Expense()}>OK</Button>
-                </Box>
-            </>
+            return (
+              <>
+                  <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} ?</Typography>
+                  <Typography variant="body2"  >Are you sure you want to delete this expense? This will remove this expense for all people involved not just you.</Typography>
+                  <Box sx={{display:'flex',justifyContent:'end'}}>
+                    <Button variant="text" onClick={()=>dispatch(closeModal())}>Cancel</Button>
+                    <Button variant="text" onClick={()=>delete_Expense()}>OK</Button>
+                  </Box>
+              </>
           );
           case "VIEW_MEMBERS":
             return (
@@ -2168,13 +2179,25 @@ useEffect(() => {
                         }}
                         // disabled={mutationStatus === "loading"}
                       >
-                        {modalProps.title === "Edit Expense" ? "Update" : "Add"}
+                        {modalProps.title === "Edit Your Expense" ? "Update" : "Add"}
                       </Button>
                     </Box>
                 </Box>
               </>
             );
           }
+          case "DELETE_PERSONAL_EXPENSE":
+            console.log("inside personal delete expense",modalProps)
+            return (
+              <>
+                  <Typography variant="h6" sx={{marginBottom:'1rem'}} >{modalProps.title} ?</Typography>
+                  <Typography variant="body2"  >Are you sure you want to delete this expense?</Typography>
+                  <Box sx={{display:'flex',justifyContent:'end'}}>
+                    <Button variant="text" onClick={()=>dispatch(closeModal())}>Cancel</Button>
+                    <Button variant="text" onClick={()=>delete_personal_Expense(modalProps.expenseId)}>OK</Button>
+                  </Box>
+              </>
+          );
           default:
           return null;
       }
