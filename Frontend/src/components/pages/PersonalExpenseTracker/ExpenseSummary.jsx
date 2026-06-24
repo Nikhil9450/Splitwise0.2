@@ -22,7 +22,7 @@ export default function ExpenseSummary({monthYear}) {
   },
   {
     title: "Budget",
-    amount: 0,
+    amount: monthlyBudget,
   },
 ];
 
@@ -31,8 +31,8 @@ export default function ExpenseSummary({monthYear}) {
   }, [dispatch]);
   useEffect(() => {
     console.log("budget inside ExpenseSummary------->", budgets);
-    console.log("asdfsaf",budgets.find(item => item.month_year === monthYear.format('MM-YYYY')));
-    setMonthlyBudget(budgets.find(item => item.month_year === monthYear.format('MM-YYYY')) || 0);
+    console.log("asdfsaf",budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount);
+    setMonthlyBudget(budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount || 0);
   }, [budgets, monthYear]);
 
   return (
