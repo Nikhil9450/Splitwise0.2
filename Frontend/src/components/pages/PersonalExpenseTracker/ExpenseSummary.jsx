@@ -1,17 +1,40 @@
 import { Box, Grid, Typography } from "@mui/material";
+import { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllBudget } from "../../../redux/budget/budgetSlice";
 
-const cards = [
+
+export default function ExpenseSummary({monthYear}) {
+  const dispatch = useDispatch();
+  const {budgets} = useSelector((state) => state.budget);
+
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [budgetLeft, setBudgetLeft] = useState(0);
+  const [monthlyBudget, setMonthlyBudget] = useState(0);
+  const cards = [
   {
     title: "Total Spent",
-    amount: "₹24,580",
+    amount: totalSpent,
   },
   {
     title: "Budget Left",
-    amount: "₹9,580",
+    amount: budgetLeft,
+  },
+  {
+    title: "Budget",
+    amount: 0,
   },
 ];
 
-export default function ExpenseSummary() {
+  useEffect(() => {
+    dispatch(fetchAllBudget());
+  }, [dispatch]);
+  useEffect(() => {
+    console.log("budget inside ExpenseSummary------->", budgets);
+    console.log("asdfsaf",budgets.find(item => item.month_year === monthYear.format('MM-YYYY')));
+    setMonthlyBudget(budgets.find(item => item.month_year === monthYear.format('MM-YYYY')) || 0);
+  }, [budgets, monthYear]);
+
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
         {cards.map((card) => (

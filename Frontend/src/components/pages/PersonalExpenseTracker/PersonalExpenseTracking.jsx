@@ -17,6 +17,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import { fetchAllPersonalExpenses } from "../../../redux/personalExpense/PersonalExpenseSlice";
+import {addBudget} from "../../../redux/budget/budgetSlice"
 import {
   Avatar,
   Box,
@@ -31,6 +32,9 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const expenses = [
   {
@@ -62,9 +66,21 @@ const expenses = [
 export default function PersonalExpenses() {
   const [open, setOpen] = useState(false);
   const [personalExpenseDetails, setPersonalExpenseDetails] = useState([]);
+  const [monthYear, setMonthYear] = useState(dayjs());
+  const [budget, setBudget] = useState(0);
   const dispatch = useDispatch();
   const {apiResponse,personalMutationStatus,personalMutationError} = useSelector((state)=>state.personalExpense)
+  const [value, setValue] = useState(dayjs());
 
+  const handleChange = (newValue) => {
+  const month = newValue.month() + 1; // 1-12
+  const year = newValue.year();
+
+  console.log("Month:", month);
+  console.log("Year:", year);
+
+  setMonthYear(newValue);
+  };
   useEffect(() => {
       dispatch(fetchAllPersonalExpenses());
     }, []);
@@ -84,6 +100,14 @@ export default function PersonalExpenses() {
                     title: 'Add Expense',
                   }
     }))
+  }
+  const addBudgetHandler =()=>{
+    const data = {
+      amount: budget,
+      month_year: monthYear.format('MM-YYYY')
+    };
+    console.log("budget inside addBudgetHandler------->", data);
+    dispatch(addBudget(data));
   }
   return (
     <Box
@@ -106,7 +130,36 @@ export default function PersonalExpenses() {
             <ArrowBackIcon />
           </IconButton>
           
-         <MonthYearPicker />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+            label="Select Month & Year to view expenses"
+            views={["year", "month"]}
+            format="MM/YYYY"
+            value={monthYear}
+            onChange={handleChange}
+            slotProps={{
+                textField: {
+                size: "small",
+                sx: {
+                    "& .MuiPickersInputBase-root": {
+                    borderRadius: "1rem !important",
+                    width: "300px",
+                    },
+                },
+                },
+                desktopPaper: {
+                sx: {
+                    borderRadius: "1rem",
+                },
+                },
+                mobilePaper: {
+                sx: {
+                    borderRadius: "1rem",
+                },
+                },
+            }}
+            />
+        </LocalizationProvider>
       </Stack>
       
       <Stack 
@@ -131,6 +184,7 @@ export default function PersonalExpenses() {
                   height: "40px",
                 },
               }}
+              onChange={(e) => setBudget(e.target.value)}
             />
 
             <Button
@@ -144,12 +198,13 @@ export default function PersonalExpenses() {
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 300,
               }}
+              onClick={addBudgetHandler}
             >
               Add Budget
             </Button>
         </Box>
       </Stack>
-      <ExpenseSummary />
+      <ExpenseSummary monthYear={monthYear} />
       <Box mt={3}>
         <SpendingChart />
       </Box>
