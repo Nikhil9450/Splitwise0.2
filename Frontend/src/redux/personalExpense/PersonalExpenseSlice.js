@@ -8,7 +8,7 @@ export const addPersonalExpense = createAsyncThunk("personalExpense/addPersonalE
     try {
         const response=  await axios.post(`${API_URL}personalExpense/addPersonalExpense`,{data},{withCredentials:true})
         console.log("response---------->",response.data) 
-        await thunkAPI.dispatch(fetchAllPersonalExpenses());
+        await thunkAPI.dispatch(fetchExpensesByMonthYear(data.date.format('MM-YYYY')));
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(
@@ -23,7 +23,7 @@ export const updatePersonalExpense = createAsyncThunk("personalExpense/updatePer
     try {
         const response=  await axios.post(`${API_URL}personalExpense/updatePersonalExpense`,{data},{withCredentials:true})
         console.log("response---------->",response.data) 
-        await thunkAPI.dispatch(fetchAllPersonalExpenses());
+        await thunkAPI.dispatch(fetchExpensesByMonthYear(data.date.format('MM-YYYY')));
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(
@@ -32,13 +32,12 @@ export const updatePersonalExpense = createAsyncThunk("personalExpense/updatePer
     }
 })
 
-export const deletePersonalExpense = createAsyncThunk("personalExpense/deletePersonalExpense",async(data,thunkAPI)=>{
-    console.log('data inside the deletePersonalExpense thunk---------->',data);
-    const payload = {expenseId: data};
+export const deletePersonalExpense = createAsyncThunk("personalExpense/deletePersonalExpense",async({expenseId,month_year},thunkAPI)=>{
+    console.log('data inside the deletePersonalExpense thunk---------->',expenseId,month_year);
     try {
-        const response=  await axios.post(`${API_URL}personalExpense/deletePersonalExpense`,{payload},{withCredentials:true})
+        const response=  await axios.post(`${API_URL}personalExpense/deletePersonalExpense`,{expenseId},{withCredentials:true})
         console.log("response---------->",response.data) 
-        await thunkAPI.dispatch(fetchAllPersonalExpenses());
+        await thunkAPI.dispatch(fetchExpensesByMonthYear(month_year));
         return response.data;       
     } catch (error) {
         return thunkAPI.rejectWithValue(
@@ -60,9 +59,26 @@ export const fetchAllPersonalExpenses = createAsyncThunk('personalExpense/fetchA
         );
     }
 })
+export const fetchExpensesByMonthYear = createAsyncThunk('personalExpense/fetchExpensesByMonthYear',async(month_year,thunkAPI)=>{
+    console.log("month_year in fetchExpensesByMonthYear thunk---------->",month_year)
+    try {
+        const response = await axios.get(`${API_URL}personalExpense/fetchExpensesByMonthYear/${month_year}`,{
+            withCredentials:true
+        })
+        console.log("response---------->",response.data) 
+       
+        return response.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.error || "failed to fetch expense"
+        );
+    }
+})
 const personalExpenseSlice = createSlice({
     name:'personalExpense',
     initialState:{
+        monthlyExpenses:[],
+        monthlyTotal:0,
         apiResponse:"",
         status: 'idle',
         error: null,
@@ -127,6 +143,20 @@ const personalExpenseSlice = createSlice({
                 state.personalMutationStatus = "succeeded";
             })
             .addCase(fetchAllPersonalExpenses.rejected, (state, action) => {
+                state.personalMutationError = action.payload;
+                state.personalMutationStatus = "failed";
+            })
+
+            .addCase(fetchExpensesByMonthYear.pending, (state) => {
+                state.personalMutationStatus = "loading";
+                state.personalMutationType = "Fetching monthly expenses";
+            })
+            .addCase(fetchExpensesByMonthYear.fulfilled, (state, action) => {
+                state.monthlyExpenses = action.payload.expenses;
+                state.monthlyTotal = action.payload.total;
+                state.personalMutationStatus = "succeeded";
+            })
+            .addCase(fetchExpensesByMonthYear.rejected, (state, action) => {
                 state.personalMutationError = action.payload;
                 state.personalMutationStatus = "failed";
             })

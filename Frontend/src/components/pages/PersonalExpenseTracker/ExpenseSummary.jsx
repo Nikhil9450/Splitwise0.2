@@ -7,18 +7,18 @@ import { fetchAllBudget } from "../../../redux/budget/budgetSlice";
 export default function ExpenseSummary({monthYear}) {
   const dispatch = useDispatch();
   const {budgets} = useSelector((state) => state.budget);
-
+  const {apiResponse,personalMutationStatus,personalMutationError,monthlyExpenses,monthlyTotal} = useSelector((state)=>state.personalExpense)
   const [totalSpent, setTotalSpent] = useState(0);
   const [budgetLeft, setBudgetLeft] = useState(0);
   const [monthlyBudget, setMonthlyBudget] = useState(0);
   const cards = [
   {
     title: "Total Spent",
-    amount: totalSpent,
+    amount: monthlyTotal,
   },
   {
     title: "Budget Left",
-    amount: budgetLeft,
+    amount: monthlyBudget - monthlyTotal,
   },
   {
     title: "Budget",
@@ -33,8 +33,14 @@ export default function ExpenseSummary({monthYear}) {
     console.log("budget inside ExpenseSummary------->", budgets);
     console.log("asdfsaf",budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount);
     setMonthlyBudget(budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount || 0);
+    setTotalSpent(monthlyTotal || 0);
+    setBudgetLeft((budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount || 0) - (monthlyTotal || 0));
   }, [budgets, monthYear]);
 
+  useEffect(() => {
+    console.log("monthlyExpenses inside ExpenseSummary------->", monthlyExpenses);
+    console.log("monthlyTotal inside ExpenseSummary------->", monthlyTotal);
+  }, [monthlyExpenses, monthlyTotal]);
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
         {cards.map((card) => (

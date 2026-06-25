@@ -78,7 +78,7 @@ const deletePersonalExpense = async (req, res) => {
     }
 
     console.log("expenseId in deletePersonalExpense------->", req.body);
-    const { expenseId } = req.body.payload;
+    const  expenseId  = req.body.expenseId;
     if (!expenseId) {
         return res.status(400).json({ error: "Expense ID is required." });
     }
@@ -122,9 +122,44 @@ const fetchAllPersonalExpense=async(req,res)=>{
     }
 }
 
+const fetchExpensesByMonthYear = async (req, res) => {
+    console.log("req.params in fetchExpensesByMonthYear------->", req.params);
+    const user = req.user;
+
+    if (!user) {
+        return res.status(400).json({ error: "User is not authenticated" });
+    }
+
+    const { month_year } = req.params; // Example: "06-2026"
+
+    try {
+        const [month, year] = month_year.split("-");
+
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 1);
+
+        const expenses = await PersonalExpense.find({
+            user: user.id,
+            date: {
+                $gte: startDate,
+                $lt: endDate,
+            },
+        }).sort({ date: -1 });
+        const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+        console.log("req.user in fetchExpensesByMonthYear------->", req.user);
+        console.log("expenses in fetchExpensesByMonthYear------->", expenses);
+        console.log("total in fetchExpensesByMonthYear------->", total);
+        return res.status(200).json({ expenses, total });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     addPersonalExpense,
     updatePersonalExpenses,
     deletePersonalExpense,
-    fetchAllPersonalExpense
+    fetchAllPersonalExpense,
+    fetchExpensesByMonthYear
 }

@@ -862,9 +862,10 @@ useEffect(() => {
 
 
 
-    const delete_personal_Expense =(expenseId)=>{
+    const delete_personal_Expense =(expenseId,month_year)=>{
       console.log("expenseId------->",expenseId);
-      dispatch(deletePersonalExpense(expenseId));
+      console.log("month_year inside deletePersonalExpense------->",month_year);
+      dispatch(deletePersonalExpense({expenseId, month_year}));
       dispatch(closeModal());
     }
     const save=(type)=>{
@@ -2194,7 +2195,7 @@ useEffect(() => {
                   <Typography variant="body2"  >Are you sure you want to delete this expense?</Typography>
                   <Box sx={{display:'flex',justifyContent:'end'}}>
                     <Button variant="text" onClick={()=>dispatch(closeModal())}>Cancel</Button>
-                    <Button variant="text" onClick={()=>delete_personal_Expense(modalProps.expenseId)}>OK</Button>
+                    <Button variant="text" onClick={()=>delete_personal_Expense(modalProps.expenseId, modalProps.month_year)}>OK</Button>
                   </Box>
               </>
           );

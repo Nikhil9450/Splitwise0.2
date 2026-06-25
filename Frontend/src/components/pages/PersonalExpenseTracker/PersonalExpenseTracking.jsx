@@ -16,7 +16,7 @@ import { openModal } from '../../../redux/modal/modalSlice';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
-import { fetchAllPersonalExpenses } from "../../../redux/personalExpense/PersonalExpenseSlice";
+import { fetchAllPersonalExpenses ,fetchExpensesByMonthYear} from "../../../redux/personalExpense/PersonalExpenseSlice";
 import {addBudget} from "../../../redux/budget/budgetSlice"
 import {
   Avatar,
@@ -69,7 +69,7 @@ export default function PersonalExpenses() {
   const [monthYear, setMonthYear] = useState(dayjs());
   const [budget, setBudget] = useState(0);
   const dispatch = useDispatch();
-  const {apiResponse,personalMutationStatus,personalMutationError} = useSelector((state)=>state.personalExpense)
+  const {apiResponse,personalMutationStatus,personalMutationError,monthlyExpenses,monthlyTotal,personalMutationType} = useSelector((state)=>state.personalExpense)
   const [value, setValue] = useState(dayjs());
 
   const handleChange = (newValue) => {
@@ -82,16 +82,17 @@ export default function PersonalExpenses() {
   setMonthYear(newValue);
   };
   useEffect(() => {
-      dispatch(fetchAllPersonalExpenses());
+      dispatch(fetchExpensesByMonthYear(monthYear.format('MM-YYYY')));
     }, []);
   useEffect(() => {
     console.log("personal expenses api data------->", apiResponse);
     console.log("personalMutationStatus------->", personalMutationStatus);
     console.log("personalMutationError------->", personalMutationError);
-    if(personalMutationStatus === "succeeded" && Array.isArray(apiResponse)){
-      setPersonalExpenseDetails(apiResponse);
+    console.log("monthlyExpenses------->", monthlyExpenses);
+    if(personalMutationStatus === "succeeded" && personalMutationType === "Fetching monthly expenses"){
+      setPersonalExpenseDetails(monthlyExpenses);
     }
-  }, [apiResponse, personalMutationStatus, personalMutationError]);
+  }, [apiResponse, personalMutationStatus, personalMutationError, monthlyExpenses, monthlyTotal]);
 
   const addPersonalExpenseHandler =()=>{
     dispatch(openModal({
@@ -109,6 +110,9 @@ export default function PersonalExpenses() {
     console.log("budget inside addBudgetHandler------->", data);
     dispatch(addBudget(data));
   }
+  useEffect(() => {
+    dispatch(fetchExpensesByMonthYear(monthYear.format('MM-YYYY')));
+  }, [monthYear]);
   return (
     <Box
       sx={{
@@ -130,36 +134,40 @@ export default function PersonalExpenses() {
             <ArrowBackIcon />
           </IconButton>
           
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-            label="Select Month & Year to view expenses"
-            views={["year", "month"]}
-            format="MM/YYYY"
-            value={monthYear}
-            onChange={handleChange}
-            slotProps={{
-                textField: {
-                size: "small",
-                sx: {
-                    "& .MuiPickersInputBase-root": {
-                    borderRadius: "1rem !important",
-                    width: "300px",
-                    },
-                },
-                },
-                desktopPaper: {
-                sx: {
-                    borderRadius: "1rem",
-                },
-                },
-                mobilePaper: {
-                sx: {
-                    borderRadius: "1rem",
-                },
-                },
-            }}
-            />
-        </LocalizationProvider>
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+  <DatePicker
+    label="Select Month & Year to view expenses"
+    views={["year", "month"]}
+    format="MM/YYYY"
+    value={monthYear}
+    onChange={handleChange}
+    closeOnSelect
+    slotProps={{
+      actionBar: {
+        actions: [], // Removes OK, Cancel, Today buttons
+      },
+      textField: {
+        size: "small",
+        sx: {
+          "& .MuiPickersInputBase-root": {
+            borderRadius: "1rem",
+            width: "300px",
+          },
+        },
+      },
+      desktopPaper: {
+        sx: {
+          borderRadius: "1rem",
+        },
+      },
+      mobilePaper: {
+        sx: {
+          borderRadius: "1rem",
+        },
+      },
+    }}
+  />
+</LocalizationProvider>
       </Stack>
       
       <Stack 
@@ -222,7 +230,7 @@ export default function PersonalExpenses() {
         Today
       </Typography>
 
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{marginBottom:'10rem'}}>
         {personalExpenseDetails?.map((expense) => (
                   <ListItem key={expense.id} sx={{padding:'2px', bgcolor: "#DFE0DC",border:'1.8px solid #5f5f5f', borderRadius:'2rem', marginBottom:'0.5rem'}}>
                     <ListItemButton sx={{ padding: '0px' }} 
@@ -298,6 +306,7 @@ export default function PersonalExpenses() {
                                             modalProps: {
                                               title: 'Delete Expense',
                                               expenseId: expense._id,
+                                              month_year: dayjs(expense.date).format('MM-YYYY'),
                                             }
                                           })
                                         )}
