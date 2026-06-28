@@ -1,7 +1,29 @@
 import Chart from "react-apexcharts";
 import { Box, Typography } from "@mui/material";
 
-export default function SpendingChart() {
+export default function SpendingChart({data}) {
+  const modified_array = data?.map((item)=>{
+    const date = item.date.split("T")[0];
+    return {
+      date,
+      amount :item.amount,
+    }
+  })
+  const reducing_amount_by_date = modified_array.reduce((acc,item)=>{
+    if(acc[item.date]){
+      acc[item.date] = acc[item.date]+item.amount
+    }else{
+      acc[item.date] = item.amount
+    }
+    return acc;
+  },{})
+
+  console.log("reducing_amount_by_date",reducing_amount_by_date);
+  const xdata = Object.keys(reducing_amount_by_date).map((item)=>item.split("-")[2]);
+  const ydata = Object.values(reducing_amount_by_date)
+  console.log("xdata--------->",xdata);
+  console.log("ydata------------>",ydata);
+
   const options = {
     chart: {
       toolbar: {
@@ -14,7 +36,7 @@ export default function SpendingChart() {
 
     stroke: {
       curve: "smooth",
-      width: 3,
+      width: 1,
     },
     colors: ["#3b3b3b"],
     fill: {
@@ -43,10 +65,7 @@ export default function SpendingChart() {
     },
 
     xaxis: {
-      categories: Array.from(
-        { length: 30 },
-        (_, i) => i
-      ),
+      categories: xdata,
       labels: {
         rotate: -45,
       },
@@ -56,6 +75,7 @@ export default function SpendingChart() {
       labels: {
         formatter: (value) => `₹${value}`,
       },
+      show :false
     },
 
     tooltip: {
@@ -69,14 +89,7 @@ export default function SpendingChart() {
   const series = [
     {
       name: "Expense",
-      data: [
-        500, 1200, 800, 1500, 900,
-        2000, 700, 1100, 1400, 600,
-        1800, 900, 1300, 2200, 1000,
-        700, 1500, 1200, 900, 1700,
-        800, 1400, 1900, 1000, 600,
-        1600, 1200, 1800, 900, 2100,
-      ],
+      data: ydata,
     },
   ];
 
@@ -85,16 +98,15 @@ export default function SpendingChart() {
       sx={{
         bgcolor: "#fff",
         borderRadius: "2rem",
-        p: 3,
+        p: 2,
         boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
         border: "2px solid #313131",
       }}
     >
       <Typography
-        variant="h7"
-        fontWeight={600}
-        mb={3}
-        sx={{fontFamily: "Montserrat, sans-serif",}}
+        fontWeight={500}
+        mb={1}
+        sx={{fontFamily: "Montserrat, sans-serif", marginBottom:"0px",fontSize:".8rem"}}
       >
         Daily Spending 
       </Typography>
@@ -111,12 +123,12 @@ export default function SpendingChart() {
           },
         }}
       >
-        <Box sx={{ minWidth: 1000 }}>
+        <Box sx={{ minWidth: 300 ,width:xdata.length * 30}}>
           <Chart
             options={options}
             series={series}
             type="area"
-            height={200}
+            height={150}
           />
         </Box>
       </Box>

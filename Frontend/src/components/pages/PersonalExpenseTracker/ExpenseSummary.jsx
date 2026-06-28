@@ -47,20 +47,25 @@ export default function ExpenseSummary({monthYear}) {
             <Box
               sx={{
                 width: "100%",
-                p: 2,
+                p: 1.5,
                 borderRadius: 5,
                 bgcolor: "white",
                 border: "2px solid #303030",
               }}
             >
-              <Typography color="text.secondary">
+              <Typography color="text.secondary"
+                fontWeight={500}
+                fontSize=".7rem"
+                sx={{marginBottom:"0px",fontFamily: "Montserrat, sans-serif",}}
+              >
                 {card.title}
               </Typography>
 
               <Typography
                 fontWeight={600}
-                fontSize="1.25rem"
+                fontSize=".7rem"
                 mt={1}
+                sx={{marginTop:"0px",fontFamily: "Montserrat, sans-serif",}}
               >
                 {card.amount}
               </Typography>

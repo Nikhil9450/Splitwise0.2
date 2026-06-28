@@ -15,9 +15,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../../../redux/modal/modalSlice';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Link } from 'react-router-dom';
 import { fetchAllPersonalExpenses ,fetchExpensesByMonthYear} from "../../../redux/personalExpense/PersonalExpenseSlice";
-import {addBudget} from "../../../redux/budget/budgetSlice"
+import {addBudget} from "../../../redux/budget/budgetSlice";
 import {
   Avatar,
   Box,
@@ -136,7 +138,7 @@ export default function PersonalExpenses() {
           
 <LocalizationProvider dateAdapter={AdapterDayjs}>
   <DatePicker
-    label="Select Month & Year to view expenses"
+    label="Select Month"
     views={["year", "month"]}
     format="MM/YYYY"
     value={monthYear}
@@ -148,12 +150,18 @@ export default function PersonalExpenses() {
       },
       textField: {
         size: "small",
-        sx: {
-          "& .MuiPickersInputBase-root": {
-            borderRadius: "1rem",
-            width: "300px",
-          },
-        },
+    sx: {
+      "& .MuiPickersInputBase-root": {
+        width: 150,
+        borderRadius: "1rem",
+      },
+      "& .MuiPickersInputBase-sectionsContainer": {
+        fontSize: "0.8rem",
+        fontFamily: "Montserrat, sans-serif",
+      },
+    },
+        
+
       },
       desktopPaper: {
         sx: {
@@ -214,7 +222,7 @@ export default function PersonalExpenses() {
       </Stack>
       <ExpenseSummary monthYear={monthYear} />
       <Box mt={3}>
-        <SpendingChart />
+        <SpendingChart data={personalExpenseDetails} />
       </Box>
 
       <Box mt={3}>
@@ -232,7 +240,7 @@ export default function PersonalExpenses() {
 
       <Stack spacing={2} sx={{marginBottom:'10rem'}}>
         {personalExpenseDetails?.map((expense) => (
-                  <ListItem key={expense.id} sx={{padding:'2px', bgcolor: "#DFE0DC",border:'1.8px solid #5f5f5f', borderRadius:'2rem', marginBottom:'0.5rem'}}>
+                  <ListItem key={expense.id} sx={{padding:'2px', bgcolor: "#ffffff",border:'1.8px solid #5f5f5f', borderRadius:'2rem', marginBottom:'0.5rem'}}>
                     <ListItemButton sx={{ padding: '0px' }} 
                       // component={Link}
                       // to={`/expenseDetails/${expense.id}`}
@@ -241,7 +249,7 @@ export default function PersonalExpenses() {
                         <p  
                           style={{ 
                             margin: '0px', 
-                            fontSize: '14px', 
+                            fontSize: '11px', 
                             fontFamily: "Montserrat, sans-serif", 
                             fontWeight: 600, 
                             fontStyle: "normal" 
@@ -251,18 +259,20 @@ export default function PersonalExpenses() {
                         </p>
                       </Box>
                       <ListItemAvatar sx={{paddingRight:'5px'}}>
-                        <Avatar sx={{ borderRadius: '2rem' ,height:'3rem',width:'3rem', bgcolor:'#25291C'}}>
-                          <ShoppingBagIcon />
+                        <Avatar sx={{ borderRadius: '2rem' ,height:'2rem',width:'2rem', bgcolor:'#25291C'}}>
+                          <ShoppingBagIcon sx={{fontSize:'1rem'}}/>
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
                         primary={expense.description}
                         secondary={`₹${expense.amount}`}
+                        sx={{margin:'0px'}}
                         primaryTypographyProps={{
                           sx: {
                             fontFamily: "Montserrat, sans-serif",
                             fontWeight: 600,
-                            fontStyle: "normal"
+                            fontStyle: "normal",
+                            fontSize:'.8rem'
                           }
                         }}
                         secondaryTypographyProps={{
@@ -293,7 +303,7 @@ export default function PersonalExpenses() {
                                         })
                                       )}
                             >
-                              <EditIcon fontSize="small" />
+                              <EditOutlinedIcon fontSize="small" />
                             </IconButton>
                           </Avatar>
                           <Avatar sx={{ borderRadius: '2rem' ,height:'2rem',width:'2rem', bgcolor:'#ffffff'}}>
@@ -311,7 +321,7 @@ export default function PersonalExpenses() {
                                           })
                                         )}
                               >
-                                <DeleteIcon fontSize="small" />
+                                <DeleteOutlineOutlinedIcon fontSize="small" />
                               </IconButton>
                           </Avatar>
                           </Box>
