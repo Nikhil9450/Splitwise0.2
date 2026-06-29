@@ -19,7 +19,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Link } from 'react-router-dom';
 import { fetchAllPersonalExpenses ,fetchExpensesByMonthYear} from "../../../redux/personalExpense/PersonalExpenseSlice";
-import {addBudget} from "../../../redux/budget/budgetSlice";
+import {addBudget,updateBudget} from "../../../redux/budget/budgetSlice";
 import {
   Avatar,
   Box,
@@ -37,43 +37,20 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
-const expenses = [
-  {
-    id: 1,
-    description: "Burger King",
-    category: "Food",
-    amount: 320,
-    date: "2026-04-01T07:20:17.696Z",
-    icon: "🍔",
-  },
-  {
-    id: 2,
-    description: "Uber Ride",
-    category: "Travel",
-    amount: 450,
-    date: "2026-04-01T07:20:17.696Z",
-    icon: "🚕",
-  },
-  {
-    id: 3,
-    description: "Amazon",
-    category: "Shopping",
-    amount: 899,
-    date: "2026-04-01T07:20:17.696Z",
-    icon: "🛒",
-  },
-];
+import {fetchAllBudget} from "../../../redux/budget/budgetSlice";
+import { toast } from "react-toastify";
 
 export default function PersonalExpenses() {
   const [open, setOpen] = useState(false);
   const [personalExpenseDetails, setPersonalExpenseDetails] = useState([]);
   const [monthYear, setMonthYear] = useState(dayjs());
   const [budget, setBudget] = useState(0);
+  const [monthlyBudget, setMonthlyBudget] =useState(0);
+  const [budgetId,setBudgetId]= useState("");
   const dispatch = useDispatch();
   const {apiResponse,personalMutationStatus,personalMutationError,monthlyExpenses,monthlyTotal,personalMutationType} = useSelector((state)=>state.personalExpense)
   const [value, setValue] = useState(dayjs());
-
+  const {budgets} = useSelector((state) => state.budget);
   const handleChange = (newValue) => {
   const month = newValue.month() + 1; // 1-12
   const year = newValue.year();
@@ -85,7 +62,9 @@ export default function PersonalExpenses() {
   };
   useEffect(() => {
       dispatch(fetchExpensesByMonthYear(monthYear.format('MM-YYYY')));
-    }, []);
+      dispatch(fetchAllBudget());
+    }, [dispatch]);
+
   useEffect(() => {
     console.log("personal expenses api data------->", apiResponse);
     console.log("personalMutationStatus------->", personalMutationStatus);
@@ -104,14 +83,28 @@ export default function PersonalExpenses() {
                   }
     }))
   }
-  const addBudgetHandler =()=>{
+  const addBudgetHandler =(type)=>{
     const data = {
       amount: budget,
       month_year: monthYear.format('MM-YYYY')
     };
     console.log("budget inside addBudgetHandler------->", data);
-    dispatch(addBudget(data));
+    if(!budget || !monthYear){
+      toast.error("Invalid data")
+    }else if( type == "Add"){
+      dispatch(addBudget(data));
+    }else if (type =="Update"){
+      const updatedData = {...data, budgetId}
+      dispatch(updateBudget(updatedData));
+    }
   }
+
+  useEffect(()=>{
+    setMonthlyBudget(budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount) ;
+    console.log("budgets from reducer",budgets);
+    setBudgetId((budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?._id))
+  },[budgets])
+
   useEffect(() => {
     dispatch(fetchExpensesByMonthYear(monthYear.format('MM-YYYY')));
   }, [monthYear]);
@@ -214,13 +207,13 @@ export default function PersonalExpenses() {
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 300,
               }}
-              onClick={addBudgetHandler}
+              onClick={()=>addBudgetHandler((monthlyBudget==0)?"Add":"Update")}
             >
-              Add Budget
+             {(monthlyBudget==0)?"Add Budget":"Update Budget"} 
             </Button>
         </Box>
       </Stack>
-      <ExpenseSummary monthYear={monthYear} />
+      <ExpenseSummary monthYear={monthYear} budgets={budgets} />
       <Box mt={3}>
         <SpendingChart data={personalExpenseDetails} />
       </Box>
@@ -230,15 +223,16 @@ export default function PersonalExpenses() {
       </Box>
 
       <Typography
-        fontWeight={700}
+        fontWeight={400}
         mt={3}
         mb={2}
-        fontSize="1.2rem"
+        fontSize="1rem"
+        sx={{fontFamily:'Montserrat, sans-serif'}}
       >
-        Today
+        Expenses of {monthYear.format('MM-YYYY')}
       </Typography>
 
-      <Stack spacing={2} sx={{marginBottom:'10rem'}}>
+      <Stack spacing={2} sx={{marginBottom:'10rem', height: '15rem', overflowY:'scroll',padding:'1rem',background:'white',borderRadius:'2rem', border:'2px solid black'}}>
         {personalExpenseDetails?.map((expense) => (
                   <ListItem key={expense.id} sx={{padding:'2px', bgcolor: "#ffffff",border:'1.8px solid #5f5f5f', borderRadius:'2rem', marginBottom:'0.5rem'}}>
                     <ListItemButton sx={{ padding: '0px' }} 

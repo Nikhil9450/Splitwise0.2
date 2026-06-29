@@ -17,12 +17,18 @@ export default function SpendingChart({data}) {
     }
     return acc;
   },{})
+  const sortedEntries = Object.entries(reducing_amount_by_date).sort(
+    ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
+  );
+
+  const xdata = sortedEntries.map(([date]) => date.split("-")[2]);
+  const ydata = sortedEntries.map(([, amount]) => amount);
 
   console.log("reducing_amount_by_date",reducing_amount_by_date);
-  const xdata = Object.keys(reducing_amount_by_date).map((item)=>item.split("-")[2]);
-  const ydata = Object.values(reducing_amount_by_date)
-  console.log("xdata--------->",xdata);
-  console.log("ydata------------>",ydata);
+  // const xdata = Object.keys(reducing_amount_by_date).map((item)=>item.split("-")[2]);
+  // const ydata = Object.values(reducing_amount_by_date)
+  // console.log("xdata--------->",xdata);
+  // console.log("ydata------------>",ydata);
 
   const options = {
     chart: {
@@ -123,7 +129,7 @@ export default function SpendingChart({data}) {
           },
         }}
       >
-        <Box sx={{ minWidth: 300 ,width:xdata.length * 30}}>
+        <Box sx={{ minWidth: 350 ,width:xdata.length * 30}}>
           <Chart
             options={options}
             series={series}

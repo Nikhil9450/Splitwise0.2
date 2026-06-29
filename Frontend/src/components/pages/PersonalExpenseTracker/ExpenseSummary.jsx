@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAllBudget } from "../../../redux/budget/budgetSlice";
 
 
-export default function ExpenseSummary({monthYear}) {
+export default function ExpenseSummary({monthYear, budgets}) {
   const dispatch = useDispatch();
-  const {budgets} = useSelector((state) => state.budget);
   const {apiResponse,personalMutationStatus,personalMutationError,monthlyExpenses,monthlyTotal} = useSelector((state)=>state.personalExpense)
   const [totalSpent, setTotalSpent] = useState(0);
   const [budgetLeft, setBudgetLeft] = useState(0);
