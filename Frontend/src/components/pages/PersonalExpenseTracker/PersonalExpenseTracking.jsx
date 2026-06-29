@@ -101,9 +101,10 @@ export default function PersonalExpenses() {
 
   useEffect(()=>{
     setMonthlyBudget(budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?.amount) ;
-    console.log("budgets from reducer",budgets);
+    const selectedDateBudget = budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))
+    console.log("budgets from reducer",selectedDateBudget);
     setBudgetId((budgets?.find(item => item.month_year === monthYear.format('MM-YYYY'))?._id))
-  },[budgets])
+  },[budgets,monthYear])
 
   useEffect(() => {
     dispatch(fetchExpensesByMonthYear(monthYear.format('MM-YYYY')));
@@ -207,9 +208,9 @@ export default function PersonalExpenses() {
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: 300,
               }}
-              onClick={()=>addBudgetHandler((monthlyBudget==0)?"Add":"Update")}
+              onClick={()=>addBudgetHandler((monthlyBudget)?"Update":"Add")}
             >
-             {(monthlyBudget==0)?"Add Budget":"Update Budget"} 
+             {(monthlyBudget)?"Update Budget":"Add Budget"} 
             </Button>
         </Box>
       </Stack>
